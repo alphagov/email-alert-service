@@ -28,7 +28,7 @@ class MajorChangeListener
 
         acknowledge(delivery_info)
       rescue JSON::ParserError => e
-        reject(delivery_info)
+        discard(delivery_info)
       end
     end
   end
@@ -46,11 +46,11 @@ private
     channel.acknowledge(delivery_info.delivery_tag, false)
   end
 
-  def reject(delivery_info)
+  def discard(delivery_info)
     channel.reject(delivery_info.delivery_tag, false)
   end
 
-  def redeliver(delivery_info)
+  def requeue(delivery_info)
     channel.reject(delivery_info.delivery_tag, true)
   end
 end
