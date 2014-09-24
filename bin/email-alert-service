@@ -18,42 +18,37 @@ environment = ENV['ENVIRONMENT'] || 'development'
 require 'yaml'
 RABBITMQ_OPTIONS = YAML.load(File.open(APP_ROOT+'config/rabbitmq.yml')).fetch(environment).freeze
 
-require 'eventmachine'
 require 'bunny'
 require 'json'
-EventMachine.run do
-  connection = Bunny.new(RABBITMQ_OPTIONS)
-  connection.start
 
-  Signal.trap 'TERM' do
-    puts "Closing down"
-    connection.close { EventMachine.stop }
-  end
+connection = Bunny.new(RABBITMQ_OPTIONS)
+connection.start
 
-  Signal.trap 'INT' do
-    puts "Closing down"
-    connection.close { EventMachine.stop }
-  end
+channel = connection.create_channel
 
-  channel = connection.create_channel
-  exchange = channel.topic(RABBITMQ_OPTIONS.fetch('exchange'), passive: true)
+at_exit do
+  puts "Closing down"
+  channel.close
+  connection.close
+end
 
-  queue = channel.queue('email_alert_service')
-  queue.bind(exchange, routing_key: "*.major.#")
+exchange = channel.topic(RABBITMQ_OPTIONS.fetch('exchange'), passive: true)
 
-  puts "Bound to exchange #{RABBITMQ_OPTIONS.fetch('exchange')}, listening for major changes"
+queue = channel.queue('email_alert_service')
+queue.bind(exchange, routing_key: "*.major.#")
 
-  queue.subscribe(block: true, ack: true) do |delivery_info, _, document_json|
-    begin
-      document = JSON.parse(document_json)
+puts "Bound to exchange #{RABBITMQ_OPTIONS.fetch('exchange')}, listening for major changes"
 
-      puts "Recevied major change notification for #{document["title"]}"
+queue.subscribe(block: true, manual_ack: true) do |delivery_info, _, document_json|
+  begin
+    document = JSON.parse(document_json)
 
-      channel.acknowledge(delivery_info.delivery_tag, false)
-    rescue JSON::ParserError => e
-      # Second parameter is `false` to not requeue messages
-      # because JSON failures shouldn't be retried
-      channel.reject(delivery_info.delivery_tag, false)
-    end
+    puts "Recevied major change notification for #{document["title"]}"
+
+    channel.acknowledge(delivery_info.delivery_tag, false)
+  rescue JSON::ParserError => e
+    # Second parameter is `false` to not requeue messages
+    # because JSON failures shouldn't be retried
+    channel.reject(delivery_info.delivery_tag, false)
   end
 end
