@@ -1,11 +1,11 @@
-require 'bunny'
-require 'json'
+require "bunny"
+require "json"
 
 class MajorChangeListener
   def initialize(rabbitmq_options)
     @connection = Bunny.new(rabbitmq_options)
-    @exchange_name = rabbitmq_options.fetch('exchange')
-    @queue_name = 'email_alert_service'
+    @exchange_name = rabbitmq_options.fetch("exchange")
+    @queue_name = "email_alert_service"
     @routing_key = "*.major.#" # Supports future expansions
   end
 

@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 
-require 'byebug'
+require "byebug"
 
-require_relative '../email_alert_service/config'
-config = EmailAlertService::Config.new(ENV['ENVIRONMENT'])
+require_relative "../email_alert_service/config"
+config = EmailAlertService::Config.new(ENV["ENVIRONMENT"])
 
-[config.app_root, config.app_root+'email_alert_service'].each do |path|
+[config.app_root, config.app_root+"email_alert_service"].each do |path|
   $LOAD_PATH << path.to_s
 end
 
@@ -16,7 +16,7 @@ logger.level = Logger::DEBUG
 logfile.sync = true
 $stderr = $stdout = logfile
 
-require 'listeners/major_change_listener'
+require "listeners/major_change_listener"
 listener = MajorChangeListener.new(config.rabbitmq)
 
 at_exit do
