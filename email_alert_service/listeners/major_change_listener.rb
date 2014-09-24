@@ -5,8 +5,8 @@ class MajorChangeListener
   def initialize(rabbitmq_options)
     @connection = Bunny.new(rabbitmq_options)
     @exchange_name = rabbitmq_options.fetch("exchange")
-    @queue_name = "email_alert_service"
-    @routing_key = "*.major.#" # Supports future expansions
+    @queue_name = rabbitmq_options.fetch("queue")
+    @routing_key = rabbitmq_options.fetch("major_change_routing_pattern")
   end
 
   def run
