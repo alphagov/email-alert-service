@@ -3,7 +3,10 @@
 require_relative "../email_alert_service/config"
 config = EmailAlertService::Config.new(ENV["ENVIRONMENT"])
 
-[config.app_root, config.app_root+"email_alert_service"].each do |path|
+[
+  config.app_root,
+  config.app_root + "email_alert_service"
+].each do |path|
   $LOAD_PATH << path.to_s
 end
 
