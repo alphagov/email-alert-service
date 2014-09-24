@@ -43,8 +43,17 @@ EventMachine.run do
 
   puts "Bound to exchange #{RABBITMQ_OPTIONS.fetch('exchange')}, listening for major changes"
 
-  queue.subscribe(block: true, ack: true) do |_, _, document_json|
-    document = JSON.parse(document_json)
-    puts "Recevied major change notification for #{document["title"]}"
+  queue.subscribe(block: true, ack: true) do |delivery_info, _, document_json|
+    begin
+      document = JSON.parse(document_json)
+
+      puts "Recevied major change notification for #{document["title"]}"
+
+      channel.acknowledge(delivery_info.delivery_tag, false)
+    rescue JSON::ParserError => e
+      # Second parameter is `false` to not requeue messages
+      # because JSON failures shouldn't be retried
+      channel.reject(delivery_info.delivery_tag, false)
+    end
   end
 end
