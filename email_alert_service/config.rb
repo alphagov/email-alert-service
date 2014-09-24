@@ -17,5 +17,14 @@ module EmailAlertService
     def rabbitmq
       @rabbitmq ||= YAML.load(File.open(app_root+"config/rabbitmq.yml")).fetch(environment).freeze
     end
+
+    def logger
+      logfile = File.open(app_root+"log/#{environment}.log", "a")
+
+      logfile.sync = true
+      $stderr = $stdout = logfile
+
+      @logger ||= Logger.new(logfile, "daily")
+    end
   end
 end

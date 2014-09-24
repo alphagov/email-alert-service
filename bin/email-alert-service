@@ -9,12 +9,7 @@ config = EmailAlertService::Config.new(ENV["ENVIRONMENT"])
   $LOAD_PATH << path.to_s
 end
 
-require 'logger'
-logfile = File.open(config.app_root+"log/#{config.environment}.log", 'a')
-logger = Logger.new(logfile, 'daily')
-logger.level = Logger::DEBUG
-logfile.sync = true
-$stderr = $stdout = logfile
+config.logger.level = Logger::DEBUG
 
 require "listeners/major_change_listener"
 listener = MajorChangeListener.new(config.rabbitmq)
