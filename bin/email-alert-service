@@ -2,24 +2,22 @@
 
 require 'byebug'
 
-require 'pathname'
-APP_ROOT = Pathname.new(File.expand_path(File.join(File.dirname(__FILE__), '..')))
-$LOAD_PATH << APP_ROOT.to_s
+require_relative '../email_alert_service/config'
+config = EmailAlertService::Config.new(ENV['ENVIRONMENT'])
 
-environment = ENV['ENVIRONMENT'] || 'development'
+[config.app_root, config.app_root+'email_alert_service'].each do |path|
+  $LOAD_PATH << path.to_s
+end
 
 require 'logger'
-logfile = File.open(APP_ROOT+"log/#{environment}.log", 'a')
+logfile = File.open(config.app_root+"log/#{config.environment}.log", 'a')
 logger = Logger.new(logfile, 'daily')
 logger.level = Logger::DEBUG
 logfile.sync = true
 $stderr = $stdout = logfile
 
-require 'yaml'
-RABBITMQ_OPTIONS = YAML.load(File.open(APP_ROOT+'config/rabbitmq.yml')).fetch(environment).freeze
-
-require 'app/listeners/major_change_listener'
-listener = MajorChangeListener.new(RABBITMQ_OPTIONS)
+require 'listeners/major_change_listener'
+listener = MajorChangeListener.new(config.rabbitmq)
 
 at_exit do
   puts "Shutting down.."
