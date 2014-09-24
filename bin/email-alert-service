@@ -6,49 +6,24 @@ require 'pathname'
 APP_ROOT = Pathname.new(File.expand_path(File.join(File.dirname(__FILE__), '..')))
 $LOAD_PATH << APP_ROOT.to_s
 
+environment = ENV['ENVIRONMENT'] || 'development'
+
 require 'logger'
-logfile = File.open(APP_ROOT+'log/production.log', 'a')
+logfile = File.open(APP_ROOT+"log/#{environment}.log", 'a')
 LOGGER = Logger.new(logfile, 'daily')
 LOGGER.level = Logger::DEBUG
 logfile.sync = true
 $stderr = $stdout = logfile
 
-environment = ENV['ENVIRONMENT'] || 'development'
-
 require 'yaml'
 RABBITMQ_OPTIONS = YAML.load(File.open(APP_ROOT+'config/rabbitmq.yml')).fetch(environment).freeze
 
-require 'bunny'
-require 'json'
-
-connection = Bunny.new(RABBITMQ_OPTIONS)
-connection.start
-
-channel = connection.create_channel
+require 'app/listeners/major_change_listener'
+listener = MajorChangeListener.new(RABBITMQ_OPTIONS)
 
 at_exit do
-  puts "Closing down"
-  channel.close
-  connection.close
+  puts "Shutting down.."
+  listener.stop
 end
 
-exchange = channel.topic(RABBITMQ_OPTIONS.fetch('exchange'), passive: true)
-
-queue = channel.queue('email_alert_service')
-queue.bind(exchange, routing_key: "*.major.#")
-
-puts "Bound to exchange #{RABBITMQ_OPTIONS.fetch('exchange')}, listening for major changes"
-
-queue.subscribe(block: true, manual_ack: true) do |delivery_info, _, document_json|
-  begin
-    document = JSON.parse(document_json)
-
-    puts "Recevied major change notification for #{document["title"]}"
-
-    channel.acknowledge(delivery_info.delivery_tag, false)
-  rescue JSON::ParserError => e
-    # Second parameter is `false` to not requeue messages
-    # because JSON failures shouldn't be retried
-    channel.reject(delivery_info.delivery_tag, false)
-  end
-end
+listener.run
