@@ -9,7 +9,9 @@ defaults: &defaults
 development:
   <<: *defaults
   exchange: published_documents
+  queue: email_alert_service
 
 test:
   <<: *defaults
   exchange: published_documents_test
+  queue: email_alert_service_test

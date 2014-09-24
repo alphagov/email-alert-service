@@ -18,10 +18,7 @@ module EmailAlertService
       all_configs = YAML.load(File.open(app_root+"config/rabbitmq.yml"))
       environment_config = all_configs.fetch(environment)
 
-      @rabbitmq ||= environment_config.merge(
-        "queue" => "email_alert_service",
-        "major_change_routing_pattern" => "*.major.#" # Supports future expansions
-      ).freeze
+      @rabbitmq ||= environment_config.freeze
     end
 
     def logger
