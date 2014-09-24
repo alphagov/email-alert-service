@@ -10,8 +10,8 @@ environment = ENV['ENVIRONMENT'] || 'development'
 
 require 'logger'
 logfile = File.open(APP_ROOT+"log/#{environment}.log", 'a')
-LOGGER = Logger.new(logfile, 'daily')
-LOGGER.level = Logger::DEBUG
+logger = Logger.new(logfile, 'daily')
+logger.level = Logger::DEBUG
 logfile.sync = true
 $stderr = $stdout = logfile
 
