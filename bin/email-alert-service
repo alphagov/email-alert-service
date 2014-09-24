@@ -38,7 +38,7 @@ EventMachine.run do
   channel = connection.create_channel
   exchange = channel.topic(RABBITMQ_OPTIONS.fetch('exchange'), passive: true)
 
-  queue = channel.queue('email_alert_service', exclusive: true)
+  queue = channel.queue('email_alert_service')
   queue.bind(exchange, routing_key: "#.major")
 
   puts "Bound to exchange #{RABBITMQ_OPTIONS.fetch('exchange')}, listening for major changes"
