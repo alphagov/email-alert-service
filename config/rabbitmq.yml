@@ -1,0 +1,15 @@
+defaults: &defaults
+  host: localhost
+  port: 5672
+  vhost: /
+  user: email_alert_service
+  pass: email_alert_service
+  recover_from_connection_close: true
+
+development:
+  <<: *defaults
+  exchange: published_documents
+
+test:
+  <<: *defaults
+  exchange: published_documents_test

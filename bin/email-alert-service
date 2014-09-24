@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+
+require 'byebug'
+
+require 'pathname'
+APP_ROOT = Pathname.new(File.expand_path(File.join(File.dirname(__FILE__), '..')))
+$LOAD_PATH << APP_ROOT.to_s
+
+require 'logger'
+logfile = File.open(APP_ROOT+'log/production.log', 'a')
+LOGGER = Logger.new(logfile, 'daily')
+LOGGER.level = Logger::DEBUG
+logfile.sync = true
+$stderr = $stdout = logfile
+
+environment = ENV['ENVIRONMENT'] || 'development'
+
+require 'yaml'
+RABBITMQ_OPTIONS = YAML.load(File.open(APP_ROOT+'config/rabbitmq.yml')).fetch(environment).freeze
+
+require 'eventmachine'
+require 'bunny'
+require 'json'
+EventMachine.run do
+  connection = Bunny.new(RABBITMQ_OPTIONS)
+  connection.start
+
+  Signal.trap 'TERM' do
+    puts "Closing down"
+    connection.close { EventMachine.stop }
+  end
+
+  Signal.trap 'INT' do
+    puts "Closing down"
+    connection.close { EventMachine.stop }
+  end
+
+  channel = connection.create_channel
+  exchange = channel.topic(RABBITMQ_OPTIONS.fetch('exchange'), passive: true)
+
+  queue = channel.queue('email_alert_service', exclusive: true)
+  queue.bind(exchange, routing_key: "#.major")
+
+  puts "Bound to exchange #{RABBITMQ_OPTIONS.fetch('exchange')}, listening for major changes"
+
+  queue.subscribe(block: true, ack: true) do |_, _, document_json|
+    document = JSON.parse(document_json)
+    puts "Recevied major change notification for #{document["title"]}"
+  end
+end
