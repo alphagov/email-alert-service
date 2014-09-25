@@ -8,7 +8,7 @@ class MajorChangeHandler
   def handle(delivery_info, document_json)
     document = JSON.parse(document_json)
 
-    puts "Recevied major change notification for #{document["title"]}"
+    puts "Received major change notification for #{document["title"]}"
 
     acknowledge(delivery_info)
   rescue JSON::ParserError => e
