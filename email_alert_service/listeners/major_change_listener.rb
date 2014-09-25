@@ -1,5 +1,5 @@
 require "bunny"
-require "json"
+require "handlers/major_change_handler"
 
 class MajorChangeListener
   def initialize(rabbitmq_options)
@@ -21,15 +21,7 @@ class MajorChangeListener
     puts "Bound to exchange #{@exchange_name} on queue #{@queue_name}, listening for major changes"
 
     queue.subscribe(block: true, manual_ack: true) do |delivery_info, _, document_json|
-      begin
-        document = JSON.parse(document_json)
-
-        puts "Recevied major change notification for #{document["title"]}"
-
-        acknowledge(delivery_info)
-      rescue JSON::ParserError => e
-        discard(delivery_info)
-      end
+      handler.handle(delivery_info, document_json)
     end
   end
 
@@ -42,15 +34,8 @@ private
 
   attr_reader :connection, :channel
 
-  def acknowledge(delivery_info)
-    channel.acknowledge(delivery_info.delivery_tag, false)
+  def handler
+    @handler ||= MajorChangeHandler.new(channel)
   end
 
-  def discard(delivery_info)
-    channel.reject(delivery_info.delivery_tag, false)
-  end
-
-  def requeue(delivery_info)
-    channel.reject(delivery_info.delivery_tag, true)
-  end
 end
