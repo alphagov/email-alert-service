@@ -28,15 +28,15 @@ RSpec.describe MajorChangeListener do
     allow(Bunny).to receive(:new).and_return(connection)
   end
 
-  describe "#run" do
+  describe "#start(rabbitmq_options)" do
     it "starts the connection" do
-      build_listener.run
+      build_listener.start
 
       expect(connection).to have_received(:start)
     end
 
     it "opens a passive topic exchange with the configured name" do
-      build_listener("exchange" => "a_test_exchange").run
+      build_listener("exchange" => "a_test_exchange").start
 
       expect(channel).to have_received(:topic).with(
         "a_test_exchange",
@@ -45,13 +45,13 @@ RSpec.describe MajorChangeListener do
     end
 
     it "creates a non-exclusive queue with the configured name" do
-      build_listener("queue" => "a_test_queue").run
+      build_listener("queue" => "a_test_queue").start
 
       expect(channel).to have_received(:queue).with("a_test_queue")
     end
 
     it "binds the queue to the exchange with the major change routing pattern" do
-      build_listener.run
+      build_listener.start
 
       expect(queue).to have_received(:bind).with(
         exchange,
@@ -61,7 +61,7 @@ RSpec.describe MajorChangeListener do
 
     it "subscribes to the queue with manual acknowledgements,
         blocking the thread" do
-      build_listener.run
+      build_listener.start
 
       expect(queue).to have_received(:subscribe).with(
         manual_ack: true,
@@ -73,7 +73,7 @@ RSpec.describe MajorChangeListener do
   describe "#stop" do
     it "closes the channel and connection" do
       listener = build_listener
-      listener.run
+      listener.start
       listener.stop
 
       expect(channel).to have_received(:close)

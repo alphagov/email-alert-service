@@ -9,7 +9,7 @@ class MajorChangeListener
     @routing_key = "*.major.#" # Supports future expansions
   end
 
-  def run
+  def start
     connection.start
 
     @channel = connection.create_channel

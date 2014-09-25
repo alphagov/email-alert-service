@@ -19,4 +19,4 @@ at_exit do
   listener.stop
 end
 
-listener.run
+listener.start
