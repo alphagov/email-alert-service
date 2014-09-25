@@ -15,7 +15,9 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
-$LOAD_PATH << File.join(File.dirname(__FILE__), '..')
+app_root = File.join(File.dirname(__FILE__), '..')
+$LOAD_PATH << app_root
+$LOAD_PATH << File.join(app_root, "email_alert_service")
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

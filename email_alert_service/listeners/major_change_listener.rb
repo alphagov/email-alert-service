@@ -35,7 +35,7 @@ class MajorChangeListener
 
   def stop
     channel.close if channel
-    connection.close if connection
+    connection.close
   end
 
 private
