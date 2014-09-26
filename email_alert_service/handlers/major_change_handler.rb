@@ -16,6 +16,7 @@ class MajorChangeHandler
     acknowledge(delivery_info)
   rescue JSON::ParserError => e
     discard(delivery_info)
+    Airbrake.notify_or_ignore(e)
   end
 
 private

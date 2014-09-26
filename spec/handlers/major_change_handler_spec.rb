@@ -30,5 +30,10 @@ RSpec.describe MajorChangeHandler do
         false
       )
     end
+
+    it "notifies errbit if there's a JSON parser error" do
+      expect(Airbrake).to receive(:notify_or_ignore).with(JSON::ParserError)
+      handler.handle(delivery_info, '{]$£$*()}')
+    end
   end
 end
