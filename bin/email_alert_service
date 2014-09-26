@@ -20,4 +20,9 @@ at_exit do
   listener.stop
 end
 
-listener.start
+begin
+  listener.start
+rescue Exception => e
+  Airbrake.notify_or_ignore(e)
+  raise e
+end
