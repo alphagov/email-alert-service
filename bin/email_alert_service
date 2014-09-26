@@ -1,13 +1,14 @@
 #!/usr/bin/env ruby
 
-require "byebug"
-
 require_relative "../email_alert_service/config"
 config = EmailAlertService::Config.new(ENV["ENVIRONMENT"])
 
 [config.app_root, config.app_root+"email_alert_service"].each do |path|
   $LOAD_PATH << path.to_s
 end
+
+require "bundler/setup"
+Bundler.require(:default, config.environment)
 
 config.logger.level = Logger::DEBUG
 
@@ -19,4 +20,9 @@ at_exit do
   listener.stop
 end
 
-listener.start
+begin
+  listener.start
+rescue Exception => e
+  Airbrake.notify_or_ignore(e)
+  raise e
+end
