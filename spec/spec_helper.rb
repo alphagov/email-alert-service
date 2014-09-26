@@ -19,6 +19,12 @@ app_root = File.join(File.dirname(__FILE__), '..')
 $LOAD_PATH << app_root
 $LOAD_PATH << File.join(app_root, "email_alert_service")
 
+ENV["ENVIRONMENT"] = "test"
+
+Dir[File.join(app_root, "spec/support/**/*.rb")].each { |f| require f }
+
+require "byebug"
+
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
@@ -31,4 +37,22 @@ RSpec.configure do |config|
   config.disable_monkey_patching!
   config.expose_dsl_globally = false
   config.order = :random
+
+  config.before(:each, type: :integration) do
+    @test_config = EmailAlertService::Config.new(ENV["ENVIRONMENT"])
+    @connection = Bunny.new(@test_config.rabbitmq.merge("queue" => "jdkfnksd"))
+    @connection.start
+
+    @channel = @connection.create_channel
+    @exchange = @channel.topic(@test_config.rabbitmq.fetch("exchange"))
+
+    @queue = @channel.queue(@test_config.rabbitmq.fetch("queue"))
+  end
+
+  config.after(:each, type: :integration) do
+    @channel.close
+    @connection.close
+  end
+
+  config.include(ListenerTestHelpers, type: :integration)
 end
