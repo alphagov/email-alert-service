@@ -94,6 +94,6 @@ RSpec.describe MajorChangeListener do
       "queue" => "example_queue"
     }.merge(options)
 
-    MajorChangeListener.new(options)
+    MajorChangeListener.new(options, double(:logger, info: nil))
   end
 end

@@ -10,7 +10,7 @@ RSpec.describe MajorChangeHandler do
       reject: nil
     )
   }
-  let(:handler) { MajorChangeHandler.new(channel) }
+  let(:handler) { MajorChangeHandler.new(channel, double(:logger, info: nil)) }
 
   describe "#handle(delivery_info, document_json)" do
     it "acknowledges the message if all goes well" do

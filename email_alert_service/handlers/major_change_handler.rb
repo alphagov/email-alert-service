@@ -1,14 +1,17 @@
 require "json"
 
 class MajorChangeHandler
-  def initialize(channel)
+  def initialize(channel, logger)
     @channel = channel
+    @logger = logger
   end
 
   def handle(delivery_info, document_json)
     document = JSON.parse(document_json)
 
-    puts "Received major change notification for #{document["title"]}"
+    if document["title"]
+      @logger.info "Received major change notification for #{document["title"]}"
+    end
 
     acknowledge(delivery_info)
   rescue JSON::ParserError => e
