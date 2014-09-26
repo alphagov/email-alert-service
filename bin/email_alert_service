@@ -12,11 +12,11 @@ end
 config.logger.level = Logger::DEBUG
 
 require "listeners/major_change_listener"
-listener = MajorChangeListener.new(config.rabbitmq)
+listener = MajorChangeListener.new(config.rabbitmq, config.logger)
 
 at_exit do
   puts "Shutting down.."
   listener.stop
 end
 
-listener.run
+listener.start
