@@ -8,4 +8,4 @@ group :test do
   gem 'rspec-mocks', '3.1.1'
 end
 
-gem "byebug", groups: [:test, :development]
+gem "byebug", group: [:test, :development]
