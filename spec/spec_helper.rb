@@ -23,7 +23,8 @@ ENV["ENVIRONMENT"] = "test"
 
 Dir[File.join(app_root, "spec/support/**/*.rb")].each { |f| require f }
 
-require "byebug"
+require "bundler/setup"
+Bundler.require(:default, ENV["ENVIRONMENT"])
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

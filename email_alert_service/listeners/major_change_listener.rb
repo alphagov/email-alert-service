@@ -1,4 +1,3 @@
-require "bunny"
 require "handlers/major_change_handler"
 
 class MajorChangeListener
