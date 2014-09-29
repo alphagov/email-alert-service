@@ -41,17 +41,20 @@ RSpec.configure do |config|
 
   config.before(:each, type: :integration) do
     @test_config = EmailAlertService::Config.new(ENV["ENVIRONMENT"])
-    @connection = Bunny.new(@test_config.rabbitmq.merge("queue" => "jdkfnksd"))
+
+    rabbit_options = @test_config.rabbitmq.reject {|(key, _)| key == :queue }
+
+    @connection = Bunny.new(rabbit_options)
     @connection.start
 
-    @channel = @connection.create_channel
-    @exchange = @channel.topic(@test_config.rabbitmq.fetch("exchange"))
+    @write_channel = @connection.create_channel
+    @read_channel = @connection.create_channel
 
-    @queue = @channel.queue(@test_config.rabbitmq.fetch("queue"))
+    @exchange = @write_channel.topic(@test_config.rabbitmq.fetch(:exchange), passive: true)
+    @read_queue = @read_channel.queue(@test_config.rabbitmq.fetch(:queue))
   end
 
   config.after(:each, type: :integration) do
-    @channel.close
     @connection.close
   end
 

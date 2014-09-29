@@ -32,7 +32,7 @@ module ListenerTestHelpers
 
   def wait_for_messages_to_process
     Timeout.timeout(5) do
-      while @queue.message_count > 0
+      while @read_queue.message_count > 0
         sleep 0.1
       end
     end

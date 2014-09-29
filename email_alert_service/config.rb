@@ -18,7 +18,7 @@ module EmailAlertService
       all_configs = YAML.load(File.open(app_root+"config/rabbitmq.yml"))
       environment_config = all_configs.fetch(environment)
 
-      @rabbitmq ||= environment_config.freeze
+      @rabbitmq ||= symbolize_keys(environment_config).freeze
     end
 
     def logger
@@ -28,6 +28,14 @@ module EmailAlertService
       $stderr = $stdout = logfile
 
       @logger ||= Logger.new(logfile, "daily")
+    end
+
+  private
+
+    def symbolize_keys(hash)
+      hash.inject({}) do |hash, (key, value)|
+        hash.merge(key.to_sym => value)
+      end
     end
   end
 end
