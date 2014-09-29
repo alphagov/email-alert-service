@@ -19,13 +19,13 @@ app_root = File.join(File.dirname(__FILE__), '..')
 $LOAD_PATH << app_root
 $LOAD_PATH << File.join(app_root, "email_alert_service")
 
-ENV["ENVIRONMENT"] = "test"
+ENV["GOVUK_ENV"] = "test"
 
 Dir[File.join(app_root, "spec/support/**/*.rb")].each { |f| require f }
 Dir[File.join(app_root, "config/initializers/**/*.rb")].each { |f| require f }
 
 require "bundler/setup"
-Bundler.require(:default, ENV["ENVIRONMENT"])
+Bundler.require(:default, ENV["GOVUK_ENV"])
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
@@ -41,7 +41,7 @@ RSpec.configure do |config|
   config.order = :random
 
   config.before(:each, type: :integration) do
-    @test_config = EmailAlertService::Config.new(ENV["ENVIRONMENT"])
+    @test_config = EmailAlertService::Config.new(ENV["GOVUK_ENV"])
 
     rabbit_options = @test_config.rabbitmq.reject {|(key, _)| key == :queue }
 
