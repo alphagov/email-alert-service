@@ -13,5 +13,7 @@ development:
 
 test:
   <<: *defaults
-  exchange: published_documents_test
-  queue: email_alert_service_test
+  user: email_alert_service_test
+  pass: email_alert_service_test
+  exchange: email_alert_service_published_documents_test_exchange
+  queue: email_alert_service_published_documents_test_queue

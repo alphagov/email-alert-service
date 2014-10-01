@@ -36,7 +36,7 @@ RSpec.describe MajorChangeListener do
     end
 
     it "opens a passive topic exchange with the configured name" do
-      build_listener("exchange" => "a_test_exchange").start
+      build_listener(exchange: "a_test_exchange").start
 
       expect(channel).to have_received(:topic).with(
         "a_test_exchange",
@@ -45,7 +45,7 @@ RSpec.describe MajorChangeListener do
     end
 
     it "creates a non-exclusive queue with the configured name" do
-      build_listener("queue" => "a_test_queue").start
+      build_listener(queue: "a_test_queue").start
 
       expect(channel).to have_received(:queue).with("a_test_queue")
     end
@@ -90,8 +90,8 @@ RSpec.describe MajorChangeListener do
 
   def build_listener(options = {})
     options = {
-      "exchange" => "example_exchange",
-      "queue" => "example_queue"
+      exchange: "example_exchange",
+      queue: "example_queue"
     }.merge(options)
 
     MajorChangeListener.new(options, double(:logger, info: nil))

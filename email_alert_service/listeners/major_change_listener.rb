@@ -3,8 +3,8 @@ require "handlers/major_change_handler"
 class MajorChangeListener
   def initialize(rabbitmq_options, logger)
     @connection = Bunny.new(rabbitmq_options)
-    @exchange_name = rabbitmq_options.fetch("exchange")
-    @queue_name = rabbitmq_options.fetch("queue")
+    @exchange_name = rabbitmq_options.fetch(:exchange)
+    @queue_name = rabbitmq_options.fetch(:queue)
     @routing_key = "*.major.#" # Supports future expansions
     @logger = logger
   end
@@ -37,5 +37,4 @@ private
   def handler
     @handler ||= MajorChangeHandler.new(channel, @logger)
   end
-
 end
