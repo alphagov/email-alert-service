@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require_relative "../email_alert_service/config"
-config = EmailAlertService::Config.new(ENV["ENVIRONMENT"])
+config = EmailAlertService::Config.new(ENV["GOVUK_ENV"])
 
 [
   config.app_root,
