@@ -15,6 +15,8 @@ Bundler.require(:default, config.environment)
 
 config.logger.level = Logger::DEBUG
 
+Dir[File.join(app_root, "config/initializers/**/*.rb")].each { |f| require f }
+
 require "listeners/major_change_listener"
 listener = MajorChangeListener.new(config.rabbitmq, config.logger)
 

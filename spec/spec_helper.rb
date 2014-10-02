@@ -22,6 +22,7 @@ $LOAD_PATH << File.join(app_root, "email_alert_service")
 ENV["ENVIRONMENT"] = "test"
 
 Dir[File.join(app_root, "spec/support/**/*.rb")].each { |f| require f }
+Dir[File.join(app_root, "config/initializers/**/*.rb")].each { |f| require f }
 
 require "bundler/setup"
 Bundler.require(:default, ENV["ENVIRONMENT"])
