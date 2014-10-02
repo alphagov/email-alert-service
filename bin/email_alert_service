@@ -1,24 +1,12 @@
 #!/usr/bin/env ruby
 
-require_relative "../email_alert_service/config"
-config = EmailAlertService::Config.new(ENV["GOVUK_ENV"])
-
-[
-  config.app_root,
-  config.app_root + "email_alert_service"
-].each do |path|
-  $LOAD_PATH << path.to_s
-end
-
-require "bundler/setup"
-Bundler.require(:default, config.environment)
-
-config.logger.level = Logger::DEBUG
-
-Dir[File.join(app_root, "config/initializers/**/*.rb")].each { |f| require f }
+require_relative "../email_alert_service/environment"
 
 require "listeners/major_change_listener"
-listener = MajorChangeListener.new(config.rabbitmq, config.logger)
+listener = MajorChangeListener.new(
+  EmailAlertService.config.rabbitmq,
+  EmailAlertService.config.logger
+)
 
 at_exit do
   puts "Shutting down.."

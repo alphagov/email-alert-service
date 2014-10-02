@@ -15,17 +15,10 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
-app_root = File.join(File.dirname(__FILE__), '..')
-$LOAD_PATH << app_root
-$LOAD_PATH << File.join(app_root, "email_alert_service")
-
 ENV["GOVUK_ENV"] = "test"
 
-Dir[File.join(app_root, "spec/support/**/*.rb")].each { |f| require f }
-Dir[File.join(app_root, "config/initializers/**/*.rb")].each { |f| require f }
-
-require "bundler/setup"
-Bundler.require(:default, ENV["GOVUK_ENV"])
+require_relative "../email_alert_service/environment"
+Dir[File.join(EmailAlertService.config.app_root, "spec/support/**/*.rb")].each { |f| require f }
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
