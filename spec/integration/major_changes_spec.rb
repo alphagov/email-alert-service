@@ -9,17 +9,11 @@ RSpec.describe "Receiving major change notifications", type: :integration do
   let(:malformed_document) { '{"houses": "are for living in"}' }
 
   before do
-    @logfile, @thread, @listener = start_listener
+    @logfile = start_listener
   end
 
   after do
-    @listener.stop
-
-    @thread.kill
-
-    while @thread.alive?
-      sleep 0.1
-    end
+    stop_listener
   end
 
   it "prints the title of documents experiencing major changes" do

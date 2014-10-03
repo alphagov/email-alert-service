@@ -1,7 +1,10 @@
+require "connections/amqp_connection"
+require "handlers/major_change_handler"
+require "listeners/listener"
 require "logger"
+require "queues/major_change_queue"
 require "tempfile"
 require "timeout"
-require "listeners/major_change_listener"
 
 module ListenerTestHelpers
   def send_message(body, routing_key: "policy.major")
@@ -12,22 +15,35 @@ module ListenerTestHelpers
     sleep 0.1
   end
 
-  def build_listener(logger)
-    MajorChangeListener.new(@test_config.rabbitmq, logger)
-  end
-
   def start_listener
     logfile = Tempfile.new("email_alert_service_test_log")
     logfile.sync = true
-
     logger = Logger.new(logfile)
 
-    listener = build_listener(logger)
-    thread = Thread.new do
-      listener.start
+    config = EmailAlertService.config
+    rabbitmq_options = config.rabbitmq
+    @app_connection = AMQPConnection.new(rabbitmq_options)
+
+    @app_connection.start
+
+    queue_binding = MajorChangeQueue.new(@app_connection).bind
+    handler = MajorChangeHandler.new(@app_connection.channel, logger)
+    listener = Listener.new(queue_binding, handler)
+
+    @thread = Thread.new do
+      listener.listen
     end
 
-    return [logfile, thread, listener]
+    return logfile
+  end
+
+  def stop_listener
+    @app_connection.stop
+    @thread.kill
+
+    while @thread.alive?
+      sleep 0.1
+    end
   end
 
   def wait_for_messages_to_process
