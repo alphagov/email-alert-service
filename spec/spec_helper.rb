@@ -17,7 +17,12 @@
 
 ENV["GOVUK_ENV"] = "test"
 
+require "webmock/rspec"
+require "gds_api/test_helpers/email_alert_api"
+require "sidekiq/testing"
+
 require_relative "../email_alert_service/environment"
+
 Dir[File.join(EmailAlertService.config.app_root, "spec/support/**/*.rb")].each { |f| require f }
 
 RSpec.configure do |config|
@@ -53,4 +58,8 @@ RSpec.configure do |config|
   end
 
   config.include(ListenerTestHelpers, type: :integration)
+  config.include(GdsApi::TestHelpers::EmailAlertApi)
 end
+
+Sidekiq::Testing.fake!
+WebMock.disable_net_connect!

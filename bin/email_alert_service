@@ -11,11 +11,11 @@ connection.start
 require "queues/major_change_queue"
 queue_binding = MajorChangeQueue.new(connection).bind
 
-require "handlers/major_change_handler"
-handler = MajorChangeHandler.new(connection.channel, logger)
+require "models/message_processor"
+message_processor = MessageProcessor.new(connection.channel, logger)
 
 require "listeners/listener"
-listener = Listener.new(queue_binding, handler)
+listener = Listener.new(queue_binding, message_processor)
 
 logger.info "Bound to exchange #{connection.exchange_name} on queue #{connection.queue_name}, listening for major changes"
 
