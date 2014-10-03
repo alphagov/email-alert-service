@@ -2,7 +2,7 @@ require_relative "../email_alert_service/config"
 
 module EmailAlertService
   def self.config
-    EmailAlertService::Config.new(ENV["ENVIRONMENT"])
+    EmailAlertService::Config.new(ENV["GOVUK_ENV"])
   end
 end
 
