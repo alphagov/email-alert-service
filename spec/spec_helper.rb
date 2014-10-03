@@ -34,22 +34,22 @@ RSpec.configure do |config|
   config.order = :random
 
   config.before(:each, type: :integration) do
-    @test_config = EmailAlertService::Config.new(ENV["GOVUK_ENV"])
+    @test_config = EmailAlertService.config.rabbitmq
+    @logger = EmailAlertService.config.logger
+    rabbit_options = @test_config.reject {|(key, _)| key == :queue }
 
-    rabbit_options = @test_config.rabbitmq.reject {|(key, _)| key == :queue }
+    @test_connection = Bunny.new(rabbit_options)
+    @test_connection.start
 
-    @connection = Bunny.new(rabbit_options)
-    @connection.start
+    @write_channel = @test_connection.create_channel
+    @read_channel = @test_connection.create_channel
 
-    @write_channel = @connection.create_channel
-    @read_channel = @connection.create_channel
-
-    @exchange = @write_channel.topic(@test_config.rabbitmq.fetch(:exchange), passive: true)
-    @read_queue = @read_channel.queue(@test_config.rabbitmq.fetch(:queue))
+    @exchange = @write_channel.topic(@test_config.fetch(:exchange), passive: true)
+    @read_queue = @read_channel.queue(@test_config.fetch(:queue))
   end
 
   config.after(:each, type: :integration) do
-    @connection.close
+    @test_connection.close
   end
 
   config.include(ListenerTestHelpers, type: :integration)

@@ -1,20 +1,31 @@
 #!/usr/bin/env ruby
 
 require_relative "../email_alert_service/environment"
+rabbitmq_options = EmailAlertService.config.rabbitmq
+logger = EmailAlertService.config.logger
 
-require "listeners/major_change_listener"
-listener = MajorChangeListener.new(
-  EmailAlertService.config.rabbitmq,
-  EmailAlertService.config.logger
-)
+require "connections/amqp_connection"
+connection = AMQPConnection.new(rabbitmq_options)
+connection.start
+
+require "queues/major_change_queue"
+queue_binding = MajorChangeQueue.new(connection).bind
+
+require "handlers/major_change_handler"
+handler = MajorChangeHandler.new(connection.channel, logger)
+
+require "listeners/listener"
+listener = Listener.new(queue_binding, handler)
+
+logger.info "Bound to exchange #{connection.exchange_name} on queue #{connection.queue_name}, listening for major changes"
 
 at_exit do
-  puts "Shutting down.."
-  listener.stop
+  logger.info "Shutting down.."
+  connection.stop
 end
 
 begin
-  listener.start
+  listener.listen
 rescue Exception => e
   Airbrake.notify_or_ignore(e)
   raise e
