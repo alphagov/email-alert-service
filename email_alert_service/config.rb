@@ -25,7 +25,6 @@ module EmailAlertService
       logfile = File.open(app_root+"log/#{environment}.log", "a")
 
       logfile.sync = true
-      $stderr = $stdout = logfile
 
       @logger ||= Logger.new(logfile, "daily")
     end
