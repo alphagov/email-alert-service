@@ -6,21 +6,14 @@ class DocumentValidator
   end
 
   def valid?
-    if document_has_required_keys?
-      true
-    else
-      raise InvalidDocumentKeys
-    end
+    has_all_required_keys?
   end
 
 private
 
   attr_reader :document
 
-  def document_has_required_keys?
-    REQUIRED_KEYS.all? { |key| document.has_key?(key) } &&
-      document.fetch("details").has_key?("tags")
+  def has_all_required_keys?
+    REQUIRED_KEYS.all? { |key| document.has_key?(key) }
   end
 end
-
-class InvalidDocumentKeys < Exception; end

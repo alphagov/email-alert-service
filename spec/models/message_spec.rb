@@ -13,7 +13,7 @@ RSpec.describe Message do
               "change_note": "this doc has been changed",
               "tags": {
                 "browse_pages": [],
-                "topics": []
+                "topics": ["example topic"]
               }
             }
          }'

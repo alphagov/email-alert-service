@@ -8,9 +8,12 @@ class Message
   end
 
   def validate_document
-    validate(parsed_document)
-  rescue InvalidDocumentKeys => e
-    raise MalformedDocumentError.new(e.message)
+    valid_document = validate(parsed_document)
+    if valid_document
+      valid_document
+    else
+      raise MalformedDocumentError.new(parsed_document)
+    end
   rescue JSON::ParserError => e
     raise MalformedDocumentError.new(e.message)
   end

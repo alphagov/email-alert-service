@@ -13,7 +13,7 @@ RSpec.describe "Receiving major change notifications", type: :integration do
           "change_note": "this doc has been changed",
           "tags": {
             "browse_pages": [],
-            "topics": []
+            "topics": ["example topic"]
           }
         }
      }'
