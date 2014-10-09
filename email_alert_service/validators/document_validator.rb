@@ -9,7 +9,7 @@ class DocumentValidator
     if has_all_required_keys?
       true
     else
-      raise InvalidDocument
+      false
     end
   end
 
@@ -21,5 +21,3 @@ private
     REQUIRED_KEYS.all? { |key| document.has_key?(key) }
   end
 end
-
-class InvalidDocument < Exception; end

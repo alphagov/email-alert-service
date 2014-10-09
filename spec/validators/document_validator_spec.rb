@@ -18,17 +18,14 @@ RSpec.describe DocumentValidator do
       }
     }
 
-    it "returns true for a valid document" do
-      validator = DocumentValidator.new(valid_document)
+    let(:invalid_document) { {"title" => "invalid document"} }
 
-      expect(validator).to be_valid
+    it "returns true for a valid document" do
+      expect(DocumentValidator.new(valid_document)).to be_valid
     end
 
-    it "raises an InvalidDocument error for an invalid document" do
-      document = { "title" => "invalid document" }
-
-      validator = DocumentValidator.new(document)
-      expect { validator.valid? }.to raise_error(InvalidDocument)
+    it "returns false for an invalid document" do
+      expect(DocumentValidator.new(invalid_document)).to_not be_valid
     end
   end
 end
