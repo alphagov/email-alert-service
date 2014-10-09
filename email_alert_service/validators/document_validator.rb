@@ -13,7 +13,7 @@ class DocumentValidator
     end
   end
 
-  private
+private
 
   attr_reader :document
 

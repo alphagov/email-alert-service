@@ -9,7 +9,7 @@ class MajorChangeQueue
     queue.bind(exchange, routing_key: MAJOR_CHANGE_ROUTING_KEY)
   end
 
-  private
+private
 
   attr_reader :connection, :exchange, :queue
 

@@ -19,7 +19,7 @@ class Message
     @delivery_info.delivery_tag
   end
 
-  private
+private
 
   def validate(document)
     if DocumentValidator.new(document).valid?

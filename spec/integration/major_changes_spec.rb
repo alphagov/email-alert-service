@@ -3,7 +3,7 @@ require "config"
 require "bunny"
 
 RSpec.describe "Receiving major change notifications", type: :integration do
-  well_formed_document =
+  let(:well_formed_document) {
     '{
         "base_path": "path/to-doc",
         "title": "Example title",
@@ -17,9 +17,10 @@ RSpec.describe "Receiving major change notifications", type: :integration do
           }
         }
      }'
+  }
 
-  malformed_json = '{23o*&£}'
-  malformed_document = '{"houses": "are for living in"}'
+  let(:malformed_json) { '{23o*&£}' }
+  let(:malformed_document) { '{"houses": "are for living in"}' }
 
   before :each do
     Sidekiq::Worker.clear_all
@@ -28,6 +29,7 @@ RSpec.describe "Receiving major change notifications", type: :integration do
 
   after :each do
     stop_listener
+    EmailAlertWorker.drain
   end
 
   it "discards invalid documents" do
@@ -44,7 +46,6 @@ RSpec.describe "Receiving major change notifications", type: :integration do
 
     send_message(well_formed_document, routing_key: "policy.major")
     wait_for_messages_to_process
-    EmailAlertWorker.drain
   end
 
   it "doesn't process documents for other change types" do
@@ -62,6 +63,5 @@ RSpec.describe "Receiving major change notifications", type: :integration do
     send_message(well_formed_document, routing_key: "policy.major")
     wait_for_messages_to_process
     expect(EmailAlertWorker.jobs.size).to eq 1
-    EmailAlertWorker.drain
   end
 end

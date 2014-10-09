@@ -26,7 +26,7 @@ class AMQPConnection
     channel.topic(exchange_name, passive: true)
   end
 
-  private
+private
 
   attr_reader :options
 

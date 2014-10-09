@@ -6,7 +6,7 @@ class EmailAlert
   end
 
   def trigger
-    @logger.info "Received major change notification for #{document["title"]}"
+    @logger.info "Received major change notification for #{document["title"]}, with topics #{document["details"]["tags"]["topics"]}"
     @worker.perform_async(format_for_email_api)
   end
 

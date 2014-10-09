@@ -3,8 +3,7 @@ require "spec_helper"
 RSpec.describe DocumentValidator do
   describe "#valid?" do
     it "returns true for a valid document" do
-      document =
-        {
+      document = {
         "base_path" => "path/to-doc",
         "title" => "Example title",
         "description" => "example description",
@@ -16,10 +15,10 @@ RSpec.describe DocumentValidator do
             "topics" => []
           }
         }
-     }
+      }
 
       validator = DocumentValidator.new(document)
-      expect(validator.valid?).to eq true
+      expect(validator).to be_valid
     end
 
     it "raises an InvalidDocumentKeys error for an invalid document" do
