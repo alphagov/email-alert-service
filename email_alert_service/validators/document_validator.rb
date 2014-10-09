@@ -6,11 +6,7 @@ class DocumentValidator
   end
 
   def valid?
-    if has_all_required_keys?
-      true
-    else
-      false
-    end
+    has_all_required_keys?
   end
 
 private
