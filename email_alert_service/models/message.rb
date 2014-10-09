@@ -14,8 +14,8 @@ class Message
     else
       raise MalformedDocumentError.new(parsed_document)
     end
-  rescue JSON::ParserError => e
-    raise MalformedDocumentError.new(e.message)
+  rescue JSON::ParserError
+    raise MalformedDocumentError.new(@document_json)
   end
 
   def delivery_tag
