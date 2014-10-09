@@ -12,7 +12,8 @@ RSpec.describe MessageProcessor do
   }
   let(:logger) { double(:logger, info: nil) }
   let(:processor) { MessageProcessor.new(channel, logger) }
-  let(:well_formed_document) {
+
+  let(:not_tagged_document) {
     '{
         "base_path": "path/to-doc",
         "title": "Example title",
@@ -22,14 +23,42 @@ RSpec.describe MessageProcessor do
           "change_note": "this doc has been changed",
           "tags": {
             "browse_pages": [],
-            "topics": ["example topic"]
+            "topics": []
           }
         }
      }'
   }
+
+  let(:tagged_document) {
+    '{
+        "base_path": "path/to-doc",
+        "title": "Example title",
+        "description": "example description",
+        "public_updated_at": "2014-10-06T13:39:19.000+00:00",
+        "details": {
+          "change_note": "this doc has been changed",
+          "tags": {
+            "browse_pages": [],
+            "topics": ["example topic one", "example topic two"]
+          }
+        }
+      }'
+    }
+
   describe "#process(document_json, delivery_info)" do
-    it "acknowledges the message if all goes well" do
-      processor.process(well_formed_document, delivery_info)
+    it "acknowledges and triggers the message if the document has topics" do
+      expect(processor).to receive(:trigger_email_alert)
+      processor.process(tagged_document, delivery_info)
+
+      expect(channel).to have_received(:acknowledge).with(
+        delivery_tag,
+        false
+      )
+    end
+
+    it "acknowledges but doesnt trigger the message if the document is not tagged to a topic" do
+      expect(processor).to_not receive(:trigger_email_alert)
+      processor.process(not_tagged_document, delivery_info)
 
       expect(channel).to have_received(:acknowledge).with(
         delivery_tag,

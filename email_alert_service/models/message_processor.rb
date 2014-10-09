@@ -11,7 +11,7 @@ class MessageProcessor
   def process(document_json, delivery_info)
     message = Message.new(document_json, delivery_info)
     document = message.validate_document
-    trigger_email_alert(document)
+    trigger_email_alert(document) if tagged_to_topics?(document)
     acknowledge(message)
   rescue MalformedDocumentError => e
     Airbrake.notify_or_ignore(e)
@@ -24,6 +24,10 @@ private
 
   def trigger_email_alert(document)
     EmailAlert.new(document, @logger, EmailAlertWorker).trigger
+  end
+
+  def tagged_to_topics?(document)
+    document.fetch("details").fetch("tags").fetch("topics").any?
   end
 
   def acknowledge(message)

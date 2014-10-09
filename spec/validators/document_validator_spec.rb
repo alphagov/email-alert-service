@@ -2,7 +2,7 @@ require "spec_helper"
 
 RSpec.describe DocumentValidator do
   describe "#valid?" do
-    let(:base_document)  {
+    let(:valid_document) {
       {
         "base_path" => "path/to-doc",
         "title" => "Example title",
@@ -18,23 +18,9 @@ RSpec.describe DocumentValidator do
       }
     }
 
-    it "raises InvalidDocument for a document that is not tagged to topics" do
-      validator = DocumentValidator.new(base_document)
-
-      expect { validator.valid? }.to raise_error(InvalidDocument)
-    end
-
     it "returns true for a valid document" do
-      valid_document = base_document.merge(
-        {
-          "details" => {
-          "tags" => {
-            "topics" => ["example topic"]
-            }
-          }
-        })
-
       validator = DocumentValidator.new(valid_document)
+
       expect(validator).to be_valid
     end
 
