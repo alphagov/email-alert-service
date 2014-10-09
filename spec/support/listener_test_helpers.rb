@@ -1,7 +1,7 @@
 require "connections/amqp_connection"
-require "handlers/major_change_handler"
 require "listeners/listener"
 require "logger"
+require "models/message_processor"
 require "queues/major_change_queue"
 require "tempfile"
 require "timeout"
@@ -23,18 +23,19 @@ module ListenerTestHelpers
     config = EmailAlertService.config
     rabbitmq_options = config.rabbitmq
     @app_connection = AMQPConnection.new(rabbitmq_options)
-
     @app_connection.start
 
+    channel = @app_connection.channel
+
     queue_binding = MajorChangeQueue.new(@app_connection).bind
-    handler = MajorChangeHandler.new(@app_connection.channel, logger)
-    listener = Listener.new(queue_binding, handler)
+    message_processor = MessageProcessor.new(channel, logger)
+    listener = Listener.new(queue_binding, message_processor)
 
     @thread = Thread.new do
       listener.listen
     end
 
-    return logfile
+    return [message_processor, channel]
   end
 
   def stop_listener

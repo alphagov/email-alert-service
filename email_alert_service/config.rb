@@ -21,6 +21,10 @@ module EmailAlertService
       @rabbitmq ||= symbolize_keys(environment_config).freeze
     end
 
+    def redis_config
+      YAML.load(File.open(app_root+"config/redis.yml")).symbolize_keys
+    end
+
     def logger
       logfile = File.open(app_root+"log/#{environment}.log", "a")
 

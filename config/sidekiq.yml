@@ -1,0 +1,4 @@
+:verbose: false
+:concurrency:  2
+:queues:
+  - [email-alert-service, 4]
