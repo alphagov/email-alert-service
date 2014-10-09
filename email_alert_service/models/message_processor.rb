@@ -27,7 +27,12 @@ private
   end
 
   def tagged_to_topics?(document)
-    document.fetch("details").fetch("tags").fetch("topics").any?
+    details = document.fetch("details")
+    if details.has_key?("tags") && details.fetch("tags").has_key?("topics")
+      details.fetch("tags").fetch("topics").any?
+    else
+      false
+    end
   end
 
   def acknowledge(message)
