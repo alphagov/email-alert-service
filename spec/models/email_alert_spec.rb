@@ -38,8 +38,9 @@ RSpec.describe EmailAlert do
         "details" => {
           "change_note" => "this doc has been changed",
           "tags" => {
-            "browse_pages" => [],
-            "topics" => [],
+            "browse_pages" => ["tax/vat"],
+            "topics" => ["oil-and-gas/licensing"],
+            "some_other_missing_tags" => [],
           }
         }
       }
@@ -51,8 +52,8 @@ RSpec.describe EmailAlert do
         "subject" => document["title"],
         "body" => "HTML formatted body",
         "tags" => {
-          "browse_pages" => [],
-          "topics" => [],
+          "browse_pages" => ["tax/vat"],
+          "topics" => ["oil-and-gas/licensing"],
         },
       }
 

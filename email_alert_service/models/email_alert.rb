@@ -14,7 +14,7 @@ class EmailAlert
     {
       "subject" => document["title"],
       "body" => format_email_body,
-      "tags" => document["details"]["tags"],
+      "tags" => strip_empty_arrays(document["details"]["tags"]),
     }
   end
 
@@ -36,5 +36,11 @@ private
 
   def make_url_from_document_base_path
     Plek.new.website_root
+  end
+
+  def strip_empty_arrays(tag_hash)
+    tag_hash.reject {|_, tags|
+      tags.empty?
+    }
   end
 end
