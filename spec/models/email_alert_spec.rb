@@ -50,7 +50,15 @@ RSpec.describe EmailAlert do
 
       formatted_message = {
         "subject" => document["title"],
-        "body" => "HTML formatted body",
+        "body" => %Q( <div class="rss_item" style="margin-bottom: 2em;">
+          <div class="rss_title" style="font-size: 120%; margin: 0 0 0.3em; padding: 0;">
+            <a href="http://www.dev.gov.uk" style="font-weight: bold; ">#{document["title"]}</a>
+          </div>
+          01:39pm, 6 October 2014
+          #{document["details"]["change_note"]}
+          <br />
+          <div class="rss_description" style="margin: 0 0 0.3em; padding: 0;">#{document["description"]}</div>
+        </div> ),
         "tags" => {
           "browse_pages" => ["tax/vat"],
           "topics" => ["oil-and-gas/licensing"],
@@ -58,7 +66,6 @@ RSpec.describe EmailAlert do
       }
 
       email_alert = EmailAlert.new(document, logger, worker)
-      allow(email_alert).to receive(:format_email_body).and_return("HTML formatted body")
 
       expect(email_alert.format_for_email_api).to eq (formatted_message)
     end

@@ -27,7 +27,7 @@ private
           <div class="rss_title" style="font-size: 120%; margin: 0 0 0.3em; padding: 0;">
             <a href="#{make_url_from_document_base_path}" style="font-weight: bold; ">#{document["title"]}</a>
           </div>
-          #{document["public_updated_at"]}
+          #{formatted_public_updated_at}
           #{document["details"]["change_note"]}
           <br />
           <div class="rss_description" style="margin: 0 0 0.3em; padding: 0;">#{document["description"]}</div>
@@ -42,5 +42,9 @@ private
     tag_hash.reject {|_, tags|
       tags.empty?
     }
+  end
+
+  def formatted_public_updated_at
+    DateTime.parse(document["public_updated_at"]).strftime("%I:%M%P, %-d %B %Y")
   end
 end
