@@ -48,11 +48,13 @@ RSpec.describe EmailAlert do
       logger = double(:logger)
       worker = double(:worker)
 
+      url_from_document_base_path = Plek.new.website_root
+
       formatted_message = {
         "subject" => document["title"],
         "body" => %Q( <div class="rss_item" style="margin-bottom: 2em;">
           <div class="rss_title" style="font-size: 120%; margin: 0 0 0.3em; padding: 0;">
-            <a href="http://www.dev.gov.uk" style="font-weight: bold; ">#{document["title"]}</a>
+            <a href="#{url_from_document_base_path}" style="font-weight: bold; ">#{document["title"]}</a>
           </div>
           01:39pm, 6 October 2014
           #{document["details"]["change_note"]}
