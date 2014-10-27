@@ -56,7 +56,7 @@ RSpec.describe EmailAlert do
           <div class="rss_title" style="font-size: 120%; margin: 0 0 0.3em; padding: 0;">
             <a href="#{url_from_document_base_path}" style="font-weight: bold; ">#{document["title"]}</a>
           </div>
-          01:39pm, 6 October 2014
+           1:39pm, 6 October 2014
           #{document["details"]["change_note"]}
           <br />
           <div class="rss_description" style="margin: 0 0 0.3em; padding: 0;">#{document["description"]}</div>

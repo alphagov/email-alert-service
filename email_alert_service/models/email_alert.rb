@@ -45,6 +45,6 @@ private
   end
 
   def formatted_public_updated_at
-    DateTime.parse(document["public_updated_at"]).strftime("%I:%M%P, %-d %B %Y")
+    DateTime.parse(document["public_updated_at"]).strftime("%l:%M%P, %-d %B %Y")
   end
 end
