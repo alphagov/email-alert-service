@@ -1,10 +1,16 @@
 require "gds_api/email_alert_api"
+require "models/lock_handler"
 
 class EmailAlertWorker
   include Sidekiq::Worker
 
-  def perform(formatted_alert)
-    email_api_client.send_alert(formatted_alert)
+  def perform(formatted_email)
+    lock_handler = LockHandler.new(formatted_email)
+
+    if lock_handler.validate_and_set_lock
+      email_api_client.send_alert(formatted_email)
+      lock_handler.set_lock_expiry
+    end
   end
 
 private
