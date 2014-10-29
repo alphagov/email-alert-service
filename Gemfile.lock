@@ -34,6 +34,7 @@ GEM
     lrucache (0.1.4)
       PriorityQueue (~> 0.1.2)
     mime-types (1.25.1)
+    mock_redis (0.13.2)
     multi_json (1.10.1)
     null_logger (0.0.1)
     plek (1.9.0)
@@ -77,7 +78,9 @@ DEPENDENCIES
   bunny (~> 1.3.1)
   byebug
   gds-api-adapters (= 14.10.0)
+  mock_redis
   plek (= 1.9.0)
+  redis (= 3.1.0)
   rspec-core (= 3.1.4)
   rspec-expectations (= 3.1.1)
   rspec-mocks (= 3.1.1)
