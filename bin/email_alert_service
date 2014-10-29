@@ -26,7 +26,7 @@ end
 
 begin
   listener.listen
-rescue Exception => e
+rescue StandardError => e
   Airbrake.notify_or_ignore(e)
   raise e
 end
