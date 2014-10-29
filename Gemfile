@@ -1,7 +1,7 @@
 source "http://rubygems.org"
 
 gem "airbrake", "4.1.0"
-gem "bunny", "~> 1.3.1"
+gem 'bunny', "~> 1.5.0"
 gem "gds-api-adapters", "14.10.0"
 gem "plek", "1.9.0"
 gem "redis", "3.1.0"
