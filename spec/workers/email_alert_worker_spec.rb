@@ -20,7 +20,7 @@ RSpec.describe EmailAlertWorker do
   it "sets a lock key for the formatted email sent" do
     aproximate_expiry_period_in_seconds = 770000
 
-    allow_any_instance_of(LockHandler).to receive(:set_lock_expiry).and_call_original
+    allow_any_instance_of(LockHandler).to receive(:validate_and_set_lock).and_call_original
     expect(email_api_client).to receive(:send_alert).with(formatted_email)
 
     worker.perform(formatted_email)
@@ -43,7 +43,7 @@ RSpec.describe EmailAlertWorker do
   end
 
   it "does not to set a lock key if the formatted email was updated outside the valid expiry period" do
-    allow_any_instance_of(LockHandler).to receive(:set_lock_expiry).and_call_original
+    allow_any_instance_of(LockHandler).to receive(:set_lock_with_expiry).and_call_original
     expect(email_api_client).not_to receive(:send_alert).with(expired_formatted_email)
 
     worker.perform(expired_formatted_email)

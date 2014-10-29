@@ -9,7 +9,6 @@ class EmailAlertWorker
 
     if lock_handler.validate_and_set_lock
       email_api_client.send_alert(formatted_email)
-      lock_handler.set_lock_expiry
     end
   end
 

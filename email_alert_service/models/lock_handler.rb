@@ -11,20 +11,27 @@ class LockHandler
 
   def validate_and_set_lock
     if within_valid_lock_period?
-      set_lock
+      key_and_expiry_status = set_lock_with_expiry
+      log_key_status(key_and_expiry_status[0])
+      key_and_expiry_status[0]
     end
-  end
-
-  def set_lock_expiry
-    redis.expireat lock_key_id, lock_expiry_period
   end
 
 private
 
   attr_reader :formatted_email, :formatted_email_title, :formatted_email_updated_at
 
-  def set_lock
-    redis.setnx lock_key_id, formatted_email_title
+  def log_key_status(key_status)
+    unless key_status
+      logger.info "A lock for the message with title: #{formatted_email_title} and email_updated_at: #{formatted_email_updated_at} already exists"
+    end
+  end
+
+  def set_lock_with_expiry
+    redis.multi do
+      redis.setnx lock_key_id, formatted_email_title
+      redis.expireat lock_key_id, lock_expiry_period
+    end
   end
 
   def lock_key_id
@@ -49,5 +56,9 @@ private
 
   def redis
     @_redis ||= Redis.new
+  end
+
+  def logger
+    EmailAlertService.config.logger
   end
 end
