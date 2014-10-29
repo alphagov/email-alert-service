@@ -50,7 +50,7 @@ RSpec.configure do |config|
     @read_channel = @test_connection.create_channel
 
     @exchange = @write_channel.topic(@test_config.fetch(:exchange), passive: true)
-    @read_queue = @read_channel.queue(@test_config.fetch(:queue))
+    @read_queue = @read_channel.queue(@test_config.fetch(:queue), durable: true)
   end
 
   config.after(:each, type: :integration) do

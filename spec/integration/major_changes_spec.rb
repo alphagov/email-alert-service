@@ -33,7 +33,7 @@ RSpec.describe "Receiving major change notifications", type: :integration do
   end
 
   it "discards invalid documents" do
-    expect_any_instance_of(MessageProcessor).to receive(:discard).twice
+    expect_any_instance_of(MessageProcessor).to receive(:discard).twice.and_call_original
 
     send_message(malformed_document)
     send_message(malformed_json)
