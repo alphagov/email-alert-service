@@ -17,7 +17,7 @@ RSpec.describe AMQPConnection do
 
   describe "#stop" do
     it "closes the connection channel and the stops the connection to the rabbitmq server" do
-      channel = double(:channel)
+      channel = double(:channel, prefetch: nil)
       rabbitmq_service = double(:rabbitmq_service, create_channel: channel)
       allow(Bunny).to receive(:new).with(config_options).and_return(rabbitmq_service)
 
@@ -29,11 +29,13 @@ RSpec.describe AMQPConnection do
   end
 
   describe "#channel" do
-    it "creates a channel on the rabbitmq server" do
+    it "creates a channel with prefetch of 1 on the rabbitmq server" do
       rabbitmq_service = double(:rabbitmq_service)
       allow(Bunny).to receive(:new).with(config_options).and_return(rabbitmq_service)
 
-      expect(rabbitmq_service).to receive(:create_channel)
+      rabbitmq_channel = double(:rabbitmq_channel)
+      expect(rabbitmq_service).to receive(:create_channel).and_return(rabbitmq_channel)
+      expect(rabbitmq_channel).to receive(:prefetch).with(1)
 
       AMQPConnection.new(config_options).channel
     end
@@ -41,7 +43,7 @@ RSpec.describe AMQPConnection do
 
   describe "#exchange" do
     it "connects to the exchange on the rabbitmq server" do
-      channel = double(:channel)
+      channel = double(:channel, prefetch: nil)
       rabbitmq_service = double(:rabbitmq_service, create_channel: channel)
       allow(Bunny).to receive(:new).with(config_options).and_return(rabbitmq_service)
 

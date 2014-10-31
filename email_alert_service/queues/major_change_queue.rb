@@ -18,7 +18,7 @@ private
   end
 
   def queue
-    channel.queue(connection.queue_name)
+    channel.queue(connection.queue_name, durable: true)
   end
 
   def exchange
