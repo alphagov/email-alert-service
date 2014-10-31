@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+require_relative "../email_alert_service/environment"
+rabbitmq_options = EmailAlertService.config.rabbitmq
+
+require "connections/amqp_connection"
+connection = AMQPConnection.new(rabbitmq_options)
+connection.start
+channel = connection.channel
+
+begin
+  channel.queue(connection.queue_name, passive: true, no_declare: true).delete
+rescue Bunny::NotFound => _
+  # Queue didn't exist anyway
+end
+
+connection.stop
