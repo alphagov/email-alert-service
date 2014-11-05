@@ -31,10 +31,7 @@ RSpec.describe EmailAlert do
       email_alert = EmailAlert.new(document, logger, worker)
       allow(email_alert).to receive(:format_for_email_api).and_return(formatted_for_email_api)
 
-      expect(worker).to receive(:perform_async).with({
-        "formatted" => formatted_for_email_api,
-        "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
-      })
+      expect(worker).to receive(:perform_async).with(formatted_for_email_api)
 
       email_alert.trigger
     end
@@ -72,6 +69,7 @@ RSpec.describe EmailAlert do
           <br />
           <div class="rss_description" style="margin: 0 0 0.3em; padding: 0;">#{document["description"]}</div>
         </div> ),
+        "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
         "tags" => {
           "browse_pages" => ["tax/vat"],
           "topics" => ["oil-and-gas/licensing"],
