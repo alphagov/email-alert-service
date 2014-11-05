@@ -38,7 +38,7 @@ private
   end
 
   def make_url_from_document_base_path
-    Plek.new.website_root
+    Plek.new.website_root + document["base_path"]
   end
 
   def strip_empty_arrays(tag_hash)
