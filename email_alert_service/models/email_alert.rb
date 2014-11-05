@@ -7,7 +7,10 @@ class EmailAlert
 
   def trigger
     @logger.info "Received major change notification for #{document["title"]}, with topics #{document["details"]["tags"]["topics"]}"
-    @worker.perform_async(format_for_email_api)
+    @worker.perform_async({
+      "formatted" => format_for_email_api,
+      "public_updated_at" => document.fetch("public_updated_at"),
+    })
   end
 
   def format_for_email_api

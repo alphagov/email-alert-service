@@ -3,7 +3,11 @@ require "spec_helper"
 RSpec.describe EmailAlert do
   describe "#trigger" do
     it "logs receiving a major change notification for a document" do
-      document = { "title" => "document title", "details" => { "tags" => { "topics" => ["a topic"]  } } }
+      document = {
+        "title" => "document title",
+        "details" => { "tags" => { "topics" => ["a topic"]  } },
+        "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
+      }
       logger = double(:logger, info: nil)
       worker = double(:worker, perform_async: nil)
       email_alert = EmailAlert.new(document, logger, worker)
@@ -16,14 +20,21 @@ RSpec.describe EmailAlert do
     end
 
     it "queues a formatted alert in the worker" do
-      document = { "title" => "document title", "details" => { "tags" => { "topics" => ["a topic"]  } } }
+      document = {
+        "title" => "document title",
+        "details" => { "tags" => { "topics" => ["a topic"]  } },
+        "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
+      }
       logger = double(:logger, info: nil)
       worker = double(:worker)
       formatted_for_email_api = double(:formatted_for_email_api)
       email_alert = EmailAlert.new(document, logger, worker)
       allow(email_alert).to receive(:format_for_email_api).and_return(formatted_for_email_api)
 
-      expect(worker).to receive(:perform_async).with(formatted_for_email_api)
+      expect(worker).to receive(:perform_async).with({
+        "formatted" => formatted_for_email_api,
+        "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
+      })
 
       email_alert.trigger
     end
