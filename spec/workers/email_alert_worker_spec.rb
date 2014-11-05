@@ -9,11 +9,11 @@ RSpec.describe EmailAlertWorker do
   let(:worker) { EmailAlertWorker.new }
   let(:email_api_client) { double(:email_api_client) }
 
-  describe "#perform(formatted_email)" do
+  describe "#perform(email_data)" do
     it "sends the formatted email to the email API client" do
-      expect(email_api_client).to receive(:send_alert).with(formatted_email)
+      expect(email_api_client).to receive(:send_alert).with(email_data["formatted"])
 
-      worker.perform(formatted_email)
+      worker.perform(email_data)
     end
   end
 
@@ -21,31 +21,34 @@ RSpec.describe EmailAlertWorker do
     aproximate_expiry_period_in_seconds = 770000
 
     allow_any_instance_of(LockHandler).to receive(:validate_and_set_lock).and_call_original
-    expect(email_api_client).to receive(:send_alert).with(formatted_email)
+    expect(email_api_client).to receive(:send_alert).with(email_data["formatted"])
 
-    worker.perform(formatted_email)
+    worker.perform(email_data)
 
     expect(
       mock_redis.ttl(
-        lock_key_for_formatted_email
+        lock_key_for_email_data
       )
     ).to be > aproximate_expiry_period_in_seconds
   end
 
   it "does not send an email if there is an existing lock key" do
-    formatted_email_with_set_time = { "title" => "Example Alert", "public_updated_at" => "3:30pm, 27 October 2014" }
+    email_data_with_set_time = {
+      "formatted" => { "subject" => "Example Alert" },
+      "public_updated_at" => updated_now
+    }
 
-    expect(email_api_client).to receive(:send_alert).with(formatted_email_with_set_time).at_most(:once)
+    expect(email_api_client).to receive(:send_alert).with(email_data_with_set_time["formatted"]).exactly(:once)
 
     2.times do
-      worker.perform(formatted_email_with_set_time)
+      worker.perform(email_data_with_set_time)
     end
   end
 
-  it "does not to set a lock key if the formatted email was updated outside the valid expiry period" do
+  it "does not set a lock key if the formatted email was updated outside the valid expiry period" do
     allow_any_instance_of(LockHandler).to receive(:set_lock_with_expiry).and_call_original
-    expect(email_api_client).not_to receive(:send_alert).with(expired_formatted_email)
+    expect(email_api_client).not_to receive(:send_alert).with(expired_email_data)
 
-    worker.perform(expired_formatted_email)
+    worker.perform(expired_email_data)
   end
 end

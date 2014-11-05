@@ -14,22 +14,22 @@ module LockHandlerTestHelpers
   end
 
   def expired_date
-    Time.at(ninety_days_before(updated_now)).strftime("%l:%M%P, %-d %B %Y")
+    Time.at(ninety_days_before(updated_now)).iso8601
   end
 
   def updated_now
-    Time.now.strftime("%l:%M%P, %-d %B %Y")
+    Time.now.iso8601
   end
 
-  def expired_formatted_email
-    { "title" => "Example Alert", "public_updated_at" => expired_date }
+  def expired_email_data
+    { "formatted" => { "subject" => "Example Alert" }, "public_updated_at" => expired_date }
   end
 
-  def formatted_email
-    { "title" => "Example Alert", "public_updated_at" => updated_now }
+  def email_data
+    { "formatted" => { "subject" => "Example Alert" }, "public_updated_at" => updated_now }
   end
 
-  def lock_key_for_formatted_email
-    Digest::SHA1.hexdigest formatted_email["title"] + formatted_email["public_updated_at"]
+  def lock_key_for_email_data
+    Digest::SHA1.hexdigest email_data["formatted"]["subject"] + email_data["public_updated_at"]
   end
 end
