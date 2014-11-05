@@ -54,7 +54,7 @@ private
   end
 
   def redis
-    @_redis ||= Redis.new
+    @_redis ||= Redis.new(EmailAlertService.config.redis_config)
   end
 
   def logger
