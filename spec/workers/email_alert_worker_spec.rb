@@ -11,7 +11,7 @@ RSpec.describe EmailAlertWorker do
 
   describe "#perform(email_data)" do
     it "sends the formatted email to the email API client" do
-      expect(email_api_client).to receive(:send_alert).with(email_data["formatted"])
+      expect(email_api_client).to receive(:send_alert).with(email_data)
 
       worker.perform(email_data)
     end
@@ -21,7 +21,7 @@ RSpec.describe EmailAlertWorker do
     aproximate_expiry_period_in_seconds = 770000
 
     allow_any_instance_of(LockHandler).to receive(:validate_and_set_lock).and_call_original
-    expect(email_api_client).to receive(:send_alert).with(email_data["formatted"])
+    expect(email_api_client).to receive(:send_alert).with(email_data)
 
     worker.perform(email_data)
 
@@ -34,11 +34,11 @@ RSpec.describe EmailAlertWorker do
 
   it "does not send an email if there is an existing lock key" do
     email_data_with_set_time = {
-      "formatted" => { "subject" => "Example Alert" },
+      "subject" => "Example Alert",
       "public_updated_at" => updated_now
     }
 
-    expect(email_api_client).to receive(:send_alert).with(email_data_with_set_time["formatted"]).exactly(:once)
+    expect(email_api_client).to receive(:send_alert).with(email_data_with_set_time).exactly(:once)
 
     2.times do
       worker.perform(email_data_with_set_time)

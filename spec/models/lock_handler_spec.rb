@@ -2,10 +2,7 @@ require "spec_helper"
 
 RSpec.describe LockHandler do
   let(:lock_handler) {
-    LockHandler.new(
-      email_data["formatted"]["subject"],
-      email_data["public_updated_at"],
-    )
+    LockHandler.new(email_data)
   }
 
   before :each do
@@ -36,7 +33,7 @@ RSpec.describe LockHandler do
 
       it "logs a message if the lock is already set" do
         mock_logger = double
-        logger_message = "A lock for the message with title: #{email_data["formatted"]["subject"]} and public_updated_at: #{email_data["public_updated_at"]} already exists"
+        logger_message = "A lock for the message with title: #{email_data["subject"]} and public_updated_at: #{email_data["public_updated_at"]} already exists"
 
         allow_any_instance_of(LockHandler).to receive(:logger).and_return(mock_logger)
         expect(mock_logger).to receive(:info).with(logger_message)
@@ -49,10 +46,7 @@ RSpec.describe LockHandler do
 
     context "if formatted email has expired" do
       it "checks that the  formatted email is within the valid expiry period" do
-        lock_handler = LockHandler.new(
-          expired_email_data["formatted"]["subject"],
-          expired_email_data["public_updated_at"],
-        )
+        lock_handler = LockHandler.new(expired_email_data)
 
         expect(lock_handler).to receive(:within_valid_lock_period?).and_call_original
         expect(lock_handler).to_not receive(:set_lock_with_expiry)

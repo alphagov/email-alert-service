@@ -22,14 +22,14 @@ module LockHandlerTestHelpers
   end
 
   def expired_email_data
-    { "formatted" => { "subject" => "Example Alert" }, "public_updated_at" => expired_date }
+    { "subject" => "Example Alert", "public_updated_at" => expired_date }
   end
 
   def email_data
-    { "formatted" => { "subject" => "Example Alert" }, "public_updated_at" => updated_now }
+    { "subject" => "Example Alert", "public_updated_at" => updated_now }
   end
 
   def lock_key_for_email_data
-    Digest::SHA1.hexdigest email_data["formatted"]["subject"] + email_data["public_updated_at"]
+    Digest::SHA1.hexdigest email_data["subject"] + email_data["public_updated_at"]
   end
 end

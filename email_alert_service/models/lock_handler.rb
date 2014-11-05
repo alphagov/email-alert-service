@@ -3,9 +3,9 @@ class LockHandler
   SECONDS_IN_A_DAY = 86400.freeze
   VALID_LOCK_PERIOD_IN_SECONDS = (90 * SECONDS_IN_A_DAY).freeze
 
-  def initialize(email_title, public_updated_at)
-    @email_title = email_title
-    @public_updated_at = public_updated_at
+  def initialize(formatted_email)
+    @email_title = formatted_email.fetch("subject")
+    @public_updated_at = formatted_email.fetch("public_updated_at")
   end
 
   def validate_and_set_lock
