@@ -43,6 +43,7 @@ RSpec.describe EmailAlert do
   describe "#format_for_email_api" do
     it "formats the message to send to the email alert api" do
       document = {
+        "base_path" => "/foo",
         "title" => "Example title",
         "description" => "example description",
         "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
@@ -59,7 +60,7 @@ RSpec.describe EmailAlert do
       logger = double(:logger)
       worker = double(:worker)
 
-      url_from_document_base_path = Plek.new.website_root
+      url_from_document_base_path = Plek.new.website_root + document["base_path"]
 
       formatted_message = {
         "subject" => document["title"],
