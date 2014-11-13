@@ -4,6 +4,7 @@ require "models/message_processor"
 RSpec.describe MessageProcessor do
   let(:delivery_tag) { double(:delivery_tag) }
   let(:delivery_info) { double(:delivery_info, delivery_tag: delivery_tag) }
+  let(:properties) { double(:properties, content_type: nil) }
   let(:channel) {
     double(:channel,
       acknowledge: nil,
@@ -75,7 +76,7 @@ RSpec.describe MessageProcessor do
   describe "#process(document_json, delivery_info)" do
     it "acknowledges and triggers the message if the document has topics" do
       expect(processor).to receive(:trigger_email_alert)
-      processor.process(tagged_document, delivery_info)
+      processor.process(tagged_document, properties, delivery_info)
 
       expect(channel).to have_received(:acknowledge).with(
         delivery_tag,
@@ -85,7 +86,7 @@ RSpec.describe MessageProcessor do
 
     it "acknowledges but doesnt trigger the message if the document is not tagged to a topic" do
       expect(processor).to_not receive(:trigger_email_alert)
-      processor.process(not_tagged_document, delivery_info)
+      processor.process(not_tagged_document, properties, delivery_info)
 
       expect(channel).to have_received(:acknowledge).with(
         delivery_tag,
@@ -95,7 +96,7 @@ RSpec.describe MessageProcessor do
 
     it "acknowledges but doesnt trigger the message if the document does not have a tags key" do
       expect(processor).to_not receive(:trigger_email_alert)
-      processor.process(document_with_no_tags_key, delivery_info)
+      processor.process(document_with_no_tags_key, properties, delivery_info)
 
       expect(channel).to have_received(:acknowledge).with(
         delivery_tag,
@@ -105,7 +106,7 @@ RSpec.describe MessageProcessor do
 
     it "acknowledges but doesnt trigger the message if the document does not have a topics key" do
       expect(processor).to_not receive(:trigger_email_alert)
-      processor.process(document_with_no_topics_key, delivery_info)
+      processor.process(document_with_no_topics_key, properties, delivery_info)
 
       expect(channel).to have_received(:acknowledge).with(
         delivery_tag,
@@ -114,7 +115,7 @@ RSpec.describe MessageProcessor do
     end
 
     it "discards the message if there's a JSON parser error" do
-      processor.process('{]$£$*()}', delivery_info)
+      processor.process('{]$£$*()}', properties, delivery_info)
 
       expect(channel).to have_received(:reject).with(
         delivery_tag,
@@ -124,7 +125,19 @@ RSpec.describe MessageProcessor do
 
     it "notifies errbit if there's a JSON parser error" do
       expect(Airbrake).to receive(:notify_or_ignore).with(MalformedDocumentError)
-      processor.process('{]$£$*()}', delivery_info)
+      processor.process('{]$£$*()}', properties, delivery_info)
+    end
+
+    it "ignores heartbeat messages" do
+      properties = double(:properties, content_type: "application/x-heartbeat")
+      expect(processor).not_to receive(:trigger_email_alert)
+
+      # Heartbeats wouldn't be tagged but I want to prove they're ignored
+      # based on content type.
+      processor.process(tagged_document, properties, delivery_info)
+
+
+      expect(channel).to have_received(:acknowledge).with(delivery_tag, false)
     end
   end
 end

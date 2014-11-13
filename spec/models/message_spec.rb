@@ -1,6 +1,10 @@
 require "spec_helper"
 
 RSpec.describe Message do
+  let(:delivery_info) { double(:delivery_info, delivery_tag: "tag") }
+  let(:document_json) { double(:document_json) }
+  let(:properties) { double(:properties, content_type: nil) }
+
   describe "#validate_document" do
     it "returns a parsed, valid document" do
       document_json =
@@ -19,8 +23,7 @@ RSpec.describe Message do
          }'
 
       valid_json = JSON.parse(document_json)
-      delivery_info = double(:delivery_info, delivery_tag: "tag")
-      message = Message.new(document_json, delivery_info)
+      message = Message.new(document_json, properties, delivery_info)
 
       expect(message.validate_document).to eq valid_json
     end
@@ -28,11 +31,27 @@ RSpec.describe Message do
 
   describe "#delivery_tag" do
     it "returns the delivery tag from the delivery info" do
-      delivery_info = double(:delivery_info, delivery_tag: "tag")
-      document_json = double(:document_json)
-      message = Message.new(document_json, delivery_info)
+      message = Message.new(document_json, properties, delivery_info)
 
       expect(message.delivery_tag).to eq "tag"
+    end
+  end
+
+  describe "#heartbeat?" do
+    it "is true if the content type matches" do
+      properties = double(:properties, content_type: "application/x-heartbeat")
+      message = Message.new(document_json, properties, delivery_info)
+      expect(message).to be_heartbeat
+    end
+
+    it "is false if the content type does not match" do
+      properties = double(:properties, content_type: "application/javascript")
+      message = Message.new(document_json, properties, delivery_info)
+      expect(message).not_to be_heartbeat
+
+      properties = double(:properties, content_type: nil)
+      message = Message.new(document_json, properties, delivery_info)
+      expect(message).not_to be_heartbeat
     end
   end
 end

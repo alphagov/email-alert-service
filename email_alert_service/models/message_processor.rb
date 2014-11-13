@@ -8,10 +8,14 @@ class MessageProcessor
     @logger = logger
   end
 
-  def process(document_json, delivery_info)
-    message = Message.new(document_json, delivery_info)
-    document = message.validate_document
-    trigger_email_alert(document) if tagged_to_topics?(document)
+  def process(document_json, properties, delivery_info)
+    message = Message.new(document_json, properties, delivery_info)
+
+    unless message.heartbeat?
+      document = message.validate_document
+      trigger_email_alert(document) if tagged_to_topics?(document)
+    end
+
     acknowledge(message)
   rescue MalformedDocumentError => e
     Airbrake.notify_or_ignore(e)
