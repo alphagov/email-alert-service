@@ -9,8 +9,7 @@ RSpec.describe EmailAlert do
         "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
       }
       logger = double(:logger, info: nil)
-      worker = double(:worker, perform_async: nil)
-      email_alert = EmailAlert.new(document, logger, worker)
+      email_alert = EmailAlert.new(document, logger)
       allow(email_alert).to receive(:format_for_email_api).and_return(nil)
 
       expect(logger).to receive(:info).with(

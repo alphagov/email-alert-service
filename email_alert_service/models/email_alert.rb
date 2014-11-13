@@ -1,16 +1,29 @@
+require "gds_api/email_alert_api"
+require "models/lock_handler"
+
 class EmailAlert
-  def initialize(document, logger, worker)
+  def initialize(document, logger)
     @document = document
     @logger = logger
-    @worker = worker
   end
 
   def trigger
     @logger.info "Received major change notification for #{document["title"]}, with topics #{document["details"]["tags"]["topics"]}"
-    @worker.perform_async({
-      "formatted" => format_for_email_api,
-      "public_updated_at" => document.fetch("public_updated_at"),
-    })
+
+    lock_handle = new_lock_handler
+    # check destructor
+    if lock_handler.validate_and_set_lock
+      email_api_client.send_alert(format_for_email_api)
+    end
+  end
+
+  def new_lock_handler
+    lock_handler = LockHandler.new(
+      document.fetch("title"),
+      document.fetch("public_updated_at"),
+    )
+
+
   end
 
   def format_for_email_api
@@ -22,6 +35,10 @@ class EmailAlert
   end
 
 private
+
+  def email_api_client
+    GdsApi::EmailAlertApi.new(Plek.find("email-alert-api"))
+  end
 
   attr_reader :document
 

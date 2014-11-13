@@ -1,6 +1,5 @@
 require "models/email_alert"
 require "models/message"
-require "workers/email_alert_worker"
 
 class MessageProcessor
   def initialize(channel, logger)
@@ -27,7 +26,7 @@ private
   attr_reader :channel
 
   def trigger_email_alert(document)
-    EmailAlert.new(document, @logger, EmailAlertWorker).trigger
+    EmailAlert.new(document, @logger).trigger
   end
 
   def tagged_to_topics?(document)
