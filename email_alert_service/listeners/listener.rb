@@ -5,8 +5,8 @@ class Listener
   end
 
   def listen
-    @queue_binding.subscribe(block: true, manual_ack: true) do |delivery_info, _, document_json|
-      @processor.process(document_json, delivery_info)
+    @queue_binding.subscribe(block: true, manual_ack: true) do |delivery_info, properties, document_json|
+      @processor.process(document_json, properties, delivery_info)
     end
   end
 end

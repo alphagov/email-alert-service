@@ -2,8 +2,9 @@ require "json"
 require "validators/document_validator"
 
 class Message
-  def initialize(document_json, delivery_info)
+  def initialize(document_json, properties, delivery_info)
     @delivery_info = delivery_info
+    @properties = properties
     @document_json = document_json
   end
 
@@ -20,6 +21,10 @@ class Message
 
   def delivery_tag
     @delivery_info.delivery_tag
+  end
+
+  def heartbeat?
+    @properties.content_type == "application/x-heartbeat"
   end
 
 private
