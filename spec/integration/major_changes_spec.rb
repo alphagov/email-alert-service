@@ -22,10 +22,6 @@ RSpec.describe "Receiving major change notifications", type: :integration do
   let(:malformed_json) { '{23o*&£}' }
   let(:malformed_document) { '{"houses": "are for living in"}' }
 
-  before :each do
-    allow(Redis).to receive(:new).and_return(mock_redis)
-  end
-
   around :each do |example|
     start_listener
     example.run

@@ -41,6 +41,8 @@ GEM
     rdoc (4.1.2)
       json (~> 1.4)
     redis (3.1.0)
+    redis-namespace (1.5.1)
+      redis (~> 3.0, >= 3.0.4)
     rest-client (1.6.8)
       mime-types (~> 1.16)
       rdoc (>= 2.4.2)
@@ -69,6 +71,7 @@ DEPENDENCIES
   mock_redis
   plek (= 1.9.0)
   redis (= 3.1.0)
+  redis-namespace (= 1.5.1)
   rspec-core (= 3.1.4)
   rspec-expectations (= 3.1.1)
   rspec-mocks (= 3.1.1)

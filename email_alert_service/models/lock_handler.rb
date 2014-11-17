@@ -34,7 +34,7 @@ private
   end
 
   def lock_key_id
-    @_lock_key_id ||= Digest::SHA1.hexdigest email_title + public_updated_at
+    @_lock_key_id ||= Digest::SHA1.hexdigest(email_title + public_updated_at)
   end
 
   def within_valid_lock_period?
@@ -54,7 +54,12 @@ private
   end
 
   def redis
-    @_redis ||= Redis.new(EmailAlertService.config.redis_config)
+    return @_namespaced_redis if @_namespaced_redis
+
+    namespace = EmailAlertService.config.redis_config[:namespace]
+    redis_connection = Redis.new(EmailAlertService.config.redis_config)
+    @_namespaced_redis ||= Redis::Namespace.new(namespace, redis: redis_connection)
+    @_namespaced_redis
   end
 
   def logger
