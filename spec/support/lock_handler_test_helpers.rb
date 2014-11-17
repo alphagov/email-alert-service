@@ -2,7 +2,11 @@ require "mock_redis"
 
 module LockHandlerTestHelpers
   def mock_redis
-    @_mock_redis ||= MockRedis.new
+    return @_namespaced_mock_redis if @_namespaced_mock_redis
+
+    namespace = EmailAlertService.config.redis_config[:namespace]
+    redis_connection = MockRedis.new
+    @_namespaced_mock_redis ||= Redis::Namespace.new(namespace, redis: redis_connection)
   end
 
   def seconds_in_three_months
@@ -21,6 +25,12 @@ module LockHandlerTestHelpers
     Time.now.iso8601
   end
 
+  def generate_title
+    sample = Array(1..100).sample
+
+    "Example title #{sample}"
+  end
+
   def expired_email_data
     { "formatted" => { "subject" => "Example Alert" }, "public_updated_at" => expired_date }
   end
@@ -30,6 +40,6 @@ module LockHandlerTestHelpers
   end
 
   def lock_key_for_email_data
-    Digest::SHA1.hexdigest email_data["formatted"]["subject"] + email_data["public_updated_at"]
+    Digest::SHA1.hexdigest(email_data["formatted"]["subject"] + email_data["public_updated_at"])
   end
 end
