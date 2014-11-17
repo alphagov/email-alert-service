@@ -57,7 +57,6 @@ RSpec.configure do |config|
   end
 
   config.include(ListenerTestHelpers, type: :integration)
-  config.include(LockHandlerTestHelpers)
   config.include(GdsApi::TestHelpers::EmailAlertApi)
 end
 

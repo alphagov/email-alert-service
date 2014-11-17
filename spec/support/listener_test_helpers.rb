@@ -34,8 +34,6 @@ module ListenerTestHelpers
     @thread = Thread.new do
       listener.listen
     end
-
-    return [message_processor, channel]
   end
 
   def stop_listener

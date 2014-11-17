@@ -1,6 +1,8 @@
 require "spec_helper"
 
 RSpec.describe LockHandler do
+  include LockHandlerTestHelpers
+
   let(:lock_handler) {
     LockHandler.new(
       email_data["formatted"]["subject"],

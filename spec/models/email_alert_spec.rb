@@ -1,39 +1,40 @@
 require "spec_helper"
 
 RSpec.describe EmailAlert do
+  include LockHandlerTestHelpers
+
+  let(:document) {
+    {
+      "title" => "document title",
+      "details" => { "tags" => { "topics" => ["a topic"]  } },
+      "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
+    }
+  }
+
+  let(:logger) { double(:logger, info: nil) }
+  let(:email_alert) { EmailAlert.new(document, logger) }
+
+  before :each do
+    allow(Redis).to receive(:new).and_return(mock_redis)
+  end
+
   describe "#trigger" do
     it "logs receiving a major change notification for a document" do
-      document = {
-        "title" => "document title",
-        "details" => { "tags" => { "topics" => ["a topic"]  } },
-        "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
-      }
-      logger = double(:logger, info: nil)
-      email_alert = EmailAlert.new(document, logger)
       allow(email_alert).to receive(:format_for_email_api).and_return(nil)
 
       expect(logger).to receive(:info).with(
         "Received major change notification for #{document["title"]}, with topics #{document["details"]["tags"]["topics"]}")
 
+      expect_any_instance_of(GdsApi::EmailAlertApi).to receive(:send_alert)
+
       email_alert.trigger
     end
 
-    it "queues a formatted alert in the worker" do
-      document = {
-        "title" => "document title",
-        "details" => { "tags" => { "topics" => ["a topic"]  } },
-        "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
-      }
-      logger = double(:logger, info: nil)
-      worker = double(:worker)
+    it "sends an alert to the Email Alert API" do
       formatted_for_email_api = double(:formatted_for_email_api)
-      email_alert = EmailAlert.new(document, logger, worker)
       allow(email_alert).to receive(:format_for_email_api).and_return(formatted_for_email_api)
 
-      expect(worker).to receive(:perform_async).with({
-        "formatted" => formatted_for_email_api,
-        "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
-      })
+      expect_any_instance_of(GdsApi::EmailAlertApi).to receive(:send_alert)
 
       email_alert.trigger
     end
@@ -56,9 +57,6 @@ RSpec.describe EmailAlert do
         }
       }
 
-      logger = double(:logger)
-      worker = double(:worker)
-
       url_from_document_base_path = Plek.new.website_root + document["base_path"]
 
       formatted_message = {
@@ -78,7 +76,7 @@ RSpec.describe EmailAlert do
         },
       }
 
-      email_alert = EmailAlert.new(document, logger, worker)
+      email_alert = EmailAlert.new(document, logger)
 
       expect(email_alert.format_for_email_api).to eq (formatted_message)
     end

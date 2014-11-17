@@ -8,22 +8,12 @@ class EmailAlert
   end
 
   def trigger
-    @logger.info "Received major change notification for #{document["title"]}, with topics #{document["details"]["tags"]["topics"]}"
+    logger.info "Received major change notification for #{document["title"]}, with topics #{document["details"]["tags"]["topics"]}"
 
-    lock_handle = new_lock_handler
     # check destructor
     if lock_handler.validate_and_set_lock
       email_api_client.send_alert(format_for_email_api)
     end
-  end
-
-  def new_lock_handler
-    lock_handler = LockHandler.new(
-      document.fetch("title"),
-      document.fetch("public_updated_at"),
-    )
-
-
   end
 
   def format_for_email_api
@@ -36,11 +26,15 @@ class EmailAlert
 
 private
 
+  attr_reader :document, :logger
+
+  def lock_handler
+    LockHandler.new(document.fetch("title"), document.fetch("public_updated_at"))
+  end
+
   def email_api_client
     GdsApi::EmailAlertApi.new(Plek.find("email-alert-api"))
   end
-
-  attr_reader :document
 
   def format_email_body
     %Q( <div class="rss_item" style="margin-bottom: 2em;">

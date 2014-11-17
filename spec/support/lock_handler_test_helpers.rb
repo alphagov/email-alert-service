@@ -21,6 +21,12 @@ module LockHandlerTestHelpers
     Time.now.iso8601
   end
 
+  def generate_title
+    sample = Array(1..100).sample
+
+    "Example title #{sample}"
+  end
+
   def expired_email_data
     { "formatted" => { "subject" => "Example Alert" }, "public_updated_at" => expired_date }
   end
