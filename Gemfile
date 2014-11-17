@@ -8,7 +8,6 @@ gem "redis", "3.1.0"
 gem "redis-namespace", "1.5.1"
 
 group :test do
-  gem 'mock_redis'
   gem 'rspec-core', '3.1.4'
   gem 'rspec-expectations', '3.1.1'
   gem 'rspec-mocks', '3.1.1'

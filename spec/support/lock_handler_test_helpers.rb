@@ -1,14 +1,4 @@
-require "mock_redis"
-
 module LockHandlerTestHelpers
-  def mock_redis
-    return @_namespaced_mock_redis if @_namespaced_mock_redis
-
-    namespace = EmailAlertService.config.redis_config[:namespace]
-    redis_connection = MockRedis.new
-    @_namespaced_mock_redis ||= Redis::Namespace.new(namespace, redis: redis_connection)
-  end
-
   def seconds_in_three_months
     90 * 86400
   end
