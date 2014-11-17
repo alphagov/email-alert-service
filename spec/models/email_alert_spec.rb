@@ -15,7 +15,7 @@ RSpec.describe EmailAlert do
   let(:email_alert) { EmailAlert.new(document, logger) }
 
   before :each do
-    allow(Redis).to receive(:new).and_return(mock_redis)
+    EmailAlertService.services(:redis, mock_redis)
   end
 
   describe "#trigger" do

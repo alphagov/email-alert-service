@@ -11,7 +11,7 @@ RSpec.describe LockHandler do
   }
 
   before :each do
-    allow(Redis).to receive(:new).and_return(mock_redis)
+    EmailAlertService.services(:redis, mock_redis)
   end
 
   describe "#validate_and_set_lock" do
