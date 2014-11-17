@@ -10,8 +10,11 @@ RSpec.describe LockHandler do
     )
   }
 
-  before :each do
-    EmailAlertService.services(:redis, mock_redis)
+  let(:redis) { EmailAlertService.services(:redis) }
+  let(:redis_connection) { redis.redis }
+
+  after :each do
+    redis.flushdb
   end
 
   describe "#validate_and_set_lock" do
@@ -24,9 +27,9 @@ RSpec.describe LockHandler do
       end
 
       it "sets a lock key and expiry within a atomic execution for the formatted email if no current key exists" do
-        expect(mock_redis).to receive(:multi).once.and_call_original
-        expect(mock_redis).to receive(:setnx).once
-        expect(mock_redis).to receive(:expireat).once
+        expect(redis).to receive(:multi).once.and_call_original
+        expect(redis).to receive(:setnx).once
+        expect(redis).to receive(:expireat).once
 
         lock_handler.validate_and_set_lock
       end
@@ -61,6 +64,15 @@ RSpec.describe LockHandler do
 
         lock_handler.validate_and_set_lock
       end
+    end
+
+    it "uses configured redis namespace for lock keys" do
+      lock_handler.validate_and_set_lock
+      namespaced_lookup = redis_connection.get("email-alert-service:#{lock_key_for_email_data}")
+      non_namespaced_lookup = redis_connection.get(lock_key_for_email_data)
+
+      expect(namespaced_lookup).to eq email_data["formatted"]["subject"]
+      expect(non_namespaced_lookup).to be_nil
     end
   end
 end

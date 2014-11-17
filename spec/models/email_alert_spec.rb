@@ -5,18 +5,14 @@ RSpec.describe EmailAlert do
 
   let(:document) {
     {
-      "title" => "document title",
+      "title" => generate_title,
       "details" => { "tags" => { "topics" => ["a topic"]  } },
-      "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
+      "public_updated_at" => updated_now,
     }
   }
 
   let(:logger) { double(:logger, info: nil) }
   let(:email_alert) { EmailAlert.new(document, logger) }
-
-  before :each do
-    EmailAlertService.services(:redis, mock_redis)
-  end
 
   describe "#trigger" do
     it "logs receiving a major change notification for a document" do
