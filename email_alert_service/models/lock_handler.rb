@@ -59,7 +59,6 @@ private
     namespace = EmailAlertService.config.redis_config[:namespace]
     redis_connection = Redis.new(EmailAlertService.config.redis_config)
     @_namespaced_redis ||= Redis::Namespace.new(namespace, redis: redis_connection)
-    @_namespaced_redis
   end
 
   def logger
