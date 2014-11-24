@@ -1,18 +1,14 @@
 module LockHandlerTestHelpers
-  def seconds_in_three_months
+  def seconds_in_90_days
     90 * 86400
   end
 
-  def ninety_days_before(date_string)
-    (Time.parse(date_string).to_i - seconds_in_three_months)
-  end
-
   def expired_date
-    Time.at(ninety_days_before(updated_now)).iso8601
+    updated_now - seconds_in_90_days
   end
 
   def updated_now
-    Time.now.iso8601
+    @_now ||= Time.now
   end
 
   def generate_title
@@ -22,14 +18,22 @@ module LockHandlerTestHelpers
   end
 
   def expired_email_data
-    { "formatted" => { "subject" => "Example Alert" }, "public_updated_at" => expired_date }
+    { "formatted" => { "subject" => "Example Alert" }, "public_updated_at" => expired_date.iso8601 }
   end
 
   def email_data
-    { "formatted" => { "subject" => "Example Alert" }, "public_updated_at" => updated_now }
+    { "formatted" => { "subject" => "Example Alert" }, "public_updated_at" => updated_now.iso8601 }
+  end
+
+  def message_key_for_email_data
+    Digest::SHA1.hexdigest(email_data["formatted"]["subject"] + email_data["public_updated_at"])
   end
 
   def lock_key_for_email_data
-    Digest::SHA1.hexdigest(email_data["formatted"]["subject"] + email_data["public_updated_at"])
+    "L#{message_key_for_email_data}"
+  end
+
+  def done_marker_for_email_data
+    "D#{message_key_for_email_data}"
   end
 end
