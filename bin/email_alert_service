@@ -26,7 +26,9 @@ end
 
 begin
   listener.listen
-rescue StandardError => e
+rescue SignalException => e
+  logger.info "Received #{e}: exiting"
+rescue Exception => e
   Airbrake.notify_or_ignore(e)
   raise e
 end

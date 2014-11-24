@@ -6,7 +6,44 @@ class Listener
 
   def listen
     @queue_binding.subscribe(block: true, manual_ack: true) do |delivery_info, properties, document_json|
-      @processor.process(document_json, properties, delivery_info)
+      begin
+        process_message(document_json, properties, delivery_info)
+      rescue SignalException
+        exit_on_signal
+      rescue Exception => e
+        exit_on_exception(e, document_json, properties, delivery_info)
+      end
     end
+  end
+
+private
+
+  def process_message(document_json, properties, delivery_info)
+    logger.info("Calling process on message #{delivery_info.delivery_tag}")
+    @processor.process(document_json, properties, delivery_info)
+    logger.info("Processed message #{delivery_info.delivery_tag}")
+  end
+
+  def exit_on_signal
+    logger.info("Received signal: exiting...")
+    exit(0)
+  end
+
+  def exit_on_exception(e, document_json, properties, delivery_info)
+    logger.info("Error processing message #{delivery_info.delivery_tag}: #{e.class} (#{e.message})")
+    # Rescue any exception, not just StandardError and subclasses.
+    # We want to ensure that the process exits in such a situation, so we
+    # explicitly call exit() after logging the error.
+    Airbrake.notify_or_ignore(e,
+      parameters: {
+        delivery_info: delivery_info,
+        properties: properties,
+        payload: document_json,
+      })
+    exit(1)
+  end
+
+  def logger
+    EmailAlertService.config.logger
   end
 end
