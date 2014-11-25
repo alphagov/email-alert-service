@@ -36,7 +36,7 @@ class LockHandler
 
 private
 
-  attr_reader :email_title, :public_updated_at
+  attr_reader :email_title, :public_updated_at, :now
 
   def lock!
     unless try_acquire_lock
@@ -86,7 +86,7 @@ private
   end
 
   def seconds_since_public_updated_at
-    @now - Time.parse(public_updated_at)
+    now - Time.parse(public_updated_at)
   end
 
   def redis
