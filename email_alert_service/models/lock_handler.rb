@@ -1,3 +1,5 @@
+require 'securerandom'
+
 class LockHandler
 
   class AlreadyLocked < Exception; end
@@ -45,10 +47,12 @@ private
   end
 
   def try_acquire_lock
+    temp_key = "temp:#{SecureRandom::base64(18)}"
     redis.multi {
-      redis.setnx lock_key, email_title
-      redis.expire lock_key, LOCK_PERIOD_IN_SECONDS
-    }[0]
+      redis.setex temp_key, LOCK_PERIOD_IN_SECONDS, email_title
+      redis.renamenx temp_key, lock_key
+      redis.del temp_key
+    }[1]
   end
 
   def unlock

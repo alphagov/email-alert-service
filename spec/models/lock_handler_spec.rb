@@ -42,6 +42,24 @@ RSpec.describe LockHandler do
         lock_handler.with_lock_unless_done {}
       end
 
+      it "failing to lock doesn't leave any extra redis keys" do
+        lock_handler.send(:lock!)
+        expect { lock_handler.with_lock_unless_done {} }.to raise_error(LockHandler::AlreadyLocked)
+        expect(redis.keys.size).to eq(1)
+        lock_handler.send(:unlock)
+
+        expect(redis.keys).to eq([])
+      end
+
+      it "failing to acquire lock doesn't affect the lock expiration time" do
+        redis.setex(lock_key_for_email_data, 60, "old lock data")
+        expect { lock_handler.with_lock_unless_done {} }.to raise_error(LockHandler::AlreadyLocked)
+
+        expect(redis.keys).to eq([lock_key_for_email_data])
+        expect(redis.ttl(lock_key_for_email_data)).to be <= 60
+        expect(redis.ttl(lock_key_for_email_data)).to be > 0
+      end
+
       it "the lock has a TTL of two minutes" do
         lock_handler.send(:lock!)
 
