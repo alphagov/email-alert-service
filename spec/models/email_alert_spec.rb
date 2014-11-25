@@ -7,7 +7,7 @@ RSpec.describe EmailAlert do
     {
       "title" => generate_title,
       "details" => { "tags" => { "topics" => ["a topic"]  } },
-      "public_updated_at" => updated_now,
+      "public_updated_at" => updated_now.iso8601,
     }
   }
 

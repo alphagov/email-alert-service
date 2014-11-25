@@ -7,6 +7,7 @@ RSpec.describe LockHandler do
     LockHandler.new(
       email_data["formatted"]["subject"],
       email_data["public_updated_at"],
+      updated_now,
     )
   }
 
@@ -17,57 +18,106 @@ RSpec.describe LockHandler do
     redis.flushdb
   end
 
-  describe "#validate_and_set_lock" do
-    context "if formatted email is within valid period" do
-      it "checks that the formatted email is within the valid expiry period" do
-        expect(lock_handler).to receive(:within_valid_lock_period?).and_call_original
-        expect(lock_handler).to receive(:set_lock_with_expiry).and_call_original
+  describe "#with_lock_unless_done" do
+    context "if email is within valid period" do
+      it "obtains and releases lock" do
+        expect(lock_handler).to receive(:lock!).and_call_original
+        expect(lock_handler).to receive(:unlock).and_call_original
 
-        lock_handler.validate_and_set_lock
+        lock_handler.with_lock_unless_done {}
       end
 
-      it "sets a lock key and expiry within a atomic execution for the formatted email if no current key exists" do
-        expect(redis).to receive(:multi).once.and_call_original
-        expect(redis).to receive(:setnx).once
-        expect(redis).to receive(:expireat).once
+      it "raises an exception and remains locked if already locked" do
+        lock_handler.send(:lock!)
 
-        lock_handler.validate_and_set_lock
+        expect { lock_handler.with_lock_unless_done {} }.to raise_error(LockHandler::AlreadyLocked)
+        expect { lock_handler.with_lock_unless_done {} }.to raise_error(LockHandler::AlreadyLocked)
       end
 
-      it "does not set a lock key for the formatted email if a current key exists" do
-        expect(lock_handler.validate_and_set_lock).to eq true
-        expect(lock_handler.validate_and_set_lock).to eq false
+      it "unlock removes the lock" do
+        lock_handler.send(:lock!)
+        expect { lock_handler.with_lock_unless_done {} }.to raise_error(LockHandler::AlreadyLocked)
+
+        lock_handler.send(:unlock)
+        lock_handler.with_lock_unless_done {}
       end
 
-      it "logs a message if the lock is already set" do
-        mock_logger = double
-        logger_message = "A lock for the message with title: #{email_data["formatted"]["subject"]} and public_updated_at: #{email_data["public_updated_at"]} already exists"
+      it "failing to lock doesn't leave any extra redis keys" do
+        lock_handler.send(:lock!)
+        expect { lock_handler.with_lock_unless_done {} }.to raise_error(LockHandler::AlreadyLocked)
+        expect(redis.keys.size).to eq(1)
+        lock_handler.send(:unlock)
 
-        allow_any_instance_of(LockHandler).to receive(:logger).and_return(mock_logger)
-        expect(mock_logger).to receive(:info).with(logger_message)
+        expect(redis.keys).to eq([])
+      end
 
-        2.times do
-          lock_handler.validate_and_set_lock
-        end
+      it "failing to acquire lock doesn't affect the lock expiration time" do
+        redis.setex(lock_key_for_email_data, 60, "old lock data")
+        expect { lock_handler.with_lock_unless_done {} }.to raise_error(LockHandler::AlreadyLocked)
+
+        expect(redis.keys).to eq([lock_key_for_email_data])
+        expect(redis.ttl(lock_key_for_email_data)).to be <= 60
+        expect(redis.ttl(lock_key_for_email_data)).to be > 0
+      end
+
+      it "the lock has a TTL of two minutes" do
+        lock_handler.send(:lock!)
+
+        ttl = redis.ttl(lock_key_for_email_data)
+        expect(ttl).to be <= 120
+        expect(ttl).to be > 0
+      end
+
+      it "only calls the block for a given message the first time" do
+        expect { |b| lock_handler.with_lock_unless_done(&b) }.to yield_with_no_args
+        expect { |b| lock_handler.with_lock_unless_done(&b) }.not_to yield_control
+      end
+
+      it "will call the block again if it raised an exception" do
+        expect {
+          lock_handler.with_lock_unless_done { raise RuntimeError }
+        }.to raise_error(RuntimeError)
+
+        expect { |b| lock_handler.with_lock_unless_done(&b) }.to yield_control
+      end
+
+      it "sets only the done marker in redis" do
+        lock_handler.with_lock_unless_done {}
+
+        expect(redis.keys).to eq([done_marker_for_email_data])
+      end
+
+      it "the done marker has a TTL of 90 days" do
+        lock_handler.with_lock_unless_done {}
+
+        ttl = redis.ttl(done_marker_for_email_data)
+        expect(ttl).to be <= 86400 * 90
+        expect(ttl).to be > 86400 * 89
       end
     end
 
-    context "if formatted email has expired" do
-      it "checks that the  formatted email is within the valid expiry period" do
-        lock_handler = LockHandler.new(
+    context "if email is too old to handle" do
+      let(:lock_handler) {
+        LockHandler.new(
           expired_email_data["formatted"]["subject"],
           expired_email_data["public_updated_at"],
+          updated_now,
         )
+      }
 
-        expect(lock_handler).to receive(:within_valid_lock_period?).and_call_original
-        expect(lock_handler).to_not receive(:set_lock_with_expiry)
+      it "won't call the block" do
+        expect { |b| lock_handler.with_lock_unless_done(&b) }.not_to yield_control
+      end
 
-        lock_handler.validate_and_set_lock
+      it "won't set the done marker" do
+        lock_handler.with_lock_unless_done {}
+
+        expect(redis.keys).to eq([])
       end
     end
 
     it "uses configured redis namespace for lock keys" do
-      lock_handler.validate_and_set_lock
+      lock_handler.send(:lock!)
       namespaced_lookup = redis_connection.get("email-alert-service:#{lock_key_for_email_data}")
       non_namespaced_lookup = redis_connection.get(lock_key_for_email_data)
 

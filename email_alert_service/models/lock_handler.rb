@@ -1,63 +1,99 @@
+require 'securerandom'
+
 class LockHandler
 
-  SECONDS_IN_A_DAY = 86400.freeze
-  VALID_LOCK_PERIOD_IN_SECONDS = (90 * SECONDS_IN_A_DAY).freeze
+  class AlreadyLocked < Exception; end
 
-  def initialize(email_title, public_updated_at)
+  SECONDS_IN_A_DAY = 86400.freeze
+
+  # We remember sent messages for a long, but limited, period.  The period is
+  # limited because we're using redis to store these, which is an in-memory
+  # datastore so we can't let it grow indefinitely.
+  SECONDS_TO_REMEMBER_SENT_MESSAGES_FOR = (90 * SECONDS_IN_A_DAY).freeze
+
+  # The lock is held while a message is being processed, to ensure that no
+  # other worker tries to process the same message concurrently.  It will
+  # normally be removed by an explicit call; this timeout is just to ensure
+  # that an unclean shutdown of a worker doesn't result in total failure to
+  # deliver the message.
+  LOCK_PERIOD_IN_SECONDS = 120.freeze
+
+  def initialize(email_title, public_updated_at, now = Time.now)
     @email_title = email_title
     @public_updated_at = public_updated_at
+    @now = now
   end
 
-  def validate_and_set_lock
-    if within_valid_lock_period?
-      key_and_expiry_status = set_lock_with_expiry
-      log_key_status(key_and_expiry_status[0])
-      key_and_expiry_status[0]
+  def with_lock_unless_done
+    lock!
+    begin
+      if unhandled_message?
+        yield
+        mark_message_handled
+      end
+    ensure
+      unlock
     end
   end
 
 private
 
-  attr_reader :email_title, :public_updated_at
+  attr_reader :email_title, :public_updated_at, :now
 
-  def log_key_status(key_status)
-    unless key_status
-      logger.info "A lock for the message with title: #{email_title} and public_updated_at: #{public_updated_at} already exists"
+  def lock!
+    unless try_acquire_lock
+      raise AlreadyLocked
     end
   end
 
-  def set_lock_with_expiry
-    redis.multi do
-      redis.setnx lock_key_id, email_title
-      redis.expireat lock_key_id, lock_expiry_period
+  def try_acquire_lock
+    temp_key = "temp:#{SecureRandom::base64(18)}"
+    redis.multi {
+      redis.setex temp_key, LOCK_PERIOD_IN_SECONDS, email_title
+      redis.renamenx temp_key, lock_key
+      redis.del temp_key
+    }[1]
+  end
+
+  def unlock
+    redis.del lock_key
+  end
+
+  def unhandled_message?
+    if within_marker_period?
+      redis.get(done_marker_key).nil?
+    else
+      # If we get a message that is too old to have a marker stored, we don't
+      # want to send email for that message.
+      false
     end
   end
 
-  def lock_key_id
-    @_lock_key_id ||= Digest::SHA1.hexdigest(email_title + public_updated_at)
+  def mark_message_handled
+    redis.setex done_marker_key, SECONDS_TO_REMEMBER_SENT_MESSAGES_FOR, email_title
   end
 
-  def within_valid_lock_period?
-    seconds_since_public_updated_at < VALID_LOCK_PERIOD_IN_SECONDS
+  def lock_key
+    "lock:#{message_key}"
   end
 
-  def lock_expiry_period
-    public_updated_at_in_seconds + VALID_LOCK_PERIOD_IN_SECONDS
+  def done_marker_key
+    "done:#{message_key}"
   end
 
-  def public_updated_at_in_seconds
-    Time.parse(public_updated_at).to_i
+  def message_key
+    @_message_key ||= Digest::SHA1.hexdigest(email_title + public_updated_at)
+  end
+
+  def within_marker_period?
+    seconds_since_public_updated_at < SECONDS_TO_REMEMBER_SENT_MESSAGES_FOR 
   end
 
   def seconds_since_public_updated_at
-    Time.now.to_i - public_updated_at_in_seconds
+    now - Time.parse(public_updated_at)
   end
 
   def redis
     EmailAlertService.services(:redis)
-  end
-
-  def logger
-    EmailAlertService.config.logger
   end
 end
