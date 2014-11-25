@@ -16,10 +16,10 @@ class LockHandler
   # deliver the message.
   LOCK_PERIOD_IN_SECONDS = 120.freeze
 
-  def initialize(email_title, public_updated_at, now = nil)
+  def initialize(email_title, public_updated_at, now = Time.now)
     @email_title = email_title
     @public_updated_at = public_updated_at
-    @now = now || Time.now
+    @now = now
   end
 
   def run
