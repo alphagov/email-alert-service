@@ -22,7 +22,7 @@ class LockHandler
     @now = now
   end
 
-  def run
+  def with_lock_unless_done
     lock!
     begin
       if unhandled_message?
@@ -59,8 +59,8 @@ private
     if within_marker_period?
       redis.get(done_marker_key).nil?
     else
-      # Assume all messages are handled if they're too old for us to have set a
-      # marker for them.
+      # If we get a message that is too old to have a marker stored, we don't
+      # want to send email for that message.
       false
     end
   end
@@ -70,11 +70,11 @@ private
   end
 
   def lock_key
-    "L#{message_key}"
+    "lock:#{message_key}"
   end
 
   def done_marker_key
-    "D#{message_key}"
+    "done:#{message_key}"
   end
 
   def message_key

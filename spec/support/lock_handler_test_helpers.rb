@@ -30,10 +30,10 @@ module LockHandlerTestHelpers
   end
 
   def lock_key_for_email_data
-    "L#{message_key_for_email_data}"
+    "lock:#{message_key_for_email_data}"
   end
 
   def done_marker_for_email_data
-    "D#{message_key_for_email_data}"
+    "done:#{message_key_for_email_data}"
   end
 end

@@ -18,28 +18,28 @@ RSpec.describe LockHandler do
     redis.flushdb
   end
 
-  describe "#run" do
+  describe "#with_lock_unless_done" do
     context "if email is within valid period" do
       it "obtains and releases lock" do
         expect(lock_handler).to receive(:lock!).and_call_original
         expect(lock_handler).to receive(:unlock).and_call_original
 
-        lock_handler.run {}
+        lock_handler.with_lock_unless_done {}
       end
 
       it "raises an exception and remains locked if already locked" do
         lock_handler.send(:lock!)
 
-        expect { lock_handler.run {} }.to raise_error(LockHandler::AlreadyLocked)
-        expect { lock_handler.run {} }.to raise_error(LockHandler::AlreadyLocked)
+        expect { lock_handler.with_lock_unless_done {} }.to raise_error(LockHandler::AlreadyLocked)
+        expect { lock_handler.with_lock_unless_done {} }.to raise_error(LockHandler::AlreadyLocked)
       end
 
       it "unlock removes the lock" do
         lock_handler.send(:lock!)
-        expect { lock_handler.run {} }.to raise_error(LockHandler::AlreadyLocked)
+        expect { lock_handler.with_lock_unless_done {} }.to raise_error(LockHandler::AlreadyLocked)
 
         lock_handler.send(:unlock)
-        lock_handler.run {}
+        lock_handler.with_lock_unless_done {}
       end
 
       it "the lock has a TTL of two minutes" do
@@ -51,26 +51,26 @@ RSpec.describe LockHandler do
       end
 
       it "only calls the block for a given message the first time" do
-        expect { |b| lock_handler.run(&b) }.to yield_with_no_args
-        expect { |b| lock_handler.run(&b) }.not_to yield_control
+        expect { |b| lock_handler.with_lock_unless_done(&b) }.to yield_with_no_args
+        expect { |b| lock_handler.with_lock_unless_done(&b) }.not_to yield_control
       end
 
       it "will call the block again if it raised an exception" do
         expect {
-          lock_handler.run { raise RuntimeError }
+          lock_handler.with_lock_unless_done { raise RuntimeError }
         }.to raise_error(RuntimeError)
 
-        expect { |b| lock_handler.run(&b) }.to yield_control
+        expect { |b| lock_handler.with_lock_unless_done(&b) }.to yield_control
       end
 
       it "sets only the done marker in redis" do
-        lock_handler.run {}
+        lock_handler.with_lock_unless_done {}
 
         expect(redis.keys).to eq([done_marker_for_email_data])
       end
 
       it "the done marker has a TTL of 90 days" do
-        lock_handler.run {}
+        lock_handler.with_lock_unless_done {}
 
         ttl = redis.ttl(done_marker_for_email_data)
         expect(ttl).to be <= 86400 * 90
@@ -88,11 +88,11 @@ RSpec.describe LockHandler do
       }
 
       it "won't call the block" do
-        expect { |b| lock_handler.run(&b) }.not_to yield_control
+        expect { |b| lock_handler.with_lock_unless_done(&b) }.not_to yield_control
       end
 
       it "won't set the done marker" do
-        lock_handler.run {}
+        lock_handler.with_lock_unless_done {}
 
         expect(redis.keys).to eq([])
       end

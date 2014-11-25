@@ -10,7 +10,7 @@ class EmailAlert
   def trigger
     logger.info "Received major change notification for #{document["title"]}, with topics #{document["details"]["tags"]["topics"]}"
 
-    lock_handler.run do
+    lock_handler.with_lock_unless_done do
       email_api_client.send_alert(format_for_email_api)
     end
   end
