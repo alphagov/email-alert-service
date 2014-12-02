@@ -12,7 +12,14 @@ class MessageProcessor
 
     unless message.heartbeat?
       document = message.validate_document
-      trigger_email_alert(document) if tagged_to_topics?(document)
+      if tagged_to_topics?(document)
+        if is_english?(document)
+          @logger.info "triggering email alert for document #{document["title"]}"
+          trigger_email_alert(document)
+        else
+          @logger.info "not triggering email alert for non-english document #{document["title"]}: locale #{document["locale"]}"
+        end
+      end
     end
 
     acknowledge(message)
@@ -36,6 +43,10 @@ private
     else
       false
     end
+  end
+
+  def is_english?(document)
+    document.fetch("locale", "en") == "en"
   end
 
   def acknowledge(message)
