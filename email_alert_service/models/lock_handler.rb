@@ -1,4 +1,5 @@
 require 'securerandom'
+require 'models/message_identifier'
 
 class LockHandler
 
@@ -82,7 +83,7 @@ private
   end
 
   def message_key
-    @_message_key ||= Digest::SHA1.hexdigest(email_title + public_updated_at)
+    @_message_key ||= MessageIdentifier.new(email_title, public_updated_at).create
   end
 
   def within_marker_period?

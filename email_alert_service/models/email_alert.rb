@@ -36,7 +36,7 @@ private
   end
 
   def format_email_body
-    %Q( <div class="rss_item" style="margin-bottom: 2em;">
+    %Q( <div class="rss_item" data-message-id="#{document_identifier_hash}" style="margin-bottom: 2em;">
           <div class="rss_title" style="font-size: 120%; margin: 0 0 0.3em; padding: 0;">
             <a href="#{make_url_from_document_base_path}" style="font-weight: bold; ">#{document["title"]}</a>
           </div>
@@ -59,5 +59,9 @@ private
 
   def formatted_public_updated_at
     DateTime.parse(document["public_updated_at"]).strftime("%l:%M%P, %-d %B %Y")
+  end
+
+  def document_identifier_hash
+    MessageIdentifier.new(document["title"], document["public_updated_at"]).create
   end
 end

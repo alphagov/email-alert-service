@@ -25,8 +25,15 @@ module LockHandlerTestHelpers
     { "formatted" => { "subject" => "Example Alert" }, "public_updated_at" => updated_now.iso8601 }
   end
 
+  def identifier_hash_for(document)
+    Digest::SHA1.hexdigest(document["title"] + document["public_updated_at"])
+  end
+
   def message_key_for_email_data
-    Digest::SHA1.hexdigest(email_data["formatted"]["subject"] + email_data["public_updated_at"])
+    MessageIdentifier.new(
+      email_data["formatted"]["subject"],
+      email_data["public_updated_at"]
+    ).create
   end
 
   def lock_key_for_email_data
