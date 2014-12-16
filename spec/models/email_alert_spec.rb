@@ -57,7 +57,7 @@ RSpec.describe EmailAlert do
 
       formatted_message = {
         "subject" => document["title"],
-        "body" => %Q( <div class="rss_item" style="margin-bottom: 2em;">
+        "body" => %Q( <div class="rss_item" data-message-id="#{identifier_hash_for(document)}" style="margin-bottom: 2em;">
           <div class="rss_title" style="font-size: 120%; margin: 0 0 0.3em; padding: 0;">
             <a href="#{url_from_document_base_path}" style="font-weight: bold; ">#{document["title"]}</a>
           </div>
