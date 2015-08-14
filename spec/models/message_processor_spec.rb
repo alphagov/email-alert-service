@@ -107,6 +107,21 @@ RSpec.describe MessageProcessor do
       }'
     }
 
+  let(:tagged_untitled_document) {
+    '{
+        "base_path": "path/to-doc",
+        "locale": "en",
+        "public_updated_at": "2014-10-06T13:39:19.000+00:00",
+        "details": {
+          "change_note": "this doc has been changed",
+          "tags": {
+            "browse_pages": [],
+            "topics": ["example topic one", "example topic two"]
+          }
+        }
+      }'
+    }
+
 
   describe "#process(document_json, delivery_info)" do
     it "acknowledges and triggers the message if the document has topics" do
@@ -188,6 +203,16 @@ RSpec.describe MessageProcessor do
     it "ignores the message if the document has topics but is not english" do
       expect(processor).not_to receive(:trigger_email_alert)
       processor.process(tagged_french_document, properties, delivery_info)
+
+      expect(channel).to have_received(:acknowledge).with(
+        delivery_tag,
+        false
+      )
+    end
+
+    it "ignores the message if the document has topics but no title" do
+      expect(processor).not_to receive(:trigger_email_alert)
+      processor.process(tagged_untitled_document, properties, delivery_info)
 
       expect(channel).to have_received(:acknowledge).with(
         delivery_tag,

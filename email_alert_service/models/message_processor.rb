@@ -14,8 +14,12 @@ class MessageProcessor
       document = message.validate_document
       if tagged_to_topics?(document)
         if is_english?(document)
-          @logger.info "triggering email alert for document #{document["title"]}"
-          trigger_email_alert(document)
+          if has_title?(document)
+            @logger.info "triggering email alert for document #{document["title"]}"
+            trigger_email_alert(document)
+          else
+            @logger.info "not triggering email alert for document with no title: #{document}"
+          end
         else
           @logger.info "not triggering email alert for non-english document #{document["title"]}: locale #{document["locale"]}"
         end
@@ -47,6 +51,10 @@ private
 
   def is_english?(document)
     document.fetch("locale", "en") == "en"
+  end
+
+  def has_title?(document)
+    document.fetch("title", "") != ""
   end
 
   def acknowledge(message)
