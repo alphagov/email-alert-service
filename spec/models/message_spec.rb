@@ -5,7 +5,7 @@ RSpec.describe Message do
   let(:document_json) { double(:document_json) }
   let(:properties) { double(:properties, content_type: nil) }
 
-  describe "#validate_document" do
+  describe "#validate!" do
     it "returns a parsed, valid document" do
       document_json =
         '{
@@ -22,10 +22,21 @@ RSpec.describe Message do
             }
          }'
 
-      valid_json = JSON.parse(document_json)
+      valid_data = JSON.parse(document_json)
       message = Message.new(document_json, properties, delivery_info)
 
-      expect(message.validate_document).to eq valid_json
+      expect(message.validate!).to eq valid_data
+    end
+
+    it "raises given an invalid document" do
+      document_json =
+        '{ "hello": "something else" }'
+
+      message = Message.new(document_json, properties, delivery_info)
+
+      expect {
+        message.validate!
+      }.to raise_error(InvalidDocumentError)
     end
   end
 

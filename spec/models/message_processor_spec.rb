@@ -122,6 +122,18 @@ RSpec.describe MessageProcessor do
       }'
     }
 
+  let(:redirect_item) {
+    '{
+      "base_path": "/foo",
+      "format": "redirect",
+      "publishing_app": "something",
+      "update_type": "major",
+      "redirects": [
+        {"path": "/foo", "destination": "/topic/foo", "type": "exact"}
+      ]
+    }'
+  }
+
 
   describe "#process(document_json, delivery_info)" do
     it "acknowledges and triggers the message if the document has topics" do
@@ -213,6 +225,16 @@ RSpec.describe MessageProcessor do
     it "ignores the message if the document has topics but no title" do
       expect(processor).not_to receive(:trigger_email_alert)
       processor.process(tagged_untitled_document, properties, delivery_info)
+
+      expect(channel).to have_received(:acknowledge).with(
+        delivery_tag,
+        false
+      )
+    end
+
+    it "ignores items without a public_updated_at" do
+      expect(processor).not_to receive(:trigger_email_alert)
+      processor.process(redirect_item, properties, delivery_info)
 
       expect(channel).to have_received(:acknowledge).with(
         delivery_tag,
