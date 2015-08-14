@@ -10,21 +10,7 @@ class MessageProcessor
   def process(document_json, properties, delivery_info)
     message = Message.new(document_json, properties, delivery_info)
 
-    unless message.heartbeat?
-      document = message.validate_document
-      if tagged_to_topics?(document)
-        if is_english?(document)
-          if has_title?(document)
-            @logger.info "triggering email alert for document #{document["title"]}"
-            trigger_email_alert(document)
-          else
-            @logger.info "not triggering email alert for document with no title: #{document}"
-          end
-        else
-          @logger.info "not triggering email alert for non-english document #{document["title"]}: locale #{document["locale"]}"
-        end
-      end
-    end
+    process_message(message)
 
     acknowledge(message)
   rescue InvalidDocumentError, MalformedDocumentError => e
@@ -33,6 +19,29 @@ class MessageProcessor
   end
 
 private
+
+  def process_message(message)
+    return if message.heartbeat?
+
+    document = message.parsed_document
+
+    unless has_title?(document)
+      @logger.info "not triggering email alert for document with no title: #{document}"
+      return
+    end
+
+    unless is_english?(document)
+      @logger.info "not triggering email alert for non-english document #{document["title"]}: locale #{document["locale"]}"
+      return
+    end
+
+    message.validate!
+
+    if tagged_to_topics?(document)
+      @logger.info "triggering email alert for document #{document["title"]}"
+      trigger_email_alert(document)
+    end
+  end
 
   attr_reader :channel
 

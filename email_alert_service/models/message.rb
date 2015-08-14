@@ -8,10 +8,15 @@ class Message
     @document_json = document_json
   end
 
-  def validate_document
-    valid_document = validate(parsed_document)
-    if valid_document
-      valid_document
+  def parsed_document
+    @_parsed_document ||= JSON.parse(@document_json)
+  rescue JSON::ParserError
+    raise MalformedDocumentError.new(@document_json)
+  end
+
+  def validate!
+    if DocumentValidator.new(parsed_document).valid?
+      parsed_document
     else
       raise InvalidDocumentError.new(parsed_document)
     end
@@ -23,20 +28,6 @@ class Message
 
   def heartbeat?
     @properties.content_type == "application/x-heartbeat"
-  end
-
-private
-
-  def validate(document)
-    if DocumentValidator.new(document).valid?
-      document
-    end
-  end
-
-  def parsed_document
-    JSON.parse(@document_json)
-  rescue JSON::ParserError
-    raise MalformedDocumentError.new(@document_json)
   end
 end
 
