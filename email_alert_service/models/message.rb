@@ -13,10 +13,8 @@ class Message
     if valid_document
       valid_document
     else
-      raise MalformedDocumentError.new(parsed_document)
+      raise InvalidDocumentError.new(parsed_document)
     end
-  rescue JSON::ParserError
-    raise MalformedDocumentError.new(@document_json)
   end
 
   def delivery_tag
@@ -37,7 +35,10 @@ private
 
   def parsed_document
     JSON.parse(@document_json)
+  rescue JSON::ParserError
+    raise MalformedDocumentError.new(@document_json)
   end
 end
 
-class MalformedDocumentError < Exception; end
+class MalformedDocumentError < StandardError; end
+class InvalidDocumentError < StandardError; end

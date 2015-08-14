@@ -27,7 +27,7 @@ class MessageProcessor
     end
 
     acknowledge(message)
-  rescue MalformedDocumentError => e
+  rescue InvalidDocumentError, MalformedDocumentError => e
     Airbrake.notify_or_ignore(e)
     discard(delivery_info.delivery_tag)
   end
