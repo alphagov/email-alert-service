@@ -1,5 +1,5 @@
 class DocumentValidator
-  REQUIRED_KEYS = %w(base_path title public_updated_at details).freeze
+  REQUIRED_KEYS = %w(base_path title public_updated_at).freeze
 
   def initialize(document)
     @document = document
