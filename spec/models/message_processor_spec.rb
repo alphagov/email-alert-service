@@ -57,6 +57,15 @@ RSpec.describe MessageProcessor do
      }'
   }
 
+  let(:document_with_no_details_hash) {
+    '{
+        "base_path": "path/to-doc",
+        "title": "Example title",
+        "description": "example description",
+        "public_updated_at": "2014-10-06T13:39:19.000+00:00"
+     }'
+  }
+
   let(:tagged_document) {
     '{
         "base_path": "path/to-doc",
@@ -169,6 +178,16 @@ RSpec.describe MessageProcessor do
     it "acknowledges but doesnt trigger the message if the document does not have a topics key" do
       expect(processor).to_not receive(:trigger_email_alert)
       processor.process(document_with_no_topics_key, properties, delivery_info)
+
+      expect(channel).to have_received(:acknowledge).with(
+        delivery_tag,
+        false
+      )
+    end
+
+    it "acknowledges but doesnt trigger the message if the document does not have a details hash" do
+      expect(processor).to_not receive(:trigger_email_alert)
+      processor.process(document_with_no_details_hash, properties, delivery_info)
 
       expect(channel).to have_received(:acknowledge).with(
         delivery_tag,
