@@ -14,4 +14,4 @@ group :test do
   gem 'webmock', '1.19.0'
 end
 
-gem "byebug", group: [:test, :development]
+gem "pry-byebug", group: [:test, :development]

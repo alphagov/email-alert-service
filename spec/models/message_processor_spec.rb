@@ -6,10 +6,7 @@ RSpec.describe MessageProcessor do
   let(:delivery_info) { double(:delivery_info, delivery_tag: delivery_tag) }
   let(:properties) { double(:properties, content_type: nil) }
   let(:channel) {
-    double(:channel,
-      acknowledge: nil,
-      reject: nil
-    )
+    double(:channel, acknowledge: nil, reject: nil)
   }
   let(:logger) { double(:logger, info: nil) }
   let(:processor) { MessageProcessor.new(channel, logger) }
@@ -66,7 +63,7 @@ RSpec.describe MessageProcessor do
      }'
   }
 
-  let(:tagged_document) {
+  let(:document_tagged_with_topic) {
     '{
         "base_path": "path/to-doc",
         "title": "Example title",
@@ -81,6 +78,24 @@ RSpec.describe MessageProcessor do
         }
       }'
     }
+
+  let(:document_tagged_with_policy) {
+    <<-DOC
+    {
+      "base_path": "path/to-doc",
+      "title": "Example title",
+      "description": "example description",
+      "public_updated_at": "2014-10-06T13:39:19.000+00:00",
+      "details": {
+        "change_note": "this doc has been changed",
+        "tags": {
+          "browse_pages": [],
+          "policy": ["some-policy-slug"]
+        }
+      }
+    }
+    DOC
+  }
 
   let(:tagged_english_document) {
     '{
@@ -147,7 +162,17 @@ RSpec.describe MessageProcessor do
   describe "#process(document_json, delivery_info)" do
     it "acknowledges and triggers the message if the document has topics" do
       expect(processor).to receive(:trigger_email_alert)
-      processor.process(tagged_document, properties, delivery_info)
+      processor.process(document_tagged_with_topic, properties, delivery_info)
+
+      expect(channel).to have_received(:acknowledge).with(
+        delivery_tag,
+        false
+      )
+    end
+
+    it "acknowledges and triggers the message if the document has a policy" do
+      expect(processor).to receive(:trigger_email_alert)
+      processor.process(document_tagged_with_policy, properties, delivery_info)
 
       expect(channel).to have_received(:acknowledge).with(
         delivery_tag,
@@ -215,7 +240,7 @@ RSpec.describe MessageProcessor do
 
       # Heartbeats wouldn't be tagged but I want to prove they're ignored
       # based on content type.
-      processor.process(tagged_document, properties, delivery_info)
+      processor.process(document_tagged_with_topic, properties, delivery_info)
 
 
       expect(channel).to have_received(:acknowledge).with(delivery_tag, false)

@@ -37,7 +37,7 @@ private
 
     message.validate!
 
-    if tagged_to_topics?(document)
+    if email_alerts_supported?(document)
       @logger.info "triggering email alert for document #{document["title"]}"
       trigger_email_alert(document)
     end
@@ -49,12 +49,12 @@ private
     EmailAlert.new(document, @logger).trigger
   end
 
-  def tagged_to_topics?(document)
-    details = document.fetch("details", {})
-    if details.has_key?("tags") && details.fetch("tags").has_key?("topics")
-      details.fetch("tags").fetch("topics").any?
-    else
-      false
+  def email_alerts_supported?(document)
+    document_tags = document.fetch("details", {}).fetch("tags", {})
+    supported_tag_names = ["topics", "policy"]
+
+    supported_tag_names.any? do |tag_name|
+      !(document_tags[tag_name].nil? || document_tags[tag_name].empty?)
     end
   end
 
