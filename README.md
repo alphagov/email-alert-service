@@ -16,11 +16,11 @@ topics, it builds an email message, and passes it to email-alert-api.
 - rabbitMQ
 
 *(Installed by puppet on the VM for a local version the following applies)*
- * install rabbitMQ with brew install rabbitmq (or similar)
+ * install rabbitMQ with `brew install rabbitmq` (or similar)
  * visit http://localhost:15672/cli/ and follow the instructions to install the admin CLI
-  * rabbitmqadmin declare user name=root password=CHANGEME tags=administrator
-  * rabbitmqadmin declare permission vhost="/" user=root configure='.*' write='.*' read='.*'
-  * rabbitmqadmin declare exchange name=published_documents type=topic durable=true
+  * `rabbitmqadmin declare user name=root password=CHANGEME tags=administrator`
+  * `rabbitmqadmin declare permission vhost="/" user=root configure='.*' write='.*' read='.*'`
+  * `rabbitmqadmin declare exchange name=published_documents type=topic durable=true`
 
 ### Running the application
 
