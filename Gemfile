@@ -1,5 +1,6 @@
 source "http://rubygems.org"
 
+gem "rake", "~> 10.4"
 gem "airbrake", "4.1.0"
 gem 'bunny', "~> 1.5.0"
 gem "gds-api-adapters", "20.1.1"
