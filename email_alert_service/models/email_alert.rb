@@ -1,10 +1,12 @@
 require "gds_api/email_alert_api"
 require "models/lock_handler"
+require  "gds_api/content_store"
 
 class EmailAlert
   def initialize(document, logger)
     @document = document
     @logger = logger
+    @content_store = GdsApi::ContentStore.new(Plek.new.find('content-store'))
   end
 
   def trigger
@@ -17,10 +19,21 @@ class EmailAlert
 
   def format_for_email_api
     {
+    api_params = {
       "subject" => document["title"],
       "body" => format_email_body,
       "tags" => strip_empty_arrays(document["details"]["tags"]),
     }
+
+    # FIXME: this conditional check on links should be considered temporary.
+    # Eventually we want all email alerts to be triggered via content IDs received
+    # in the expected form below. The 'tags' hash will then be deprecated.
+    # Rework this method when that happens.
+    if document["links"] && document["links"]["parent"]
+      api_params.merge!({"links" => document["links"]})
+    end
+
+    api_params
   end
 
 private
@@ -48,7 +61,9 @@ private
   end
 
   def make_url_from_document_base_path
-    Plek.new.website_root + document["base_path"]
+    base_path = document["base_path"]
+    content_item = @content_store.content_item(base_path)
+    link = content_item.links.parent[0].web_url
   end
 
   def strip_empty_arrays(tag_hash)
