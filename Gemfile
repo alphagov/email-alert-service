@@ -2,11 +2,11 @@ source "http://rubygems.org"
 
 gem "rake", "~> 10.4"
 gem "airbrake", "4.1.0"
-gem 'bunny', "~> 1.5.0"
 gem "gds-api-adapters", "20.1.1"
 gem "plek", "1.9.0"
 gem "redis", "3.1.0"
 gem "redis-namespace", "1.5.1"
+gem "govuk_message_queue_consumer", "~> 2.0.0"
 
 group :test do
   gem 'rspec-core', '3.1.4'

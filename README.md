@@ -24,8 +24,11 @@ topics, it builds an email message, and passes it to email-alert-api.
 
 ### Running the application
 
-The main daemon is run via `./bin/email_alert_service`.
-It connects to RabbitMQ, reading configs from `./config`.
+The main daemon is run with:
+
+```
+govuk_setenv email-alert-service bundle exec rake message_queue:consumer
+```
 
 ### Running the test suite
 

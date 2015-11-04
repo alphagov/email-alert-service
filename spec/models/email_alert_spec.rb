@@ -11,7 +11,7 @@ RSpec.describe EmailAlert do
     }
   }
 
-  let(:logger) { double(:logger, info: nil) }
+  let(:logger) { EmailAlertService.config.logger }
   let(:email_alert) { EmailAlert.new(document, logger) }
 
   describe "#trigger" do
