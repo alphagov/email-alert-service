@@ -48,7 +48,10 @@ private
   end
 
   def make_url_from_document_base_path
-    Plek.new.website_root + document["base_path"]
+    # TODO get the url from the parent url in the links value in the document once this feature has been implemented.  
+    # In the meantime, just remove email-signup from the end of the url 
+    url_path = document["base_path"].sub(/\/email-signup$/, '')
+    Plek.new.website_root + url_path
   end
 
   def strip_empty_arrays(tag_hash)

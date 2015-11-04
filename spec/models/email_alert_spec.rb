@@ -39,7 +39,7 @@ RSpec.describe EmailAlert do
   describe "#format_for_email_api" do
     it "formats the message to send to the email alert api" do
       document = {
-        "base_path" => "/foo",
+        "base_path" => "an-important-policy/email-signup",
         "title" => "Example title",
         "description" => "example description",
         "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
@@ -53,7 +53,7 @@ RSpec.describe EmailAlert do
         }
       }
 
-      url_from_document_base_path = Plek.new.website_root + document["base_path"]
+      url_from_document_base_path = Plek.new.website_root + "an-important-policy"
 
       formatted_message = {
         "subject" => document["title"],
