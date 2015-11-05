@@ -14,13 +14,6 @@ module EmailAlertService
       @app_root ||= Pathname.new(File.expand_path(File.join(File.dirname(__FILE__), "..")))
     end
 
-    def rabbitmq
-      all_configs = YAML.load(File.open(app_root+"config/rabbitmq.yml"))
-      environment_config = all_configs.fetch(environment)
-
-      @rabbitmq ||= symbolize_keys(environment_config).freeze
-    end
-
     def redis_config
       symbolize_keys(YAML.load(File.open(app_root+"config/redis.yml")))
     end

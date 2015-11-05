@@ -9,6 +9,11 @@ class DocumentValidator
     has_all_required_keys?
   end
 
+  def validate!
+    return if valid?
+    raise InvalidDocumentError.new(self)
+  end
+
 private
 
   attr_reader :document
@@ -17,3 +22,5 @@ private
     REQUIRED_KEYS.all? { |key| document.has_key?(key) }
   end
 end
+
+class InvalidDocumentError < StandardError; end

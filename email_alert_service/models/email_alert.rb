@@ -1,7 +1,10 @@
 require "gds_api/email_alert_api"
-require "models/lock_handler"
 
 class EmailAlert
+  def self.trigger(document)
+    new(document, EmailAlertService.config.logger).trigger
+  end
+
   def initialize(document, logger)
     @document = document
     @logger = logger

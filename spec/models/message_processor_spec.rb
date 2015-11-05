@@ -1,289 +1,126 @@
 require "spec_helper"
 require "models/message_processor"
+require "govuk_message_queue_consumer/test_helpers"
 
 RSpec.describe MessageProcessor do
-  let(:delivery_tag) { double(:delivery_tag) }
-  let(:delivery_info) { double(:delivery_info, delivery_tag: delivery_tag) }
-  let(:properties) { double(:properties, content_type: nil) }
-  let(:channel) {
-    double(:channel, acknowledge: nil, reject: nil)
-  }
-  let(:logger) { double(:logger, info: nil) }
-  let(:processor) { MessageProcessor.new(channel, logger) }
+  before { allow(EmailAlert).to receive(:trigger) }
 
-  let(:not_tagged_document) {
-    '{
-        "base_path": "path/to-doc",
-        "title": "Example title",
-        "description": "example description",
-        "public_updated_at": "2014-10-06T13:39:19.000+00:00",
-        "details": {
-          "change_note": "this doc has been changed",
-          "tags": {
-            "browse_pages": [],
-            "topics": []
+  it_behaves_like "a message queue processor"
+
+  describe "#process" do
+    it "triggers an email if the document has topics" do
+      message = GovukMessageQueueConsumer::MockMessage.new(
+        {
+          "base_path" => "/foo/bar",
+          "title" => "A Title",
+          "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
+          "locale" => "en",
+          "details" => {
+            "tags" => {
+              "topics" => ["mah-topic"]
+            }
           }
-        }
-     }'
-  }
+        },
+        {},
+        { routing_key: "topic.major" }
+      )
 
-  let(:document_with_no_tags_key) {
-    '{
-        "base_path": "path/to-doc",
-        "title": "Example title",
-        "description": "example description",
-        "public_updated_at": "2014-10-06T13:39:19.000+00:00",
-        "details": {
-          "change_note": "this doc has been changed"
-        }
-     }'
-  }
+      MessageProcessor.new.process(message)
 
-  let(:document_with_no_topics_key) {
-    '{
-        "base_path": "path/to-doc",
-        "title": "Example title",
-        "description": "example description",
-        "public_updated_at": "2014-10-06T13:39:19.000+00:00",
-        "details": {
-          "change_note": "this doc has been changed",
-          "tags": {
-            "browse_pages": []
+      expect(message).to be_acked
+      expect(EmailAlert).to have_received(:trigger)
+    end
+
+    it "triggers an email if the document has policy" do
+      message = GovukMessageQueueConsumer::MockMessage.new(
+        {
+          "base_path" => "/foo/bar",
+          "title" => "A Title",
+          "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
+          "locale" => "en",
+          "details" => {
+            "tags" => {
+              "policy" => ["mah-policy"]
+            }
           }
-        }
-     }'
-  }
+        },
+        {},
+        { routing_key: "policy.major" }
+      )
 
-  let(:document_with_no_details_hash) {
-    '{
-        "base_path": "path/to-doc",
-        "title": "Example title",
-        "description": "example description",
-        "public_updated_at": "2014-10-06T13:39:19.000+00:00"
-     }'
-  }
+      MessageProcessor.new.process(message)
 
-  let(:document_tagged_with_topic) {
-    '{
-        "base_path": "path/to-doc",
-        "title": "Example title",
-        "description": "example description",
-        "public_updated_at": "2014-10-06T13:39:19.000+00:00",
-        "details": {
-          "change_note": "this doc has been changed",
-          "tags": {
-            "browse_pages": [],
-            "topics": ["example topic one", "example topic two"]
+      expect(message).to be_acked
+      expect(EmailAlert).to have_received(:trigger)
+    end
+
+    it "does not trigger an email without a title" do
+      message = GovukMessageQueueConsumer::MockMessage.new(
+        {
+          "base_path" => "/foo/bar",
+          "title" => "",
+          "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
+          "locale" => "en",
+          "details" => {
+            "tags" => {
+              "policy" => ["mah-policy"]
+            }
           }
-        }
-      }'
-    }
+        },
+        {},
+        { routing_key: "policy.major" }
+      )
 
-  let(:document_tagged_with_policy) {
-    <<-DOC
-    {
-      "base_path": "path/to-doc",
-      "title": "Example title",
-      "description": "example description",
-      "public_updated_at": "2014-10-06T13:39:19.000+00:00",
-      "details": {
-        "change_note": "this doc has been changed",
-        "tags": {
-          "browse_pages": [],
-          "policy": ["some-policy-slug"]
-        }
-      }
-    }
-    DOC
-  }
+      MessageProcessor.new.process(message)
 
-  let(:tagged_english_document) {
-    '{
-        "base_path": "path/to-doc",
-        "title": "Example title",
-        "description": "example description",
-        "locale": "en",
-        "public_updated_at": "2014-10-06T13:39:19.000+00:00",
-        "details": {
-          "change_note": "this doc has been changed",
-          "tags": {
-            "browse_pages": [],
-            "topics": ["example topic one", "example topic two"]
+      expect(message).to be_acked
+      expect(EmailAlert).not_to have_received(:trigger)
+    end
+
+    it "does not trigger an email not in english" do
+      message = GovukMessageQueueConsumer::MockMessage.new(
+        {
+          "base_path" => "/foo/bar",
+          "title" => "",
+          "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
+          "locale" => "de",
+          "details" => {
+            "tags" => {
+              "policy" => ["mah-policy"]
+            }
           }
-        }
-      }'
-    }
-
-  let(:tagged_french_document) {
-    '{
-        "base_path": "path/to-doc",
-        "title": "Le title",
-        "description": "pour example",
-        "locale": "fr",
-        "public_updated_at": "2014-10-06T13:39:19.000+00:00",
-        "details": {
-          "change_note": "this doc has been changed, un petit peu",
-          "tags": {
-            "browse_pages": [],
-            "topics": ["example topic one", "example topic two"]
-          }
-        }
-      }'
-    }
-
-  let(:tagged_untitled_document) {
-    '{
-        "base_path": "path/to-doc",
-        "locale": "en",
-        "public_updated_at": "2014-10-06T13:39:19.000+00:00",
-        "details": {
-          "change_note": "this doc has been changed",
-          "tags": {
-            "browse_pages": [],
-            "topics": ["example topic one", "example topic two"]
-          }
-        }
-      }'
-    }
-
-  let(:redirect_item) {
-    '{
-      "base_path": "/foo",
-      "format": "redirect",
-      "publishing_app": "something",
-      "update_type": "major",
-      "redirects": [
-        {"path": "/foo", "destination": "/topic/foo", "type": "exact"}
-      ]
-    }'
-  }
-
-
-  describe "#process(document_json, delivery_info)" do
-    it "acknowledges and triggers the message if the document has topics" do
-      expect(processor).to receive(:trigger_email_alert)
-      processor.process(document_tagged_with_topic, properties, delivery_info)
-
-      expect(channel).to have_received(:acknowledge).with(
-        delivery_tag,
-        false
+        },
+        {},
+        { routing_key: "policy.major" }
       )
-    end
 
-    it "acknowledges and triggers the message if the document has a policy" do
-      expect(processor).to receive(:trigger_email_alert)
-      processor.process(document_tagged_with_policy, properties, delivery_info)
+      MessageProcessor.new.process(message)
 
-      expect(channel).to have_received(:acknowledge).with(
-        delivery_tag,
-        false
-      )
-    end
-
-    it "acknowledges but doesnt trigger the message if the document is not tagged to a topic" do
-      expect(processor).to_not receive(:trigger_email_alert)
-      processor.process(not_tagged_document, properties, delivery_info)
-
-      expect(channel).to have_received(:acknowledge).with(
-        delivery_tag,
-        false
-      )
-    end
-
-    it "acknowledges but doesnt trigger the message if the document does not have a tags key" do
-      expect(processor).to_not receive(:trigger_email_alert)
-      processor.process(document_with_no_tags_key, properties, delivery_info)
-
-      expect(channel).to have_received(:acknowledge).with(
-        delivery_tag,
-        false
-      )
-    end
-
-    it "acknowledges but doesnt trigger the message if the document does not have a topics key" do
-      expect(processor).to_not receive(:trigger_email_alert)
-      processor.process(document_with_no_topics_key, properties, delivery_info)
-
-      expect(channel).to have_received(:acknowledge).with(
-        delivery_tag,
-        false
-      )
-    end
-
-    it "acknowledges but doesnt trigger the message if the document does not have a details hash" do
-      expect(processor).to_not receive(:trigger_email_alert)
-      processor.process(document_with_no_details_hash, properties, delivery_info)
-
-      expect(channel).to have_received(:acknowledge).with(
-        delivery_tag,
-        false
-      )
-    end
-
-    it "discards the message if there's a JSON parser error" do
-      processor.process('{]$£$*()}', properties, delivery_info)
-
-      expect(channel).to have_received(:reject).with(
-        delivery_tag,
-        false
-      )
-    end
-
-    it "notifies errbit if there's a JSON parser error" do
-      expect(Airbrake).to receive(:notify_or_ignore).with(MalformedDocumentError)
-      processor.process('{]$£$*()}', properties, delivery_info)
-    end
-
-    it "ignores heartbeat messages" do
-      properties = double(:properties, content_type: "application/x-heartbeat")
-      expect(processor).not_to receive(:trigger_email_alert)
-
-      # Heartbeats wouldn't be tagged but I want to prove they're ignored
-      # based on content type.
-      processor.process(document_tagged_with_topic, properties, delivery_info)
-
-
-      expect(channel).to have_received(:acknowledge).with(delivery_tag, false)
-    end
-
-    it "acknowledges and triggers the message if the document has topics and is english" do
-      expect(processor).to receive(:trigger_email_alert)
-      processor.process(tagged_english_document, properties, delivery_info)
-
-      expect(channel).to have_received(:acknowledge).with(
-        delivery_tag,
-        false
-      )
-    end
-
-    it "ignores the message if the document has topics but is not english" do
-      expect(processor).not_to receive(:trigger_email_alert)
-      processor.process(tagged_french_document, properties, delivery_info)
-
-      expect(channel).to have_received(:acknowledge).with(
-        delivery_tag,
-        false
-      )
-    end
-
-    it "ignores the message if the document has topics but no title" do
-      expect(processor).not_to receive(:trigger_email_alert)
-      processor.process(tagged_untitled_document, properties, delivery_info)
-
-      expect(channel).to have_received(:acknowledge).with(
-        delivery_tag,
-        false
-      )
+      expect(message).to be_acked
+      expect(EmailAlert).not_to have_received(:trigger)
     end
 
     it "ignores items without a public_updated_at" do
-      expect(processor).not_to receive(:trigger_email_alert)
-      processor.process(redirect_item, properties, delivery_info)
-
-      expect(channel).to have_received(:acknowledge).with(
-        delivery_tag,
-        false
+      message = GovukMessageQueueConsumer::MockMessage.new(
+        {
+          "base_path" => "/foo/bar",
+          "title" => "A Title",
+          "locale" => "en",
+          "details" => {
+            "tags" => {
+              "policy" => ["mah-policy"]
+            }
+          }
+        },
+        {},
+        { routing_key: "policy.major" }
       )
+
+      MessageProcessor.new.process(message)
+
+      expect(message).not_to be_acked
+      expect(message).to be_discarded
+      expect(EmailAlert).not_to have_received(:trigger)
     end
   end
 end

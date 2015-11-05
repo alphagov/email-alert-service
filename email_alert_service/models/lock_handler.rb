@@ -1,5 +1,4 @@
 require 'securerandom'
-require 'models/message_identifier'
 
 class LockHandler
 
@@ -87,7 +86,7 @@ private
   end
 
   def within_marker_period?
-    seconds_since_public_updated_at < SECONDS_TO_REMEMBER_SENT_MESSAGES_FOR 
+    seconds_since_public_updated_at < SECONDS_TO_REMEMBER_SENT_MESSAGES_FOR
   end
 
   def seconds_since_public_updated_at

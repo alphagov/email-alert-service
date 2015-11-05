@@ -1,76 +1,62 @@
-require "models/email_alert"
-require "models/message"
-
 class MessageProcessor
-  def initialize(channel, logger)
-    @channel = channel
-    @logger = logger
-  end
+  def process(message)
+    ensure_only_major_updates!(message)
+    content_item = message.payload
 
-  def process(document_json, properties, delivery_info)
-    message = Message.new(document_json, properties, delivery_info)
-
-    process_message(message)
-
-    acknowledge(message)
-  rescue InvalidDocumentError, MalformedDocumentError => e
+    DocumentValidator.new(content_item).validate!
+    process_message(content_item)
+    message.ack
+  rescue InvalidDocumentError => e
     Airbrake.notify_or_ignore(e)
-    discard(delivery_info.delivery_tag)
+    message.discard
   end
 
 private
 
-  def process_message(message)
-    return if message.heartbeat?
-
-    document = message.parsed_document
-
-    unless has_title?(document)
-      @logger.info "not triggering email alert for document with no title: #{document}"
+  def process_message(content_item)
+    unless has_title?(content_item)
+      logger.info "not triggering email alert for content_item with no title: #{content_item}"
       return
     end
 
-    unless is_english?(document)
-      @logger.info "not triggering email alert for non-english document #{document["title"]}: locale #{document["locale"]}"
+    unless is_english?(content_item)
+      logger.info "not triggering email alert for non-english content_item #{content_item["title"]}: locale #{content_item["locale"]}"
       return
     end
 
-    message.validate!
-
-    if email_alerts_supported?(document)
-      @logger.info "triggering email alert for document #{document["title"]}"
-      trigger_email_alert(document)
+    unless has_relevant_tags?(content_item)
+      logger.info "not triggering email alert for non-tagged content_item #{content_item["title"]}"
+      return
     end
+
+    logger.info "triggering email alert for content_item #{content_item["title"]}"
+    EmailAlert.trigger(content_item)
   end
 
-  attr_reader :channel
-
-  def trigger_email_alert(document)
-    EmailAlert.new(document, @logger).trigger
-  end
-
-  def email_alerts_supported?(document)
-    document_tags = document.fetch("details", {}).fetch("tags", {})
+  def has_relevant_tags?(content_item)
+    content_item_tags = content_item.fetch("details", {}).fetch("tags", {})
     supported_tag_names = ["topics", "policy"]
 
     supported_tag_names.any? do |tag_name|
-      !(document_tags[tag_name].nil? || document_tags[tag_name].empty?)
+      !(content_item_tags[tag_name].nil? || content_item_tags[tag_name].empty?)
     end
   end
 
-  def is_english?(document)
-    document.fetch("locale", "en") == "en"
+  def is_english?(content_item)
+    content_item.fetch("locale", "en") == "en"
   end
 
-  def has_title?(document)
-    document.fetch("title", "") != ""
+  def has_title?(content_item)
+    content_item.fetch("title", "") != ""
   end
 
-  def acknowledge(message)
-    channel.acknowledge(message.delivery_tag, false)
+  def logger
+    EmailAlertService.config.logger
   end
 
-  def discard(delivery_tag)
-    channel.reject(delivery_tag, false)
+  def ensure_only_major_updates!(message)
+    update_type = message.delivery_info.routing_key.split('.').last
+    return if update_type == 'major'
+    raise "Found a message with illegal update: #{update_type}"
   end
 end

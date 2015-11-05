@@ -6,10 +6,10 @@ GEM
     airbrake (4.1.0)
       builder
       multi_json
-    amq-protocol (1.9.2)
+    amq-protocol (2.0.0)
     builder (3.2.2)
-    bunny (1.5.1)
-      amq-protocol (>= 1.9.2)
+    bunny (2.2.1)
+      amq-protocol (>= 2.0.0)
     byebug (3.5.1)
       columnize (~> 0.8)
       debugger-linecache (~> 1.2)
@@ -29,6 +29,8 @@ GEM
       plek
       rack-cache
       rest-client (~> 1.8.0)
+    govuk_message_queue_consumer (2.0.0)
+      bunny (~> 2.2.0)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     link_header (0.0.8)
@@ -50,6 +52,7 @@ GEM
     rack (1.6.4)
     rack-cache (1.2)
       rack (>= 0.4)
+    rake (10.4.2)
     redis (3.1.0)
     redis-namespace (1.5.1)
       redis (~> 3.0, >= 3.0.4)
@@ -79,10 +82,11 @@ PLATFORMS
 
 DEPENDENCIES
   airbrake (= 4.1.0)
-  bunny (~> 1.5.0)
   gds-api-adapters (= 20.1.1)
+  govuk_message_queue_consumer (~> 2.0.0)
   plek (= 1.9.0)
   pry-byebug
+  rake (~> 10.4)
   redis (= 3.1.0)
   redis-namespace (= 1.5.1)
   rspec-core (= 3.1.4)

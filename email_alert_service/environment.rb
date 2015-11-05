@@ -6,12 +6,10 @@ module EmailAlertService
   end
 end
 
-[
-  EmailAlertService.config.app_root,
-  EmailAlertService.config.app_root + "email_alert_service"
-].each do |path|
-  $LOAD_PATH << path.to_s
-end
+$LOAD_PATH << EmailAlertService.config.app_root
+$LOAD_PATH << EmailAlertService.config.app_root + "email_alert_service"
+
+Dir[File.join(EmailAlertService.config.app_root, "email_alert_service/**/*.rb")].each { |f| require f }
 
 require "bundler/setup"
 Bundler.require(:default, EmailAlertService.config.environment)
