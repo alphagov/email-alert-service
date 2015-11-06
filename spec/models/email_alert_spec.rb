@@ -51,44 +51,39 @@ RSpec.describe EmailAlert do
   end
 
   describe "#format_for_email_api" do
+    before do
+      allow(EmailAlertTemplate).to receive(:new).and_return(
+        double(:email_template, message_body: "This is an email.")
+      )
+    end
+
     it "formats the message to send to the email alert api" do
-      document = {
-        "base_path" => "/foo",
-        "title" => "Example title",
-        "description" => "example description",
-        "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
-        "details" => {
-          "change_note" => "this doc has been changed",
-          "tags" => {
-            "browse_pages" => ["tax/vat"],
-            "topics" => ["oil-and-gas/licensing"],
-            "some_other_missing_tags" => [],
-          }
-        }
-      }
-
-      url_from_document_base_path = Plek.new.website_root + document["base_path"]
-
-      formatted_message = {
-        "subject" => document["title"],
-        "body" => %Q( <div class="rss_item" data-message-id="#{identifier_hash_for(document)}" style="margin-bottom: 2em;">
-          <div class="rss_title" style="font-size: 120%; margin: 0 0 0.3em; padding: 0;">
-            <a href="#{url_from_document_base_path}" style="font-weight: bold; ">#{document["title"]}</a>
-          </div>
-           1:39pm, 6 October 2014
-          #{document["details"]["change_note"]}
-          <br />
-          <div class="rss_description" style="margin: 0 0 0.3em; padding: 0;">#{document["description"]}</div>
-        </div> ),
+      expect(email_alert.format_for_email_api).to eq({
+        "subject" => "Example title",
+        "body" => "This is an email.",
         "tags" => {
           "browse_pages" => ["tax/vat"],
-          "topics" => ["oil-and-gas/licensing"],
+          "topics" => ["oil-and-gas/licensing"]
         },
-      }
+      })
+    end
 
-      email_alert = EmailAlert.new(document, logger)
+    context "a parent link is present in the document" do
+      before { document.merge!( { "links" => { "parent" => ["uuid-888"] } } ) }
 
-      expect(email_alert.format_for_email_api).to eq (formatted_message)
+      it "formats the message to include the parent link" do
+        expect(email_alert.format_for_email_api).to eq({
+          "subject" => "Example title",
+          "body" => "This is an email.",
+          "tags" => {
+            "browse_pages"=>["tax/vat"],
+            "topics"=>["oil-and-gas/licensing"]
+          },
+          "links" => {
+            "parent" => ["uuid-888"]
+          },
+        })
+      end
     end
   end
 end
