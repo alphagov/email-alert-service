@@ -17,10 +17,21 @@ class EmailAlert
 
   def format_for_email_api
     {
+    api_params = {
       "subject" => document["title"],
       "body" => format_email_body,
       "tags" => strip_empty_arrays(document["details"]["tags"]),
     }
+
+    # FIXME: this conditional check on links should be considered temporary.
+    # Eventually we want all email alerts to be triggered via content IDs received
+    # in the expected form below. The 'tags' hash will then be deprecated.
+    # Rework this method when that happens.
+    if document["links"] && document["links"]["parent"]
+      api_params.merge!({"links" => document["links"]})
+    end
+
+    api_params
   end
 
 private

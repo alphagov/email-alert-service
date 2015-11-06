@@ -3,36 +3,50 @@ require "spec_helper"
 RSpec.describe EmailAlert do
   include LockHandlerTestHelpers
 
-  let(:document) {
+  let(:document) do
     {
-      "title" => generate_title,
-      "details" => { "tags" => { "topics" => ["a topic"]  } },
+      "base_path" => "/foo",
+      "title" => "Example title",
+      "details" => {
+        "tags" => {
+          "browse_pages" => ["tax/vat"],
+          "topics" => ["oil-and-gas/licensing"],
+          "some_other_missing_tags" => [],
+        }
+      },
       "public_updated_at" => updated_now.iso8601,
     }
-  }
+  end
+
+  class FakeLockHandler
+    def with_lock_unless_done
+      yield
+    end
+  end
 
   let(:logger) { double(:logger, info: nil) }
+  let(:alert_api) { double(:alert_api, send_alert: nil) }
   let(:email_alert) { EmailAlert.new(document, logger) }
+  let(:fake_lock_handler) { FakeLockHandler.new }
+
+  before do
+    allow(GdsApi::EmailAlertApi).to receive(:new).and_return(alert_api)
+    allow(LockHandler).to receive(:new).and_return(fake_lock_handler)
+  end
 
   describe "#trigger" do
     it "logs receiving a major change notification for a document" do
-      allow(email_alert).to receive(:format_for_email_api).and_return(nil)
-
-      expect(logger).to receive(:info).with(
-        "Received major change notification for #{document["title"]}, with topics #{document["details"]["tags"]["topics"]}")
-
-      expect_any_instance_of(GdsApi::EmailAlertApi).to receive(:send_alert)
-
       email_alert.trigger
+
+      expect(logger).to have_received(:info).with(
+        "Received major change notification for #{document["title"]}, with topics #{document["details"]["tags"]["topics"]}"
+      )
     end
 
     it "sends an alert to the Email Alert API" do
-      formatted_for_email_api = double(:formatted_for_email_api)
-      allow(email_alert).to receive(:format_for_email_api).and_return(formatted_for_email_api)
-
-      expect_any_instance_of(GdsApi::EmailAlertApi).to receive(:send_alert)
-
       email_alert.trigger
+
+      expect(alert_api).to have_received(:send_alert)
     end
   end
 
