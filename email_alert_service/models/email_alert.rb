@@ -1,6 +1,7 @@
 require "gds_api/email_alert_api"
 require "models/lock_handler"
-require  "gds_api/content_store"
+require "gds_api/content_store"
+require "models/email_alert_template"
 
 class EmailAlert
   def initialize(document, logger)
@@ -18,11 +19,21 @@ class EmailAlert
   end
 
   def format_for_email_api
-    {
+    api_params = {
       "subject" => document["title"],
-      "body" => format_email_body,
-      "tags" => strip_empty_arrays(document["details"]["tags"]),
+      "body"    => EmailAlertTemplate.new(document).message_body,
+      "tags"    => strip_empty_arrays(document["details"]["tags"]),
     }
+
+    # FIXME: this conditional check on links should be considered temporary.
+    # Eventually we want all email alerts to be triggered via content IDs received
+    # in the expected form below. The 'tags' hash will then be deprecated.
+    # Rework this method when that happens.
+    if document["links"] && document["links"]["parent"]
+      api_params.merge!({"links" => document["links"]})
+    end
+
+    api_params
   end
 
 private
@@ -59,13 +70,5 @@ private
     tag_hash.reject {|_, tags|
       tags.empty?
     }
-  end
-
-  def formatted_public_updated_at
-    DateTime.parse(document["public_updated_at"]).strftime("%l:%M%P, %-d %B %Y")
-  end
-
-  def document_identifier_hash
-    MessageIdentifier.new(document["title"], document["public_updated_at"]).create
   end
 end
