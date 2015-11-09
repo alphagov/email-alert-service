@@ -2,6 +2,7 @@ require "spec_helper"
 
 RSpec.describe EmailAlert do
   include LockHandlerTestHelpers
+  include ContentItemHelpers
 
   let(:document) {
     {
@@ -71,6 +72,11 @@ RSpec.describe EmailAlert do
           "topics" => ["oil-and-gas/licensing"],
         },
       }
+
+      web_url = "http://www.dev.gov.ukan-important-policy"
+      stub_request(:get, "http://content-store.dev.gov.uk/contentan-important-policy/email-signup").
+         with(:headers => {'Accept'=>'application/json', 'Accept-Encoding'=>'gzip, deflate', 'Content-Type'=>'application/json', 'User-Agent'=>'gds-api-adapters/20.1.1 ()'}).
+         to_return(:status => 200, :body => content_item(web_url), :headers => {})
 
       email_alert = EmailAlert.new(document, logger)
 

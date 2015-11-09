@@ -1,10 +1,12 @@
 require "gds_api/email_alert_api"
 require "models/lock_handler"
+require  "gds_api/content_store"
 
 class EmailAlert
   def initialize(document, logger)
     @document = document
     @logger = logger
+    @content_store = GdsApi::ContentStore.new(Plek.new.find('content-store'))
   end
 
   def trigger
@@ -48,10 +50,9 @@ private
   end
 
   def make_url_from_document_base_path
-    # TODO get the url from the parent url in the links value in the document once this feature has been implemented.  
-    # In the meantime, just remove email-signup from the end of the url 
-    url_path = document["base_path"].sub(/\/email-signup$/, '')
-    Plek.new.website_root + url_path
+    base_path = document["base_path"]
+    content_item = @content_store.content_item(base_path)
+    link = content_item.links.parent[0].web_url
   end
 
   def strip_empty_arrays(tag_hash)
