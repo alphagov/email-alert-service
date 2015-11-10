@@ -70,7 +70,6 @@ RSpec.describe EmailAlert do
     end
 
     context "a parent link is present in the document" do
-
       before { document.merge!( { "links" => { "parent" => ["uuid-888"] } } ) }
 
       it "formats the message to include the parent link" do
