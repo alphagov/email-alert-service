@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
+
 require_relative "../email_alert_service/environment"
 rabbitmq_options = EmailAlertService.config.rabbitmq
 logger = EmailAlertService.config.logger
 
 require "connections/amqp_connection"
-
 connection = AMQPConnection.new(rabbitmq_options)
 connection.start
 
