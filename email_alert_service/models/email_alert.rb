@@ -1,11 +1,13 @@
 require "gds_api/email_alert_api"
 require "models/lock_handler"
+require "gds_api/content_store"
 require "models/email_alert_template"
 
 class EmailAlert
   def initialize(document, logger)
     @document = document
     @logger = logger
+    @content_store = GdsApi::ContentStore.new(Plek.new.find('content-store'))
   end
 
   def trigger
@@ -46,7 +48,27 @@ private
     GdsApi::EmailAlertApi.new(Plek.find("email-alert-api"))
   end
 
+  def format_email_body
+    %Q( <div class="rss_item" data-message-id="#{document_identifier_hash}" style="margin-bottom: 2em;">
+          <div class="rss_title" style="font-size: 120%; margin: 0 0 0.3em; padding: 0;">
+            <a href="#{make_url_from_document_base_path}" style="font-weight: bold; ">#{document["title"]}</a>
+          </div>
+          #{formatted_public_updated_at}
+          #{document["details"]["change_note"]}
+          <br />
+          <div class="rss_description" style="margin: 0 0 0.3em; padding: 0;">#{document["description"]}</div>
+        </div> )
+  end
+
+  def make_url_from_document_base_path
+    base_path = document["base_path"]
+    content_item = @content_store.content_item(base_path)
+    link = content_item.links.parent[0].web_url
+  end
+
   def strip_empty_arrays(tag_hash)
-    tag_hash.reject { |_, tags| tags.empty? }
+    tag_hash.reject {|_, tags|
+      tags.empty?
+    }
   end
 end

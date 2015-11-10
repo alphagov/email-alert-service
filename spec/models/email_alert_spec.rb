@@ -2,6 +2,7 @@ require "spec_helper"
 
 RSpec.describe EmailAlert do
   include LockHandlerTestHelpers
+  include ContentItemHelpers
 
   let(:document) do
     {
@@ -72,6 +73,14 @@ RSpec.describe EmailAlert do
       before { document.merge!( { "links" => { "parent" => ["uuid-888"] } } ) }
 
       it "formats the message to include the parent link" do
+
+        web_url = "http://www.dev.gov.ukan-important-policy"
+        stub_request(:get, "http://content-store.dev.gov.uk/contentan-important-policy/email-signup").
+           with(:headers => {'Accept'=>'application/json', 'Accept-Encoding'=>'gzip, deflate', 'Content-Type'=>'application/json', 'User-Agent'=>'gds-api-adapters/20.1.1 ()'}).
+           to_return(:status => 200, :body => content_item(web_url), :headers => {})
+
+        email_alert = EmailAlert.new(document, logger)
+      
         expect(email_alert.format_for_email_api).to eq({
           "subject" => "Example title",
           "body" => "This is an email.",
