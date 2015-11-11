@@ -14,6 +14,7 @@ RSpec.describe EmailAlert do
           "some_other_missing_tags" => [],
         }
       },
+      "links" => {},
       "public_updated_at" => updated_now.iso8601,
     }
   end
@@ -65,6 +66,7 @@ RSpec.describe EmailAlert do
           "browse_pages" => ["tax/vat"],
           "topics" => ["oil-and-gas/licensing"]
         },
+        "links" => {},
       })
     end
 
