@@ -51,7 +51,7 @@ private
 
   def email_alerts_supported?(document)
     document_tags = document.fetch("details", {}).fetch("tags", {})
-    supported_tag_names = ["topics", "policy"]
+    supported_tag_names = ["topics", "policies"]
 
     supported_tag_names.any? do |tag_name|
       !(document_tags[tag_name].nil? || document_tags[tag_name].empty?)

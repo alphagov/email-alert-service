@@ -90,7 +90,7 @@ RSpec.describe MessageProcessor do
         "change_note": "this doc has been changed",
         "tags": {
           "browse_pages": [],
-          "policy": ["some-policy-slug"]
+          "policies": ["some-policy-slug"]
         }
       }
     }
