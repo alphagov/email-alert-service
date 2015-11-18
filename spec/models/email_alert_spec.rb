@@ -40,7 +40,7 @@ RSpec.describe EmailAlert do
       email_alert.trigger
 
       expect(logger).to have_received(:info).with(
-        "Received major change notification for #{document["title"]}, with topics #{document["details"]["tags"]["topics"]}"
+        "Received major change notification for #{document["title"]}, with details #{document["details"]}"
       )
     end
 
