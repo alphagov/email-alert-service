@@ -16,6 +16,7 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 ENV["GOVUK_ENV"] = "test"
+ENV['GOVUK_APP_DOMAIN']='test.gov.uk'
 
 require "webmock/rspec"
 require "gds_api/test_helpers/email_alert_api"
