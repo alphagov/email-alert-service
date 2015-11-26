@@ -2,6 +2,7 @@ require "spec_helper"
 
 RSpec.describe EmailAlert do
   include LockHandlerTestHelpers
+  include ContentItemHelpers
 
   let(:document) do
     {
@@ -37,6 +38,7 @@ RSpec.describe EmailAlert do
 
   describe "#trigger" do
     it "logs receiving a major change notification for a document" do
+      stub_call_to_content_store("https://content-store.test.gov.uk/content/foo", "my_url")
       email_alert.trigger
 
       expect(logger).to have_received(:info).with(
@@ -45,6 +47,7 @@ RSpec.describe EmailAlert do
     end
 
     it "sends an alert to the Email Alert API" do
+      stub_call_to_content_store("https://content-store.test.gov.uk/content/foo", "my_url")
       email_alert.trigger
 
       expect(alert_api).to have_received(:send_alert)
