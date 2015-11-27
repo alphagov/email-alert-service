@@ -2,7 +2,6 @@ require "spec_helper"
 
 RSpec.describe "Receiving major change notifications", type: :integration do
   include LockHandlerTestHelpers
-  include ContentItemHelpers
 
   let(:well_formed_document) {
     {
@@ -22,11 +21,8 @@ RSpec.describe "Receiving major change notifications", type: :integration do
 
   let(:malformed_json) { '{23o*&£}' }
   let(:invalid_document) { '{"houses": "are for living in"}' }
-  let(:content_store_url)   { 'https://content-store.test.gov.uk/contentpath/to-doc' }
-  let(:web_url)             { 'https://www.gov.uk/content/policies/2012-olympic-and-paralympic-legacy' }
 
   around :each do |example|
-    system('GOVUK_ENV=test bin/delete_queue')
     start_listener
     example.run
     stop_listener
@@ -53,7 +49,6 @@ RSpec.describe "Receiving major change notifications", type: :integration do
   it "acknowledges the message for documents experiencing major changes" do
     expect_any_instance_of(MessageProcessor).to receive(:acknowledge).and_call_original
     expect_any_instance_of(GdsApi::EmailAlertApi).to receive(:send_alert)
-    stub_call_to_content_store(content_store_url, web_url)
 
     send_message(well_formed_document, routing_key: "policy.major")
 
@@ -73,8 +68,6 @@ RSpec.describe "Receiving major change notifications", type: :integration do
   it "sends an email alert for documents experiencing major changes" do
     expect_any_instance_of(MessageProcessor).to receive(:acknowledge).and_call_original
     expect_any_instance_of(GdsApi::EmailAlertApi).to receive(:send_alert)
-    
-    stub_call_to_content_store(content_store_url, web_url)
 
     send_message(well_formed_document, routing_key: "policy.major")
 

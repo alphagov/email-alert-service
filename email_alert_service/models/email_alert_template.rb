@@ -1,5 +1,3 @@
-require  File.dirname(__FILE__) + '/../../lib/services.rb'
-
 class EmailAlertTemplate
   def initialize(document)
     @document = document
@@ -22,9 +20,7 @@ class EmailAlertTemplate
 private
 
   def make_url_from_document_base_path
-    base_path = @document["base_path"]
-    content_item = Services.content_store.content_item(base_path)
-    link = content_item['links']['parent'].first['web_url']
+    Plek.new.website_root + @document["base_path"]
   end
 
   def formatted_public_updated_at
