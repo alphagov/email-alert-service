@@ -51,10 +51,14 @@ private
 
   def email_alerts_supported?(document)
     document_tags = document.fetch("details", {}).fetch("tags", {})
-    supported_tag_names = ["topics", "policies"]
+    document_links = document.fetch("links", {})
+    contains_supported_tag?(document_links) || contains_supported_tag?(document_tags)
+  end
 
+  def contains_supported_tag?(tags_hash)
+    supported_tag_names = ["topics", "policies"]
     supported_tag_names.any? do |tag_name|
-      !(document_tags[tag_name].nil? || document_tags[tag_name].empty?)
+      tags_hash[tag_name] && tags_hash[tag_name].any?
     end
   end
 

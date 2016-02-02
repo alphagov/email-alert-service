@@ -70,8 +70,8 @@ RSpec.describe EmailAlert do
       })
     end
 
-    context "a parent link is present in the document" do
-      before { document.merge!( { "links" => { "parent" => ["uuid-888"] } } ) }
+    context "a link is present in the document" do
+      before { document.merge!( { "links" => { "topics" => ["uuid-888"] } } ) }
 
       it "formats the message to include the parent link" do
         expect(email_alert.format_for_email_api).to eq({
@@ -82,8 +82,26 @@ RSpec.describe EmailAlert do
             "topics"=>["oil-and-gas/licensing"]
           },
           "links" => {
-            "parent" => ["uuid-888"]
+            "topics" => ["uuid-888"]
           },
+        })
+      end
+    end
+
+    context "blank tags are present" do
+      before do
+        document.merge!("links" => { "topics" => [] })
+        document["details"]["tags"].merge!("topics" => [])
+      end
+
+      it "strips these out" do
+        expect(email_alert.format_for_email_api).to eq({
+          "subject" => "Example title",
+          "body" => "This is an email.",
+          "tags" => {
+            "browse_pages"=>["tax/vat"],
+          },
+          "links" => {}
         })
       end
     end
