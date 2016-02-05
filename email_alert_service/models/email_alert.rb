@@ -19,8 +19,8 @@ class EmailAlert
     {
       "subject" => document["title"],
       "body"    => EmailAlertTemplate.new(document).message_body,
-      "tags"    => strip_empty_arrays(document["details"]["tags"]),
-      "links"   => document["links"],
+      "tags"    => strip_empty_arrays(document.fetch("details", {}).fetch("tags", {})),
+      "links"   => strip_empty_arrays(document.fetch("links", {})),
     }
   end
 
