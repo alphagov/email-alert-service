@@ -52,12 +52,13 @@ private
   def email_alerts_supported?(document)
     document_tags = document.fetch("details", {}).fetch("tags", {})
     document_links = document.fetch("links", {})
-    contains_supported_tag?(document_links) || contains_supported_tag?(document_tags)
+    contains_supported_attribute?(document_links) \
+      || contains_supported_attribute?(document_tags)
   end
 
-  def contains_supported_tag?(tags_hash)
-    supported_tag_names = ["topics", "policies"]
-    supported_tag_names.any? do |tag_name|
+  def contains_supported_attribute?(tags_hash)
+    supported_attributes = ["topics", "policies", "service_manual_topics"]
+    supported_attributes.any? do |tag_name|
       tags_hash[tag_name] && tags_hash[tag_name].any?
     end
   end
