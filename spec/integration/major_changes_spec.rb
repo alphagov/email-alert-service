@@ -15,7 +15,8 @@ RSpec.describe "Receiving major change notifications", type: :integration do
           "browse_pages" => [],
           "topics" => ["example topic"]
         }
-      }
+      },
+      "document_type" => "example_document"
     }.to_json
   }
 
