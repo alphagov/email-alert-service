@@ -16,6 +16,7 @@ RSpec.describe EmailAlert do
       },
       "links" => {},
       "public_updated_at" => updated_now.iso8601,
+      "document_type" => "example_document"
     }
   end
 
@@ -67,6 +68,7 @@ RSpec.describe EmailAlert do
           "topics" => ["oil-and-gas/licensing"]
         },
         "links" => {},
+        "document_type" => "example_document"
       })
     end
 
@@ -84,6 +86,7 @@ RSpec.describe EmailAlert do
           "links" => {
             "topics" => ["uuid-888"]
           },
+          "document_type" => "example_document"
         })
       end
     end
@@ -101,7 +104,8 @@ RSpec.describe EmailAlert do
           "tags" => {
             "browse_pages"=>["tax/vat"],
           },
-          "links" => {}
+          "links" => {},
+          "document_type" => "example_document"
         })
       end
     end

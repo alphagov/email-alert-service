@@ -18,9 +18,10 @@ class EmailAlert
   def format_for_email_api
     {
       "subject" => document["title"],
-      "body"    => EmailAlertTemplate.new(document).message_body,
-      "tags"    => strip_empty_arrays(document.fetch("details", {}).fetch("tags", {})),
-      "links"   => strip_empty_arrays(document.fetch("links", {})),
+      "body" => EmailAlertTemplate.new(document).message_body,
+      "tags" => strip_empty_arrays(document.fetch("details", {}).fetch("tags", {})),
+      "links" => strip_empty_arrays(document.fetch("links", {})),
+      "document_type" => document["document_type"]
     }
   end
 
