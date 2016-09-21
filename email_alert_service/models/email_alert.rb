@@ -20,7 +20,9 @@ class EmailAlert
       "subject" => document["title"],
       "body" => EmailAlertTemplate.new(document).message_body,
       "tags" => strip_empty_arrays(document.fetch("details", {}).fetch("tags", {})),
-      "links" => strip_empty_arrays(document.fetch("links", {})),
+      "links" => strip_empty_arrays(
+        as_lists_of_content_ids(document.fetch("expanded_links", {}))
+      ),
       "document_type" => document["document_type"]
     }
   end
@@ -31,6 +33,14 @@ private
 
   def lock_handler
     LockHandler.new(document.fetch("title"), document.fetch("public_updated_at"))
+  end
+
+  def as_lists_of_content_ids(expanded_links)
+    expanded_links.each_with_object({}) do |(linkset_name, linkset), output|
+      output[linkset_name] = linkset.map do |link|
+        link["content_id"]
+      end
+    end
   end
 
   def email_api_client
