@@ -14,7 +14,7 @@ RSpec.describe EmailAlert do
           "some_other_missing_tags" => [],
         }
       },
-      "links" => {},
+      "expanded_links" => {},
       "public_updated_at" => updated_now.iso8601,
       "document_type" => "example_document"
     }
@@ -73,9 +73,33 @@ RSpec.describe EmailAlert do
     end
 
     context "a link is present in the document" do
-      before { document.merge!( { "links" => { "topics" => ["uuid-888"] } } ) }
+      before do
+        document.merge!(
+          {
+            "expanded_links" => {
+              "topics" => [
+                {
+                  "analytics_identifier" => "12345",
+                  "api_url" => "https://www.publishing.service.gov.uk/api/content/example/topic",
+                  "base_path" => "/example/topic",
+                  "content_id" => "uuid-888",
+                  "description" => nil,
+                  "document_type" => "example",
+                  "locale" => "en",
+                  "public_updated_at" => "2016-02-07T20:08:15Z",
+                  "schema_name" => "example",
+                  "title" => "Example linked content",
+                  "web_url" => "https://www.gov.uk/example/topic",
+                  "details" => {},
+                  "links" => {}
+                }
+              ]
+            }
+          }
+        )
+      end
 
-      it "formats the message to include the parent link" do
+      it "includes a list of just the link content ids" do
         expect(email_alert.format_for_email_api).to eq({
           "subject" => "Example title",
           "body" => "This is an email.",
@@ -93,7 +117,7 @@ RSpec.describe EmailAlert do
 
     context "blank tags are present" do
       before do
-        document.merge!("links" => { "topics" => [] })
+        document.merge!("expanded_links" => { "topics" => [] })
         document["details"]["tags"].merge!("topics" => [])
       end
 

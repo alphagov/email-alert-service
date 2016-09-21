@@ -51,7 +51,7 @@ private
 
   def email_alerts_supported?(document)
     document_tags = document.fetch("details", {}).fetch("tags", {})
-    document_links = document.fetch("links", {})
+    document_links = document.fetch("expanded_links", {})
     contains_supported_attribute?(document_links) \
       || contains_supported_attribute?(document_tags)
   end
