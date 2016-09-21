@@ -22,8 +22,24 @@ RSpec.describe MessageProcessor do
           "topics" => ["example topic"]
         }
       },
-      "links" => {
-        "topics" => ["example-topic-uuid"]
+      "expanded_links" => {
+        "topics" => [
+          {
+            "analytics_identifier" => "12345",
+            "api_url" => "https://www.publishing.service.gov.uk/api/content/example/topic",
+            "base_path" => "/example/topic",
+            "content_id" => "example-topic-uuid",
+            "description" => nil,
+            "document_type" => "example",
+            "locale" => "en",
+            "public_updated_at" => "2016-02-07T20:08:15Z",
+            "schema_name" => "example",
+            "title" => "Example linked content",
+            "web_url" => "https://www.gov.uk/example/topic",
+            "details" => {},
+            "links" => {}
+          }
+        ]
       }
     }
   }
@@ -59,7 +75,7 @@ RSpec.describe MessageProcessor do
     context "document tagged with a policy" do
       before do
         good_document["details"]["tags"] = { "policies" => ["example policy"] }
-        good_document["links"] = { "policies" => ["example-policy-uuid"] }
+        good_document["expanded_links"] = { "policies" => ["example-policy-uuid"] }
       end
 
       it "acknowledges and triggers the email" do
@@ -85,7 +101,7 @@ RSpec.describe MessageProcessor do
 
     context "document with no tags in its links hash" do
       before do
-        good_document["links"].delete("topics")
+        good_document["expanded_links"].delete("topics")
       end
 
       it "still acknowledges and triggers the email" do
@@ -99,7 +115,7 @@ RSpec.describe MessageProcessor do
     context "document with empty tags" do
       before do
         good_document["details"]["tags"] = { "topics" => [] }
-        good_document["links"] = { "topics" => [] }
+        good_document["expanded_links"] = { "topics" => [] }
       end
 
       it "acknowledges but doesn't trigger the email" do
@@ -112,7 +128,7 @@ RSpec.describe MessageProcessor do
 
     context "document with missing tag fields" do
       before do
-        good_document["links"].delete("topics")
+        good_document["expanded_links"].delete("topics")
         good_document["details"].delete("tags")
       end
 
@@ -136,7 +152,7 @@ RSpec.describe MessageProcessor do
     end
 
     context "missing links hash" do
-      before { good_document.delete("links") }
+      before { good_document.delete("expanded_links") }
 
       it "still acknowledges and triggers the email" do
         processor.process(good_document.to_json, properties, delivery_info)
@@ -147,7 +163,10 @@ RSpec.describe MessageProcessor do
     end
 
     context "no details hash, no links hash" do
-      before { good_document.delete("links"); good_document.delete("details") }
+      before do
+        good_document.delete("expanded_links")
+        good_document.delete("details")
+      end
 
       it "acknowledges but doesn't trigger the email" do
         processor.process(good_document.to_json, properties, delivery_info)
