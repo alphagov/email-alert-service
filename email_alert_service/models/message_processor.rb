@@ -52,8 +52,10 @@ private
   def email_alerts_supported?(document)
     document_tags = document.fetch("details", {}).fetch("tags", {})
     document_links = document.fetch("links", {})
+    document_type = document.fetch("document_type")
     contains_supported_attribute?(document_links) \
-      || contains_supported_attribute?(document_tags)
+      || contains_supported_attribute?(document_tags) \
+      || whitelisted_document_type?(document_type)
   end
 
   def contains_supported_attribute?(tags_hash)
@@ -61,6 +63,10 @@ private
     supported_attributes.any? do |tag_name|
       tags_hash[tag_name] && tags_hash[tag_name].any?
     end
+  end
+
+  def whitelisted_document_type?(document_type)
+    document_type == "service_manual_guide"
   end
 
   def is_english?(document)
