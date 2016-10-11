@@ -15,6 +15,7 @@ RSpec.describe MessageProcessor do
     {
       "base_path" => "path/to-doc",
       "title" => "Example title",
+      "document_type" => "example",
       "description" => "example description",
       "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
       "details" => {
@@ -137,6 +138,21 @@ RSpec.describe MessageProcessor do
 
     context "missing links hash" do
       before { good_document.delete("links") }
+
+      it "still acknowledges and triggers the email" do
+        processor.process(good_document.to_json, properties, delivery_info)
+
+        email_was_triggered
+        message_acknowledged
+      end
+    end
+
+    context "no links or tags but of whitelisted document type" do
+      before do
+        good_document["details"] = {}
+        good_document["links"] = { "parent" => ["parent-topic-uuid"] }
+        good_document["document_type"] = "service_manual_guide"
+      end
 
       it "still acknowledges and triggers the email" do
         processor.process(good_document.to_json, properties, delivery_info)
