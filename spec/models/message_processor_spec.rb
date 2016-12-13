@@ -206,6 +206,17 @@ RSpec.describe MessageProcessor do
       end
     end
 
+    context "document has blank locale" do
+      before { good_document["locale"] = nil }
+
+      it "acknowledges but doesn't trigger the email" do
+        processor.process(good_document.to_json, properties, delivery_info)
+
+        email_was_not_triggered
+        message_acknowledged
+      end
+    end
+
     context "document has no title" do
       before { good_document.delete("title") }
 
@@ -217,8 +228,30 @@ RSpec.describe MessageProcessor do
       end
     end
 
+    context "document has blank title" do
+      before { good_document["title"] = nil }
+
+      it "acknowledges but doesn't trigger the email" do
+        processor.process(good_document.to_json, properties, delivery_info)
+
+        email_was_not_triggered
+        message_acknowledged
+      end
+    end
+
     context "document has no public_updated_at" do
       before { good_document.delete("public_updated_at") }
+
+      it "acknowledges but doesn't trigger the email" do
+        processor.process(good_document.to_json, properties, delivery_info)
+
+        email_was_not_triggered
+        message_acknowledged
+      end
+    end
+
+    context "document has blank public_updated_at" do
+      before { good_document["public_updated_at"] = nil }
 
       it "acknowledges but doesn't trigger the email" do
         processor.process(good_document.to_json, properties, delivery_info)
