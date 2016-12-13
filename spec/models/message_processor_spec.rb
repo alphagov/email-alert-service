@@ -199,8 +199,6 @@ RSpec.describe MessageProcessor do
       before { good_document["locale"] = "fr" }
 
       it "acknowledges but doesn't trigger the email" do
-        properties = double(:properties, content_type: "application/x-heartbeat")
-
         processor.process(good_document.to_json, properties, delivery_info)
 
         email_was_not_triggered
@@ -212,8 +210,6 @@ RSpec.describe MessageProcessor do
       before { good_document.delete("title") }
 
       it "acknowledges but doesn't trigger the email" do
-        properties = double(:properties, content_type: "application/x-heartbeat")
-
         processor.process(good_document.to_json, properties, delivery_info)
 
         email_was_not_triggered
@@ -225,8 +221,6 @@ RSpec.describe MessageProcessor do
       before { good_document.delete("public_updated_at") }
 
       it "acknowledges but doesn't trigger the email" do
-        properties = double(:properties, content_type: "application/x-heartbeat")
-
         processor.process(good_document.to_json, properties, delivery_info)
 
         email_was_not_triggered

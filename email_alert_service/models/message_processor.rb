@@ -30,6 +30,11 @@ private
       return
     end
 
+    unless has_public_updated_at?(document)
+      @logger.info "not triggering email alert for document with no public_updated_at: #{document}"
+      return
+    end
+
     unless is_english?(document)
       @logger.info "not triggering email alert for non-english document #{document["title"]}: locale #{document["locale"]}"
       return
@@ -75,6 +80,10 @@ private
 
   def has_title?(document)
     document.fetch("title", "") != ""
+  end
+
+  def has_public_updated_at?(document)
+    document.fetch("public_updated_at", "") != ""
   end
 
   def acknowledge(message)
