@@ -13,6 +13,7 @@ group :test do
   gem 'rspec-expectations', '3.1.1'
   gem 'rspec-mocks', '3.1.1'
   gem 'webmock', '1.19.0'
+  gem 'govuk_schemas', '~> 2.1'
 end
 
 gem "pry-byebug", group: [:test, :development]
