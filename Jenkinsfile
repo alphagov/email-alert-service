@@ -60,7 +60,7 @@ node {
     }
 
     stage("Set up content schema dependency") {
-      govuk.contentSchemaDependency("deployed-to-production")
+      govuk.contentSchemaDependency(env.SCHEMA_BRANCH)
       govuk.setEnvar("GOVUK_CONTENT_SCHEMAS_PATH", "tmp/govuk-content-schemas")
     }
 
