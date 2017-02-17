@@ -20,12 +20,29 @@ class EmailAlert
       "subject" => document["title"],
       "body" => EmailAlertTemplate.new(document).message_body,
       "tags" => strip_empty_arrays(document.fetch("details", {}).fetch("tags", {})),
-      "links" => strip_empty_arrays(document.fetch("links", {})),
+      "links" => strip_empty_arrays(document.fetch("links", {}).merge('taxons_tree' => taxon_tree)),
       "document_type" => document["document_type"]
     }
   end
 
 private
+
+  def taxon_tree
+    node = document.fetch("expanded_links", {}).fetch('taxons', []).first
+    return [] unless node
+    [node['content_id']] + children_taxons(node)
+  end
+
+  def children_taxons(node)
+    # binding.pry
+    links_node = node.fetch("links", {})
+    if links_node.key?("parent_taxons")
+      parent_node = links_node["parent_taxons"].first
+      [parent_node['content_id']] + children_taxons(parent_node)
+    else
+      []
+    end
+  end
 
   attr_reader :document, :logger
 
