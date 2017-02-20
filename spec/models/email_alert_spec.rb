@@ -155,5 +155,54 @@ RSpec.describe EmailAlert do
         })
       end
     end
+
+    context "mutliple taxons are present in the expanded_links data" do
+      before do
+        document.merge!(
+          "expanded_links" => {
+            "taxons" => [
+              {
+                "content_id" => "b67afac3-0bfc-4e44-9893-951be4d05e4c",
+                "links" => {
+                  "parent_taxons" => [
+                    {
+                      "content_id" => "db605204-0f03-441b-837f-16613c6b3f8f",
+                      "links" => {
+                        "parent_taxons" => [
+                          {
+                            "content_id" => "c58fdadd-7743-46d6-9629-90bb3ccc4ef0",
+                            "links" => {}
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "content_id" => "1111111-0f03-441b-837f-16613c6b3f8f",
+                      "links" => {}
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        )
+      end
+
+      it "populates links with 'taxon' and 'taxon_tree' data" do
+        expect(email_alert.format_for_email_api).to eq({
+          "subject" => "Example title",
+          "body" => "This is an email.",
+          "tags" => {
+            "browse_pages"=>["tax/vat"],
+            "topics"=>["oil-and-gas/licensing"]
+          },
+          "links" => {
+            "taxons_tree" => ["b67afac3-0bfc-4e44-9893-951be4d05e4c", "db605204-0f03-441b-837f-16613c6b3f8f", "c58fdadd-7743-46d6-9629-90bb3ccc4ef0", "1111111-0f03-441b-837f-16613c6b3f8f"]
+          },
+          "document_type" => "example_document"
+        })
+      end
+    end
+
   end
 end

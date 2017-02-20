@@ -28,17 +28,19 @@ class EmailAlert
 private
 
   def taxon_tree
-    node = document.fetch("expanded_links", {}).fetch('taxons', []).first
-    return [] unless node
-    [node['content_id']] + children_taxons(node)
+    nodes = document.fetch("expanded_links", {}).fetch('taxons', [])
+    nodes.flat_map do |node|
+      [node['content_id']] + children_taxons(node)
+    end
   end
 
   def children_taxons(node)
     # binding.pry
     links_node = node.fetch("links", {})
     if links_node.key?("parent_taxons")
-      parent_node = links_node["parent_taxons"].first
-      [parent_node['content_id']] + children_taxons(parent_node)
+      links_node["parent_taxons"].flat_map do |parent_node|
+        [parent_node['content_id']] + children_taxons(parent_node)
+      end
     else
       []
     end
