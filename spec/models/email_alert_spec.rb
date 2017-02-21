@@ -2,10 +2,12 @@ require "spec_helper"
 
 RSpec.describe EmailAlert do
   include LockHandlerTestHelpers
-
+  let(:content_id) { SecureRandom.uuid }
+  let(:public_updated_at) { updated_now.iso8601 }
   let(:document) do
     {
       "base_path" => "/foo",
+      "content_id" => content_id,
       "title" => "Example title",
       "details" => {
         "tags" => {
@@ -15,8 +17,9 @@ RSpec.describe EmailAlert do
         }
       },
       "links" => {},
-      "public_updated_at" => updated_now.iso8601,
-      "document_type" => "example_document"
+      "public_updated_at" => public_updated_at,
+      "document_type" => "example_document",
+      "publishing_app" => "Whitehall"
     }
   end
 
@@ -63,6 +66,9 @@ RSpec.describe EmailAlert do
       expect(email_alert.format_for_email_api).to eq({
         "subject" => "Example title",
         "body" => "This is an email.",
+        "content_id" => content_id,
+        "public_updated_at" => public_updated_at,
+        "publishing_app" => "Whitehall",
         "tags" => {
           "browse_pages" => ["tax/vat"],
           "topics" => ["oil-and-gas/licensing"]
@@ -79,6 +85,9 @@ RSpec.describe EmailAlert do
         expect(email_alert.format_for_email_api).to eq({
           "subject" => "Example title",
           "body" => "This is an email.",
+          "content_id" => content_id,
+          "public_updated_at" => public_updated_at,
+          "publishing_app" => "Whitehall",
           "tags" => {
             "browse_pages"=>["tax/vat"],
             "topics"=>["oil-and-gas/licensing"]
@@ -101,6 +110,9 @@ RSpec.describe EmailAlert do
         expect(email_alert.format_for_email_api).to eq({
           "subject" => "Example title",
           "body" => "This is an email.",
+          "content_id" => content_id,
+          "public_updated_at" => public_updated_at,
+          "publishing_app" => "Whitehall",
           "tags" => {
             "browse_pages"=>["tax/vat"],
           },
