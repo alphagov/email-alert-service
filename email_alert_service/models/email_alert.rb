@@ -21,7 +21,10 @@ class EmailAlert
       "body" => EmailAlertTemplate.new(document).message_body,
       "tags" => strip_empty_arrays(document.fetch("details", {}).fetch("tags", {})),
       "links" => strip_empty_arrays(document.fetch("links", {})),
-      "document_type" => document["document_type"]
+      "document_type" => document["document_type"],
+      "content_id" => document["content_id"],
+      "public_updated_at" => document["public_updated_at"],
+      "publishing_app" => document["publishing_app"],
     }
   end
 
