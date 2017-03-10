@@ -19,9 +19,9 @@ ENV["GOVUK_ENV"] = "test"
 ENV['GOVUK_APP_DOMAIN']='test.gov.uk'
 
 require "webmock/rspec"
-require "gds_api/test_helpers/email_alert_api"
 
 require_relative "../email_alert_service/environment"
+require "gds_api/test_helpers/email_alert_api"
 
 Dir[File.join(EmailAlertService.config.app_root, "spec/support/**/*.rb")].each { |f| require f }
 

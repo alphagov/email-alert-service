@@ -3,6 +3,7 @@ require "spec_helper"
 RSpec.describe EmailAlert do
   include LockHandlerTestHelpers
   let(:content_id) { SecureRandom.uuid }
+  let(:govuk_request_id) { SecureRandom.uuid }
   let(:public_updated_at) { updated_now.iso8601 }
   let(:document) do
     {
@@ -19,7 +20,8 @@ RSpec.describe EmailAlert do
       "links" => {},
       "public_updated_at" => public_updated_at,
       "document_type" => "example_document",
-      "publishing_app" => "Whitehall"
+      "publishing_app" => "Whitehall",
+      "govuk_request_id" => govuk_request_id,
     }
   end
 
@@ -51,7 +53,10 @@ RSpec.describe EmailAlert do
     it "sends an alert to the Email Alert API" do
       email_alert.trigger
 
-      expect(alert_api).to have_received(:send_alert)
+      expect(alert_api).to have_received(:send_alert).with(
+        hash_including("content_id" => content_id),
+        govuk_request_id: govuk_request_id
+      )
     end
   end
 
