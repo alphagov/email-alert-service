@@ -7,6 +7,7 @@ gem "gds-api-adapters", "40.3.0"
 gem "plek", "1.9.0"
 gem "redis", "3.1.0"
 gem "redis-namespace", "1.5.1"
+gem "govuk_taxonomy_helpers", "~> 0.0.1"
 
 group :test do
   gem 'rspec-core', '3.1.4'
