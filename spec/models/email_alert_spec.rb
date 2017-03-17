@@ -126,5 +126,40 @@ RSpec.describe EmailAlert do
         })
       end
     end
+
+    context 'taxon links are present' do
+      before do
+        document.merge!(
+          "links" => { "taxons" => %w(uuid-1 uuid-3) },
+          "expanded_links" => {
+            "taxons" => [
+              {
+                "content_id" => "uuid-1",
+                "links" => {
+                  "parent_taxons" => [
+                    { "content_id" => "uuid-2", "links" => {} },
+                  ]
+                }
+              },
+              {
+                "content_id" => "uuid-3",
+                "links" => {
+                  "parent_taxons" => [
+                    { "content_id" => "uuid-2", "links" => {} },
+                  ]
+                }
+              }
+            ]
+          }
+        )
+      end
+
+      it 'adds the linked taxon and a unique list of its ancestors to the message' do
+        links_hash = email_alert.format_for_email_api["links"]
+
+        expect(links_hash["taxons"]).to eq %w(uuid-1 uuid-3)
+        expect(links_hash["taxon_tree"].sort).to eq %w(uuid-1 uuid-2 uuid-3)
+      end
+    end
   end
 end

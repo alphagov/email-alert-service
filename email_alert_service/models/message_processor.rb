@@ -64,7 +64,7 @@ private
   end
 
   def contains_supported_attribute?(tags_hash)
-    supported_attributes = ["topics", "policies", "service_manual_topics"]
+    supported_attributes = ["topics", "policies", "service_manual_topics", "taxons"]
     supported_attributes.any? do |tag_name|
       tags_hash[tag_name] && tags_hash[tag_name].any?
     end
