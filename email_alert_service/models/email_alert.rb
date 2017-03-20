@@ -23,6 +23,8 @@ class EmailAlert
       "tags" => strip_empty_arrays(document.fetch("details", {}).fetch("tags", {})),
       "links" => document_links,
       "document_type" => document["document_type"],
+      "email_document_supertype" => document["email_document_supertype"],
+      "government_document_supertype" => document["government_document_supertype"],
       "content_id" => document["content_id"],
       "public_updated_at" => document["public_updated_at"],
       "publishing_app" => document["publishing_app"],

@@ -20,6 +20,8 @@ RSpec.describe EmailAlert do
       "links" => {},
       "public_updated_at" => public_updated_at,
       "document_type" => "example_document",
+      "email_document_supertype" => "publications",
+      "government_document_supertype" => "example_supertype",
       "publishing_app" => "Whitehall",
       "govuk_request_id" => govuk_request_id,
     }
@@ -79,7 +81,9 @@ RSpec.describe EmailAlert do
           "topics" => ["oil-and-gas/licensing"]
         },
         "links" => {},
-        "document_type" => "example_document"
+        "document_type" => "example_document",
+        "email_document_supertype" => "publications",
+        "government_document_supertype" => "example_supertype",
       })
     end
 
@@ -100,7 +104,9 @@ RSpec.describe EmailAlert do
           "links" => {
             "topics" => ["uuid-888"]
           },
-          "document_type" => "example_document"
+          "document_type" => "example_document",
+          "email_document_supertype" => "publications",
+          "government_document_supertype" => "example_supertype",
         })
       end
     end
@@ -122,7 +128,9 @@ RSpec.describe EmailAlert do
             "browse_pages"=>["tax/vat"],
           },
           "links" => {},
-          "document_type" => "example_document"
+          "document_type" => "example_document",
+          "email_document_supertype" => "publications",
+          "government_document_supertype" => "example_supertype",
         })
       end
     end
