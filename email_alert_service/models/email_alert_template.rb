@@ -10,7 +10,7 @@ class EmailAlertTemplate
           <a href="#{make_url_from_document_base_path}" style="font-weight: bold; ">#{@document["title"]}</a>
         </div>
         #{formatted_public_updated_at}
-        #{@document["details"]["change_note"]}
+        #{latest_change_note}
         <br />
         <div class="rss_description" style="margin: 0 0 0.3em; padding: 0;">#{@document["description"]}</div>
       </div>
@@ -25,6 +25,11 @@ private
 
   def formatted_public_updated_at
     DateTime.parse(@document["public_updated_at"]).strftime("%l:%M%P, %-d %B %Y")
+  end
+
+  def latest_change_note
+    change_note = @document["details"]["change_history"]&.first
+    change_note["note"] if change_note
   end
 
   def document_identifier_hash
