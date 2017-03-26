@@ -60,9 +60,11 @@ private
     document_tags = document.fetch("details", {}).fetch("tags", {})
     document_links = document.fetch("links", {})
     document_type = document.fetch("document_type")
+
     contains_supported_attribute?(document_links) \
       || contains_supported_attribute?(document_tags) \
-      || whitelisted_document_type?(document_type)
+      || whitelisted_document_type?(document_type) \
+      || has_relevant_document_supertype?(document)
   end
 
   def contains_supported_attribute?(tags_hash)
@@ -81,6 +83,21 @@ private
 
   def whitelisted_document_type?(document_type)
     document_type == "service_manual_guide"
+  end
+
+  def has_relevant_document_supertype?(document)
+    def relevant_supertype?(supertype)
+      !(['other', '', nil].include?(supertype))
+    end
+
+    # These supertypes were added to Whitehall content to aid the migration of
+    # Whitehall subscriptions to email-alert-api. We'd like to get to the point
+    # where email subscriptions cover all content on the site rather than
+    # perpetuating the Whitehall/everything else divide, but don't have time to
+    # work through all the ramifications of that while also doing that migration
+    # so are limiting the scope of emails to approximately what Whitehall did.
+    relevant_supertype?(document["government_document_supertype"]) ||
+      relevant_supertype?(document["email_document_supertype"])
   end
 
   def is_english?(document)
