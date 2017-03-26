@@ -68,7 +68,25 @@ private
   end
 
   def contains_supported_attribute?(tags_hash)
-    supported_attributes = ["topics", "policies", "service_manual_topics", "taxons"]
+    # These are attributes in links or tags which email subscriptions can be
+    # based on.
+
+    # We also send emails based on links to organisations, but don't include
+    # organisations in this list because that would trigger emails for many
+    # things which aren't appropriate. has_relevant_document_supertype? will
+    # let through anything for which Whitehall would have sent emails to
+    # organisation-based lists if none of these other attributes exist on it.
+    supported_attributes = [
+      "topics",
+      "policies",
+      "service_manual_topics",
+      "taxons",
+      "world_locations",
+      "topical_events",
+      "people",
+      "policy_areas",
+      "roles",
+    ]
     supported_attributes.any? do |tag_name|
       tags_hash[tag_name] && tags_hash[tag_name].any?
     end
