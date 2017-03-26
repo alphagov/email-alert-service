@@ -144,7 +144,6 @@ private
     channel.reject(delivery_tag, false)
   end
 
-  private
   def has_non_blank_value_for_key?(document:, key:)
     # a key can be present but the value is nil, so fetch won't
     # protect us here
