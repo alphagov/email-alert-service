@@ -100,6 +100,8 @@ private
   end
 
   def whitelisted_document_type?(document_type)
+    # It's possible to subscribe to these without any other filtering, so we
+    # should always let them through
     document_type == "service_manual_guide"
   end
 
