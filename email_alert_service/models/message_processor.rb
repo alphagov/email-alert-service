@@ -55,6 +55,8 @@ private
   end
 
   def email_alerts_supported?(document)
+    return false if blacklisted_publishing_app?(document["publishing_app"])
+
     document_tags = document.fetch("details", {}).fetch("tags", {})
     document_links = document.fetch("links", {})
     document_type = document.fetch("document_type")
@@ -68,6 +70,13 @@ private
     supported_attributes.any? do |tag_name|
       tags_hash[tag_name] && tags_hash[tag_name].any?
     end
+  end
+
+  def blacklisted_publishing_app?(publishing_app)
+    # These publishing apps make direct calls to email-alert-api to send their
+    # emails, so we need to avoid sending duplicate emails when they come
+    # through on the queue:
+    ['travel-advice-publisher', 'specialist-publisher'].include?(publishing_app)
   end
 
   def whitelisted_document_type?(document_type)

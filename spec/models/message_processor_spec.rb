@@ -162,6 +162,21 @@ RSpec.describe MessageProcessor do
       end
     end
 
+    context "has links but is from a blacklisted publishing application" do
+      before do
+        good_document["details"] = {}
+        good_document["links"] = { "taxons" => ["taxon-uuid"] }
+        good_document["publishing_app"] = "travel-advice-publisher"
+      end
+
+      it "acknowledges but doesn't trigger the email" do
+        processor.process(good_document.to_json, properties, delivery_info)
+
+        email_was_not_triggered
+        message_acknowledged
+      end
+    end
+
     context "no details hash, no links hash" do
       before { good_document.delete("links"); good_document.delete("details") }
 
