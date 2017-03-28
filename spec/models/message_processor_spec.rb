@@ -247,6 +247,28 @@ RSpec.describe MessageProcessor do
       end
     end
 
+    context "document has no base_path" do
+      before { good_document.delete("base_path") }
+
+      it "acknowledges but doesn't trigger the email" do
+        processor.process(good_document.to_json, properties, delivery_info)
+
+        email_was_not_triggered
+        message_acknowledged
+      end
+    end
+
+    context "document has blank base_path" do
+      before { good_document["base_path"] = nil }
+
+      it "acknowledges but doesn't trigger the email" do
+        processor.process(good_document.to_json, properties, delivery_info)
+
+        email_was_not_triggered
+        message_acknowledged
+      end
+    end
+
     context "document has no title" do
       before { good_document.delete("title") }
 
