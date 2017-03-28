@@ -5,41 +5,6 @@ RSpec.describe Message do
   let(:document_json) { double(:document_json) }
   let(:properties) { double(:properties, content_type: nil) }
 
-  describe "#validate!" do
-    it "returns a parsed, valid document" do
-      document_json =
-        '{
-            "base_path": "path/to-doc",
-            "title": "Example title",
-            "description": "example description",
-            "public_updated_at": "2014-10-06T13:39:19.000+00:00",
-            "details": {
-              "change_note": "this doc has been changed",
-              "tags": {
-                "browse_pages": [],
-                "topics": ["example topic"]
-              }
-            }
-         }'
-
-      valid_data = JSON.parse(document_json)
-      message = Message.new(document_json, properties, delivery_info)
-
-      expect(message.validate!).to eq valid_data
-    end
-
-    it "raises given an invalid document" do
-      document_json =
-        '{ "hello": "something else" }'
-
-      message = Message.new(document_json, properties, delivery_info)
-
-      expect {
-        message.validate!
-      }.to raise_error(InvalidDocumentError)
-    end
-  end
-
   describe "#delivery_tag" do
     it "returns the delivery tag from the delivery info" do
       message = Message.new(document_json, properties, delivery_info)
