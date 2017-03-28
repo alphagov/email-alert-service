@@ -21,7 +21,7 @@ RSpec.describe "Receiving major change notifications", type: :integration do
   }
 
   let(:malformed_json) { '{23o*&£}' }
-  let(:invalid_document) { '{"houses": "are for living in"}' }
+  let(:document_missing_fields) { '{"houses": "are for living in"}' }
 
   around :each do |example|
     start_listener
@@ -38,11 +38,11 @@ RSpec.describe "Receiving major change notifications", type: :integration do
     wait_for_messages_to_process
   end
 
-  it "ignores invalid documents" do
+  it "ignores documents which are missing required fields" do
     expect_any_instance_of(MessageProcessor).to receive(:acknowledge).once.and_call_original
     expect_any_instance_of(GdsApi::EmailAlertApi).not_to receive(:send_alert)
 
-    send_message(invalid_document)
+    send_message(document_missing_fields)
 
     wait_for_messages_to_process
   end

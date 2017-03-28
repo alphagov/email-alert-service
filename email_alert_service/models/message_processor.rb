@@ -13,7 +13,7 @@ class MessageProcessor
     process_message(message)
 
     acknowledge(message)
-  rescue InvalidDocumentError, MalformedDocumentError => e
+  rescue MalformedDocumentError => e
     Airbrake.notify_or_ignore(e)
     discard(delivery_info.delivery_tag)
   end
@@ -44,8 +44,6 @@ private
       @logger.info "not triggering email alert for non-english document #{document["title"]}: locale #{document["locale"]}"
       return
     end
-
-    message.validate!
 
     if email_alerts_supported?(document)
       @logger.info "triggering email alert for document #{document["title"]}"
