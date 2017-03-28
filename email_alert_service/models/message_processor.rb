@@ -25,6 +25,11 @@ private
 
     document = message.parsed_document
 
+    unless has_base_path?(document)
+      @logger.info "not triggering email alert for document with no base_path: #{document}"
+      return
+    end
+
     unless has_title?(document)
       @logger.info "not triggering email alert for document with no title: #{document}"
       return
@@ -126,6 +131,10 @@ private
     return true unless document.key?("locale")
 
     document["locale"] == "en"
+  end
+
+  def has_base_path?(document)
+    has_non_blank_value_for_key?(document: document, key: "base_path")
   end
 
   def has_title?(document)
