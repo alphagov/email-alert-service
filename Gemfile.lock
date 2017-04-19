@@ -31,7 +31,6 @@ GEM
       rest-client (~> 2.0)
     govuk_schemas (2.1.0)
       json-schema (~> 2.5.0)
-    govuk_taxonomy_helpers (0.1.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     json-schema (2.5.0)
@@ -90,7 +89,6 @@ DEPENDENCIES
   bunny (~> 1.5.0)
   gds-api-adapters (= 40.3.0)
   govuk_schemas (~> 2.1)
-  govuk_taxonomy_helpers (~> 0.1.0)
   plek (= 1.9.0)
   pry-byebug
   rake
