@@ -1,7 +1,7 @@
 require "gds_api/email_alert_api"
 require "models/lock_handler"
 require "models/email_alert_template"
-require "govuk_taxonomy_helpers"
+require "models/taxon_tree"
 
 class EmailAlert
   def initialize(document, logger)
@@ -54,16 +54,6 @@ private
   end
 
   def taxon_tree
-    return [] unless document.dig("links", "taxons")
-
-    # TODO: update the public API of the taxonomy helpers gem to also accept a
-    # single fully expanded document so that we don't have to pass in the
-    # document twice.
-    linked_content_item = GovukTaxonomyHelpers::LinkedContentItem.from_publishing_api(
-      content_item: document,
-      expanded_links: document,
-    )
-
-    linked_content_item.taxons_with_ancestors.map(&:content_id).uniq
+    TaxonTree.ancestors(document.dig("expanded_links", "taxons").to_a)
   end
 end
