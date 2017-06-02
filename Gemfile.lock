@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     PriorityQueue (0.1.2)
-    addressable (2.3.6)
+    addressable (2.3.8)
     airbrake (4.1.0)
       builder
       multi_json
@@ -29,12 +29,12 @@ GEM
       plek (>= 1.9.0)
       rack-cache
       rest-client (~> 2.0)
-    govuk_schemas (2.1.0)
+    govuk_schemas (2.1.1)
       json-schema (~> 2.5.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
-    json-schema (2.5.0)
-      addressable (~> 2.3)
+    json-schema (2.5.2)
+      addressable (~> 2.3.8)
     link_header (0.0.8)
     lrucache (0.1.4)
       PriorityQueue (~> 0.1.2)
