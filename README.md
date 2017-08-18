@@ -5,7 +5,7 @@ This is a message queue consumer that triggers email alerts when documents are p
 ## Technical documentation
 
 Messages are read from the `published_documents` exchange which carries documents
-published from Whitehall or Publisher via the Content Store, soon to be all publishing applications.
+published from all publishing applications via the content-store.
 
 When the service detects a published document which was tagged to one or more
 topics, it builds an email message, and passes it to email-alert-api.
@@ -30,11 +30,6 @@ It connects to RabbitMQ, reading configs from `./config`.
 ### Running the test suite
 
 `bundle exec rspec`
-
-## In the future
-
-This service will eventually be used to trigger alerts for more than just topics,
-and can be extended as needed.
 
 ## Licence
 
