@@ -14,7 +14,7 @@ class MessageProcessor
 
     acknowledge(message)
   rescue MalformedDocumentError => e
-    Airbrake.notify_or_ignore(e)
+    GovukError.notify(e)
     discard(delivery_info.delivery_tag)
   end
 

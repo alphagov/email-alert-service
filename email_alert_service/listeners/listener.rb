@@ -34,8 +34,8 @@ private
     # Rescue any exception, not just StandardError and subclasses.
     # We want to ensure that the process exits in such a situation, so we
     # explicitly call exit() after logging the error.
-    Airbrake.notify_or_ignore(e,
-      parameters: {
+    GovukError.notify(e,
+      extra: {
         delivery_info: delivery_info,
         properties: properties,
         payload: document_json,

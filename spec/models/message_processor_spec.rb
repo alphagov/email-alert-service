@@ -205,7 +205,7 @@ RSpec.describe MessageProcessor do
 
     context "document contains malformed JSON" do
       it "rejects the document, doesn't trigger the email, and notifies an exception reporter" do
-        expect(Airbrake).to receive(:notify_or_ignore).with(MalformedDocumentError)
+        expect(GovukError).to receive(:notify).with(MalformedDocumentError)
 
         processor.process("{]$£$*()}", properties, delivery_info)
 

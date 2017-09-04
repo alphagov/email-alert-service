@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require 'govuk_app_config'
 
 require_relative "../email_alert_service/environment"
 rabbitmq_options = EmailAlertService.config.rabbitmq
@@ -29,6 +30,6 @@ begin
 rescue SignalException => e
   logger.info "Received #{e}: exiting"
 rescue Exception => e
-  Airbrake.notify_or_ignore(e)
+  GovukError.notify(e)
   raise e
 end
