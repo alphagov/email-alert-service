@@ -16,6 +16,8 @@ end
 require "bundler/setup"
 Bundler.require(:default, EmailAlertService.config.environment)
 
+require "govuk_app_config"
+
 EmailAlertService.config.logger.level = Logger::DEBUG
 
 Dir[File.join(EmailAlertService.config.app_root, "config/initializers/**/*.rb")].each { |f| require f }
