@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-require 'govuk_app_config'
 
 require_relative "../email_alert_service/environment"
 rabbitmq_options = EmailAlertService.config.rabbitmq
