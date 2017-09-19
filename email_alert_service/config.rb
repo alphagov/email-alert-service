@@ -1,6 +1,7 @@
 require "pathname"
 require "yaml"
 require "logger"
+require "erb"
 
 module EmailAlertService
   class Config
@@ -15,7 +16,7 @@ module EmailAlertService
     end
 
     def rabbitmq
-      all_configs = YAML.load(File.open(app_root+"config/rabbitmq.yml"))
+      all_configs = YAML.load(ERB.new(File.read(app_root+"config/rabbitmq.yml")).result)
       environment_config = all_configs.fetch(environment)
 
       @rabbitmq ||= symbolize_keys(environment_config).freeze
