@@ -17,3 +17,16 @@ test:
   pass: email_alert_service_test
   exchange: email_alert_service_published_documents_test_exchange
   queue: email_alert_service_published_documents_test_queue
+
+production:
+  <<: *defaults
+  hosts:
+    <% hosts = ENV['RABBITMQ_HOSTS'] || 'localhost' %>
+    <% hosts.split(",").each do |host| %>
+    - <% host %>
+    <% end %>
+  user: <% ENV['RABBITMQ_USER'] %>
+  pass: <% ENV['RABBITMQ_PASSWORD'] %>
+  exchange: <% ENV['RABBITMQ_EXCHANGE'] || 'published_documents' %>
+  queue: <% ENV['RABBITMQ_QUEUE'] || 'email_alert_service' %>
+  recover_from_connection_close: true
