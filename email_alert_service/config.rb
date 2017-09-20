@@ -23,7 +23,7 @@ module EmailAlertService
     end
 
     def redis_config
-      symbolize_keys(YAML.load(File.open(app_root+"config/redis.yml")))
+      symbolize_keys(YAML.load(ERB.new(File.read(app_root+"config/redis.yml")).result))
     end
 
     def logger
