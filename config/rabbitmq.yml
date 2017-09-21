@@ -23,10 +23,10 @@ production:
   hosts:
     <% hosts = ENV['RABBITMQ_HOSTS'] || 'localhost' %>
     <% hosts.split(",").each do |host| %>
-    - <% host %>
+    - <%= host %>
     <% end %>
-  user: <% ENV['RABBITMQ_USER'] %>
-  pass: <% ENV['RABBITMQ_PASSWORD'] %>
-  exchange: <% ENV['RABBITMQ_EXCHANGE'] || 'published_documents' %>
-  queue: <% ENV['RABBITMQ_QUEUE'] || 'email_alert_service' %>
+  user: <%= ENV['RABBITMQ_USER'] %>
+  pass: <%= ENV['RABBITMQ_PASSWORD'] %>
+  exchange: <%= ENV['RABBITMQ_EXCHANGE'] || 'published_documents' %>
+  queue: <%= ENV['RABBITMQ_QUEUE'] || 'email_alert_service' %>
   recover_from_connection_close: true
