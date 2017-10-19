@@ -75,6 +75,11 @@ GEM
       faraday (>= 0.7.6, < 1.0)
     slop (3.6.0)
     statsd-ruby (1.4.0)
+    thread_safe (0.3.6)
+    tzinfo (1.2.3)
+      thread_safe (~> 0.1)
+    tzinfo-data (1.2017.2)
+      tzinfo (>= 1.0.0)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.4)
@@ -99,6 +104,8 @@ DEPENDENCIES
   rspec-core (= 3.6.0)
   rspec-expectations (= 3.6.0)
   rspec-mocks (= 3.6.0)
+  tzinfo (~> 1.2.3)
+  tzinfo-data (~> 1.2017.2)
   webmock (= 3.0.1)
 
 BUNDLED WITH
