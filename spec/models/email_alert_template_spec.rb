@@ -26,6 +26,28 @@ RSpec.describe EmailAlertTemplate do
   end
   let(:email_alert_template) { EmailAlertTemplate.new(document) }
 
+  describe "#formatted_public_updated_at" do
+    context "when public_updated_at is not during summer time in London" do
+      before do
+        document["public_updated_at"] = "2017-02-19T16:00:00.000+00:00"
+      end
+
+      it "returns a formatted date" do
+        expect(email_alert_template.send(:formatted_public_updated_at)).to eq(" 4:00pm, 19 February 2017")
+      end
+    end
+
+    context "when public_updated_at is during summer time in London" do
+      before do
+        document["public_updated_at"] = "2017-10-19T16:00:00.000+00:00"
+      end
+
+      it "returns a formatted date which is an hour later than public_updated_at" do
+        expect(email_alert_template.send(:formatted_public_updated_at)).to eq(" 5:00pm, 19 October 2017")
+      end
+    end
+  end
+
   describe "#latest_change_note" do
     context "no change_history is present in the document" do
       it "returns nil" do

@@ -7,6 +7,8 @@ gem "gds-api-adapters", "~> 47.9.0"
 gem "plek", "1.9.0"
 gem "redis", "3.1.0"
 gem "redis-namespace", "1.5.1"
+gem "tzinfo", "~> 1.2.3"
+gem "tzinfo-data", "~> 1.2017.2"
 
 group :test do
   gem 'rspec-core', '3.6.0'

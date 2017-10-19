@@ -24,7 +24,10 @@ private
   end
 
   def formatted_public_updated_at
-    DateTime.parse(@document["public_updated_at"]).strftime("%l:%M%P, %-d %B %Y")
+    # This returns the local time in London since that's what users expect to see
+    # rather than UTC
+    timezone = TZInfo::Timezone.get('Europe/London')
+    timezone.utc_to_local(DateTime.parse(@document["public_updated_at"])).strftime("%l:%M%P, %-d %B %Y")
   end
 
   def latest_change_note
