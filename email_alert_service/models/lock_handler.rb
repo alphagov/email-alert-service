@@ -2,10 +2,9 @@ require 'securerandom'
 require 'models/message_identifier'
 
 class LockHandler
+  class AlreadyLocked < StandardError; end
 
-  class AlreadyLocked < Exception; end
-
-  SECONDS_IN_A_DAY = 86400.freeze
+  SECONDS_IN_A_DAY = 86400
 
   # We remember sent messages for a long, but limited, period.  The period is
   # limited because we're using redis to store these, which is an in-memory
@@ -17,7 +16,7 @@ class LockHandler
   # normally be removed by an explicit call; this timeout is just to ensure
   # that an unclean shutdown of a worker doesn't result in total failure to
   # deliver the message.
-  LOCK_PERIOD_IN_SECONDS = 120.freeze
+  LOCK_PERIOD_IN_SECONDS = 120
 
   def initialize(email_title, public_updated_at, now = Time.now)
     @email_title = email_title
@@ -87,7 +86,7 @@ private
   end
 
   def within_marker_period?
-    seconds_since_public_updated_at < SECONDS_TO_REMEMBER_SENT_MESSAGES_FOR 
+    seconds_since_public_updated_at < SECONDS_TO_REMEMBER_SENT_MESSAGES_FOR
   end
 
   def seconds_since_public_updated_at

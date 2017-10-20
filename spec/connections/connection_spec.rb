@@ -2,7 +2,7 @@ require "spec_helper"
 require "connections/amqp_connection"
 
 RSpec.describe AMQPConnection do
-  let(:config_options) { {exchange: "example exchange", queue: "example queue"} }
+  let(:config_options) { { exchange: "example exchange", queue: "example queue" } }
 
   describe "#start" do
     it "starts a connection to the rabbitmq server" do

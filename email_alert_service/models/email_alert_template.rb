@@ -4,15 +4,15 @@ class EmailAlertTemplate
   end
 
   def message_body
-    %Q(
+    %(
       <div class="rss_item" data-message-id="#{document_identifier_hash}" style="margin-bottom: 2em;">
         <div class="rss_title" style="font-size: 120%; margin: 0 0 0.3em; padding: 0;">
-          <a href="#{make_url_from_document_base_path}" style="font-weight: bold; ">#{@document["title"]}</a>
+          <a href="#{make_url_from_document_base_path}" style="font-weight: bold; ">#{@document['title']}</a>
         </div>
         #{formatted_public_updated_at}
         #{latest_change_note}
         <br />
-        <div class="rss_description" style="margin: 0 0 0.3em; padding: 0;">#{@document["description"]}</div>
+        <div class="rss_description" style="margin: 0 0 0.3em; padding: 0;">#{@document['description']}</div>
       </div>
     )
   end

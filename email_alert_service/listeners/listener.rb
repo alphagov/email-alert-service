@@ -10,7 +10,7 @@ class Listener
         process_message(document_json, properties, delivery_info)
       rescue SignalException
         exit_on_signal
-      rescue Exception => e
+      rescue Exception => e # rubocop:disable Lint/RescueException
         exit_on_exception(e, document_json, properties, delivery_info)
       end
     end

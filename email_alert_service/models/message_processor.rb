@@ -41,12 +41,12 @@ private
     end
 
     unless is_english?(document)
-      @logger.info "not triggering email alert for non-english document #{document["title"]}: locale #{document["locale"]}"
+      @logger.info "not triggering email alert for non-english document #{document['title']}: locale #{document['locale']}"
       return
     end
 
     if email_alerts_supported?(document)
-      @logger.info "triggering email alert for document #{document["title"]}"
+      @logger.info "triggering email alert for document #{document['title']}"
       trigger_email_alert(document)
     end
   end
@@ -79,17 +79,18 @@ private
     # things which aren't appropriate. has_relevant_document_supertype? will
     # let through anything for which Whitehall would have sent emails to
     # organisation-based lists if none of these other attributes exist on it.
-    supported_attributes = [
-      "topics",
-      "policies",
-      "service_manual_topics",
-      "taxons",
-      "world_locations",
-      "topical_events",
-      "people",
-      "policy_areas",
-      "roles",
-    ]
+    supported_attributes = %w(
+      topics
+      policies
+      service_manual_topics
+      taxons
+      world_locations
+      topical_events
+      people
+      policy_areas
+      roles
+    )
+
     supported_attributes.any? do |tag_name|
       tags_hash[tag_name] && tags_hash[tag_name].any?
     end
@@ -109,9 +110,7 @@ private
   end
 
   def has_relevant_document_supertype?(document)
-    def relevant_supertype?(supertype)
-      !(['other', '', nil].include?(supertype))
-    end
+    relevant_supertype = ->(supertype) { !['other', '', nil].include?(supertype) }
 
     # These supertypes were added to Whitehall content to aid the migration of
     # Whitehall subscriptions to email-alert-api. We'd like to get to the point
@@ -119,13 +118,12 @@ private
     # perpetuating the Whitehall/everything else divide, but don't have time to
     # work through all the ramifications of that while also doing that migration
     # so are limiting the scope of emails to approximately what Whitehall did.
-    relevant_supertype?(document["government_document_supertype"]) ||
-      relevant_supertype?(document["email_document_supertype"])
+    relevant_supertype.call(document["government_document_supertype"]) ||
+      relevant_supertype.call(document["email_document_supertype"])
   end
 
   def is_english?(document)
-    # a missing locale is assumed to be English, but a "null" locale
-    # is not
+    # A missing locale is assumed to be English, but a "null" locale is not
     return true unless document.key?("locale")
 
     document["locale"] == "en"

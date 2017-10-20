@@ -8,7 +8,8 @@ require "timeout"
 
 module ListenerTestHelpers
   def send_message(body, routing_key: "policy.major")
-    @exchange.publish(body,
+    @exchange.publish(
+      body,
       routing_key: routing_key,
       content_type: "application/json"
     )

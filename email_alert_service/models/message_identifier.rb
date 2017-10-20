@@ -9,6 +9,7 @@ class MessageIdentifier
   end
 
 private
+
   attr_reader :title, :timestamp
 
   def create_hexdigest

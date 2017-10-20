@@ -16,7 +16,7 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 ENV["GOVUK_ENV"] = "test"
-ENV['GOVUK_APP_DOMAIN']='test.gov.uk'
+ENV['GOVUK_APP_DOMAIN'] = 'test.gov.uk'
 
 require "webmock/rspec"
 
@@ -41,7 +41,7 @@ RSpec.configure do |config|
   config.before(:each, type: :integration) do
     @test_config = EmailAlertService.config.rabbitmq
     @logger = EmailAlertService.config.logger
-    rabbit_options = @test_config.reject {|(key, _)| key == :queue }
+    rabbit_options = @test_config.reject { |(key, _)| key == :queue }
 
     @test_connection = Bunny.new(rabbit_options)
     @test_connection.start
