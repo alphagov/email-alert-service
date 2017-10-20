@@ -31,8 +31,9 @@ private
   end
 
   def latest_change_note
-    change_note = @document["details"]["change_history"]&.first
-    change_note["note"] if change_note
+    ChangeHistory.new(
+      history: @document["details"]["change_history"]
+    ).latest_change_note
   end
 
   def document_identifier_hash
