@@ -17,6 +17,7 @@ require "bundler/setup"
 Bundler.require(:default, EmailAlertService.config.environment)
 
 require "govuk_app_config"
+require_relative 'models/change_history'
 
 EmailAlertService.config.logger.level = Logger::DEBUG
 
