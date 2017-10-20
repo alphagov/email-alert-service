@@ -1,6 +1,3 @@
-require "models/email_alert"
-require "models/message"
-
 class MessageProcessor
   def initialize(channel, logger)
     @channel = channel

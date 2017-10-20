@@ -1,5 +1,4 @@
 require "spec_helper"
-require "models/message_processor"
 
 RSpec.describe MessageProcessor do
   let(:delivery_tag) { double(:delivery_tag) }

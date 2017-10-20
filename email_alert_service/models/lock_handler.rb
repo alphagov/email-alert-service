@@ -1,5 +1,4 @@
 require 'securerandom'
-require 'models/message_identifier'
 
 class LockHandler
   class AlreadyLocked < StandardError; end
