@@ -10,12 +10,23 @@ RSpec.describe EmailAlert do
       "base_path" => "/foo",
       "content_id" => content_id,
       "title" => "Example title",
+      "description" => "Example description",
       "details" => {
         "tags" => {
           "browse_pages" => ["tax/vat"],
           "topics" => ["oil-and-gas/licensing"],
           "some_other_missing_tags" => [],
-        }
+        },
+        "change_history" => [
+          {
+            "public_timestamp": "2017-10-19T16:09:23.000+01:00",
+            "note" => "latest change note"
+          },
+          {
+            "public_timestamp": "2017-10-16T12:09:00.000+01:00",
+            "note" => "old change note"
+          }
+        ]
       },
       "links" => {},
       "public_updated_at" => public_updated_at,
@@ -84,6 +95,10 @@ RSpec.describe EmailAlert do
         "document_type" => "example_document",
         "email_document_supertype" => "publications",
         "government_document_supertype" => "example_supertype",
+        "base_path" => "/foo",
+        "title" => "Example title",
+        "description" => "Example description",
+        "change_note" => "latest change note",
       )
     end
 
@@ -91,22 +106,10 @@ RSpec.describe EmailAlert do
       before { document.merge!("links" => { "topics" => ["uuid-888"] }) }
 
       it "formats the message to include the parent link" do
-        expect(email_alert.format_for_email_api).to eq(
-          "subject" => "Example title",
-          "body" => "This is an email.",
-          "content_id" => content_id,
-          "public_updated_at" => public_updated_at,
-          "publishing_app" => "Whitehall",
-          "tags" => {
-            "browse_pages" => ["tax/vat"],
-            "topics" => ["oil-and-gas/licensing"]
-          },
+        expect(email_alert.format_for_email_api).to include(
           "links" => {
             "topics" => ["uuid-888"]
-          },
-          "document_type" => "example_document",
-          "email_document_supertype" => "publications",
-          "government_document_supertype" => "example_supertype",
+          }
         )
       end
     end
@@ -118,20 +121,7 @@ RSpec.describe EmailAlert do
       end
 
       it "strips these out" do
-        expect(email_alert.format_for_email_api).to eq(
-          "subject" => "Example title",
-          "body" => "This is an email.",
-          "content_id" => content_id,
-          "public_updated_at" => public_updated_at,
-          "publishing_app" => "Whitehall",
-          "tags" => {
-            "browse_pages" => ["tax/vat"],
-          },
-          "links" => {},
-          "document_type" => "example_document",
-          "email_document_supertype" => "publications",
-          "government_document_supertype" => "example_supertype",
-        )
+        expect(email_alert.format_for_email_api["tags"]).not_to include("topics")
       end
     end
 

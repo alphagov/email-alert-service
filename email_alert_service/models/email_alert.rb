@@ -18,6 +18,9 @@ class EmailAlert
 
   def format_for_email_api
     {
+      "title" => document["title"],
+      "description" => document["description"],
+      "change_note" => change_note,
       "subject" => document["title"],
       "body" => EmailAlertTemplate.new(document).message_body,
       "tags" => strip_empty_arrays(document.fetch("details", {}).fetch("tags", {})),
@@ -28,12 +31,19 @@ class EmailAlert
       "content_id" => document["content_id"],
       "public_updated_at" => document["public_updated_at"],
       "publishing_app" => document["publishing_app"],
+      "base_path" => document["base_path"],
     }
   end
 
 private
 
   attr_reader :document, :logger
+
+  def change_note
+    ChangeHistory.new(
+      history: document['details']['change_history']
+    ).latest_change_note
+  end
 
   def lock_handler
     LockHandler.new(document.fetch("title"), document.fetch("public_updated_at"))
