@@ -10,7 +10,7 @@ channel = connection.channel
 
 begin
   channel.queue(connection.queue_name, passive: true, no_declare: true).delete
-rescue Bunny::NotFound => _
+rescue Bunny::NotFound => _ # rubocop:disable Lint/HandleExceptions
   # Queue didn't exist anyway
 end
 

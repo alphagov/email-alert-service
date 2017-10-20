@@ -48,7 +48,7 @@ RSpec.describe EmailAlert do
       email_alert.trigger
 
       expect(logger).to have_received(:info).with(
-        "Received major change notification for #{document["title"]}, with details #{document["details"]}"
+        "Received major change notification for #{document['title']}, with details #{document['details']}"
       )
     end
 
@@ -70,7 +70,7 @@ RSpec.describe EmailAlert do
     end
 
     it "formats the message to send to the email alert api" do
-      expect(email_alert.format_for_email_api).to eq({
+      expect(email_alert.format_for_email_api).to eq(
         "subject" => "Example title",
         "body" => "This is an email.",
         "content_id" => content_id,
@@ -84,22 +84,22 @@ RSpec.describe EmailAlert do
         "document_type" => "example_document",
         "email_document_supertype" => "publications",
         "government_document_supertype" => "example_supertype",
-      })
+      )
     end
 
     context "a link is present in the document" do
-      before { document.merge!( { "links" => { "topics" => ["uuid-888"] } } ) }
+      before { document.merge!("links" => { "topics" => ["uuid-888"] }) }
 
       it "formats the message to include the parent link" do
-        expect(email_alert.format_for_email_api).to eq({
+        expect(email_alert.format_for_email_api).to eq(
           "subject" => "Example title",
           "body" => "This is an email.",
           "content_id" => content_id,
           "public_updated_at" => public_updated_at,
           "publishing_app" => "Whitehall",
           "tags" => {
-            "browse_pages"=>["tax/vat"],
-            "topics"=>["oil-and-gas/licensing"]
+            "browse_pages" => ["tax/vat"],
+            "topics" => ["oil-and-gas/licensing"]
           },
           "links" => {
             "topics" => ["uuid-888"]
@@ -107,31 +107,31 @@ RSpec.describe EmailAlert do
           "document_type" => "example_document",
           "email_document_supertype" => "publications",
           "government_document_supertype" => "example_supertype",
-        })
+        )
       end
     end
 
     context "blank tags are present" do
       before do
-        document.merge!("links" => { "topics" => [] })
+        document["links"] = { "topics" => [] }
         document["details"]["tags"].merge!("topics" => [])
       end
 
       it "strips these out" do
-        expect(email_alert.format_for_email_api).to eq({
+        expect(email_alert.format_for_email_api).to eq(
           "subject" => "Example title",
           "body" => "This is an email.",
           "content_id" => content_id,
           "public_updated_at" => public_updated_at,
           "publishing_app" => "Whitehall",
           "tags" => {
-            "browse_pages"=>["tax/vat"],
+            "browse_pages" => ["tax/vat"],
           },
           "links" => {},
           "document_type" => "example_document",
           "email_document_supertype" => "publications",
           "government_document_supertype" => "example_supertype",
-        })
+        )
       end
     end
 

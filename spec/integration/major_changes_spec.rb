@@ -75,4 +75,3 @@ RSpec.describe "Receiving major change notifications", type: :integration do
     wait_for_messages_to_process
   end
 end
-

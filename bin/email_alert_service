@@ -28,7 +28,7 @@ begin
   listener.listen
 rescue SignalException => e
   logger.info "Received #{e}: exiting"
-rescue Exception => e
+rescue Exception => e # rubocop:disable Lint/RescueException
   GovukError.notify(e)
   raise e
 end

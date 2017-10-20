@@ -16,18 +16,18 @@ module EmailAlertService
     end
 
     def rabbitmq
-      all_configs = YAML.load(ERB.new(File.read(app_root+"config/rabbitmq.yml")).result)
+      all_configs = YAML.safe_load(ERB.new(File.read(app_root + "config/rabbitmq.yml")).result, [], [], true)
       environment_config = all_configs.fetch(environment)
 
       @rabbitmq ||= symbolize_keys(environment_config).freeze
     end
 
     def redis_config
-      symbolize_keys(YAML.load(ERB.new(File.read(app_root+"config/redis.yml")).result))
+      symbolize_keys(YAML.safe_load(ERB.new(File.read(app_root + "config/redis.yml")).result, [], [], true))
     end
 
     def logger
-      logfile = File.open(app_root+"log/#{environment}.log", "a")
+      logfile = File.open(app_root + "log/#{environment}.log", "a")
 
       logfile.sync = true
 
@@ -37,8 +37,8 @@ module EmailAlertService
   private
 
     def symbolize_keys(hash)
-      hash.inject({}) do |hash, (key, value)|
-        hash.merge(key.to_sym => value)
+      hash.inject({}) do |inner_hash, (key, value)|
+        inner_hash.merge(key.to_sym => value)
       end
     end
   end
