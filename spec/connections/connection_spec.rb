@@ -1,5 +1,4 @@
 require "spec_helper"
-require "connections/amqp_connection"
 
 RSpec.describe AMQPConnection do
   let(:config_options) { { exchange: "example exchange", queue: "example queue" } }

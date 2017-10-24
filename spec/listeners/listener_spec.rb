@@ -1,5 +1,4 @@
 require "spec_helper"
-require "listeners/listener"
 
 RSpec.describe Listener do
   describe "#listen" do
