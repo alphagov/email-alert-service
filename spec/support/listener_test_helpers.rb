@@ -1,8 +1,4 @@
-require "connections/amqp_connection"
-require "listeners/listener"
 require "logger"
-require "models/message_processor"
-require "queues/major_change_queue"
 require "tempfile"
 require "timeout"
 

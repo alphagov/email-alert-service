@@ -1,5 +1,4 @@
 require "spec_helper"
-require "queues/major_change_queue"
 
 RSpec.describe MajorChangeQueue do
   describe "#bind" do

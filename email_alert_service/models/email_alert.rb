@@ -1,7 +1,4 @@
 require "gds_api/email_alert_api"
-require "models/lock_handler"
-require "models/email_alert_template"
-require "models/taxon_tree"
 
 class EmailAlert
   def initialize(document, logger)

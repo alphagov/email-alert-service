@@ -3,7 +3,6 @@
 require_relative "../email_alert_service/environment"
 rabbitmq_options = EmailAlertService.config.rabbitmq
 
-require "connections/amqp_connection"
 connection = AMQPConnection.new(rabbitmq_options)
 connection.start
 channel = connection.channel

@@ -1,5 +1,4 @@
 require "spec_helper"
-require "models/message_processor"
 
 RSpec.describe "Random input", type: :integration do
   let(:delivery_info) { double(:delivery_info, delivery_tag: double(:delivery_tag)) }
