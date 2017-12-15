@@ -5,8 +5,8 @@ GEM
     addressable (2.3.8)
     amq-protocol (2.2.0)
     ast (2.3.0)
-    bunny (1.5.1)
-      amq-protocol (>= 1.9.2)
+    bunny (2.7.2)
+      amq-protocol (>= 2.2.0)
     byebug (9.1.0)
     coderay (1.1.2)
     crack (0.4.3)
@@ -124,7 +124,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bunny (~> 1.5.0)
+  bunny (~> 2.7.2)
   gds-api-adapters (~> 47.9.0)
   govuk-lint (= 3.3.0)
   govuk_app_config (~> 0.2.0)
