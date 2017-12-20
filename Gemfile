@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gem "bunny", "~> 1.5.0"
 gem "gds-api-adapters", "~> 47.9.0"
-gem "govuk_app_config", "~> 0.2.0"
+gem "govuk_app_config", "~> 1.1.0"
 gem "plek", "1.9.0"
 gem "rake"
 gem "redis", "3.1.0"
