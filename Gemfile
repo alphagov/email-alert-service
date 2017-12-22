@@ -6,7 +6,7 @@ gem "govuk_app_config", "~> 1.1.0"
 gem "plek", "1.9.0"
 gem "rake"
 gem "redis", "3.3.5"
-gem "redis-namespace", "1.5.1"
+gem "redis-namespace", "1.6.0"
 gem "tzinfo", "~> 1.2.3"
 gem "tzinfo-data", "~> 1.2017.2"
 
