@@ -47,7 +47,10 @@ private
   end
 
   def email_api_client
-    GdsApi::EmailAlertApi.new(Plek.find("email-alert-api"))
+    GdsApi::EmailAlertApi.new(
+      Plek.find("email-alert-api"),
+      bearer_token: ENV.fetch("EMAIL_ALERT_API_BEARER_TOKEN", "email-alert-api-bearer-token")
+    )
   end
 
   def strip_empty_arrays(tag_hash)
