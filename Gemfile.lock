@@ -94,7 +94,7 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
-    rspec-core (3.7.0)
+    rspec-core (3.7.1)
       rspec-support (~> 3.7.0)
     rspec-expectations (3.7.0)
       diff-lcs (>= 1.2.0, < 2.0)
@@ -156,7 +156,7 @@ DEPENDENCIES
   rake
   redis (= 4.0.1)
   redis-namespace (= 1.6.0)
-  rspec-core (= 3.7.0)
+  rspec-core (= 3.7.1)
   rspec-expectations (= 3.7.0)
   rspec-mocks (= 3.7.0)
   tzinfo (~> 1.2.3)
