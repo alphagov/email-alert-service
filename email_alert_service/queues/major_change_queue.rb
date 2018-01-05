@@ -11,7 +11,7 @@ class MajorChangeQueue
 
 private
 
-  attr_reader :connection, :exchange, :queue
+  attr_reader :connection
 
   def channel
     connection.channel
