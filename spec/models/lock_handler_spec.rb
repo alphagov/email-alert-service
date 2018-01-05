@@ -15,7 +15,7 @@ RSpec.describe LockHandler do
   let(:redis_connection) { redis.redis }
 
   after :each do
-    redis.flushdb
+    redis_connection.flushdb
   end
 
   describe "#with_lock_unless_done" do
