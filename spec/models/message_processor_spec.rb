@@ -176,6 +176,21 @@ RSpec.describe MessageProcessor do
       end
     end
 
+    context "has links but is from a blacklisted document type" do
+      before do
+        good_document["details"] = {}
+        good_document["links"] = { "taxons" => ["taxon-uuid"] }
+        good_document["document_type"] = "coming_soon"
+      end
+
+      it "acknowledges but doesn't trigger the email" do
+        processor.process(good_document.to_json, properties, delivery_info)
+
+        email_was_not_triggered
+        message_acknowledged
+      end
+    end
+
     context "no links or tags but has a relevant document supertype" do
       before do
         good_document["details"] = {}

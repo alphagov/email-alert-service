@@ -55,7 +55,9 @@ private
   end
 
   def email_alerts_supported?(document)
-    return false if blacklisted_publishing_app?(document["publishing_app"])
+    blacklisted = blacklisted_publishing_app?(document["publishing_app"]) \
+      || blacklisted_document_type?(document["document_type"])
+    return false if blacklisted
 
     document_tags = document.fetch("details", {}).fetch("tags", {})
     document_links = document.fetch("links", {})
@@ -98,6 +100,12 @@ private
     # emails, so we need to avoid sending duplicate emails when they come
     # through on the queue:
     ['travel-advice-publisher', 'specialist-publisher'].include?(publishing_app)
+  end
+
+  def blacklisted_document_type?(document_type)
+    # These are documents that don't make sense to email someone about as they
+    # are not useful to an end user.
+    %w[coming_soon].include?(document_type)
   end
 
   def whitelisted_document_type?(document_type)
