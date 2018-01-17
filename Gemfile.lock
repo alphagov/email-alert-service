@@ -32,7 +32,7 @@ GEM
       plek (>= 1.9.0)
       rack-cache
       rest-client (~> 2.0)
-    govuk-lint (3.5.0)
+    govuk-lint (3.6.0)
       rubocop (~> 0.51.0)
       rubocop-rspec (~> 1.19.0)
       scss_lint
@@ -152,7 +152,7 @@ PLATFORMS
 DEPENDENCIES
   bunny (~> 2.8)
   gds-api-adapters (~> 51.0)
-  govuk-lint (~> 3.3)
+  govuk-lint (~> 3.6)
   govuk_app_config (~> 1.2)
   govuk_schemas (~> 3.0)
   plek (~> 2.0)
