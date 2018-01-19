@@ -24,7 +24,7 @@ GEM
     faraday (0.13.1)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.18)
-    gds-api-adapters (51.0.0)
+    gds-api-adapters (51.1.0)
       addressable
       link_header
       lrucache (~> 0.1.1)
@@ -151,7 +151,7 @@ PLATFORMS
 
 DEPENDENCIES
   bunny (~> 2.8)
-  gds-api-adapters (~> 51.0)
+  gds-api-adapters (~> 51.1)
   govuk-lint (~> 3.6)
   govuk_app_config (~> 1.2)
   govuk_schemas (~> 3.0)
