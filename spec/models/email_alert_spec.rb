@@ -99,6 +99,7 @@ RSpec.describe EmailAlert do
         "title" => "Example title",
         "description" => "Example description",
         "change_note" => "latest change note",
+        "priority" => "normal",
       )
     end
 

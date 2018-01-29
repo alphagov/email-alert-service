@@ -29,6 +29,7 @@ class EmailAlert
       "public_updated_at" => document["public_updated_at"],
       "publishing_app" => document["publishing_app"],
       "base_path" => document["base_path"],
+      "priority" => priority,
     }
   end
 
@@ -65,5 +66,9 @@ private
 
   def taxon_tree
     TaxonTree.ancestors(document.dig("expanded_links", "taxons").to_a)
+  end
+
+  def priority
+    "normal"
   end
 end
