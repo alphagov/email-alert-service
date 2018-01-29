@@ -170,5 +170,15 @@ RSpec.describe EmailAlert do
         expect(email_alert.format_for_email_api["priority"]).to eq("high")
       end
     end
+
+    context "with a medical safety alert" do
+      before do
+        document.merge!("document_type" => "medical_safety_alert")
+      end
+
+      it "should be high priority" do
+        expect(email_alert.format_for_email_api["priority"]).to eq("high")
+      end
+    end
   end
 end

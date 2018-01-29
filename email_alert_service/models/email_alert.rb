@@ -1,7 +1,7 @@
 require "gds_api/email_alert_api"
 
 class EmailAlert
-  HIGH_PRIORITY_DOCUMENT_TYPES = %w(travel_advice).freeze
+  HIGH_PRIORITY_DOCUMENT_TYPES = %w(travel_advice medical_safety_alert).freeze
 
   def initialize(document, logger)
     @document = document
