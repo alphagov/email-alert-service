@@ -1,6 +1,8 @@
 require "gds_api/email_alert_api"
 
 class EmailAlert
+  HIGH_PRIORITY_DOCUMENT_TYPES = %w(travel_advice).freeze
+
   def initialize(document, logger)
     @document = document
     @logger = logger
@@ -69,6 +71,6 @@ private
   end
 
   def priority
-    "normal"
+    HIGH_PRIORITY_DOCUMENT_TYPES.include?(document.fetch("document_type")) ? "high" : "normal"
   end
 end

@@ -160,5 +160,15 @@ RSpec.describe EmailAlert do
         expect(links_hash["taxon_tree"].sort).to eq %w(uuid-1 uuid-2 uuid-3)
       end
     end
+
+    context "with a travel advice" do
+      before do
+        document.merge!("document_type" => "travel_advice")
+      end
+
+      it "should be high priority" do
+        expect(email_alert.format_for_email_api["priority"]).to eq("high")
+      end
+    end
   end
 end
