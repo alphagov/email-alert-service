@@ -1,6 +1,8 @@
 require "gds_api/email_alert_api"
 
 class EmailAlert
+  HIGH_PRIORITY_DOCUMENT_TYPES = %w(travel_advice medical_safety_alert).freeze
+
   def initialize(document, logger)
     @document = document
     @logger = logger
@@ -29,6 +31,7 @@ class EmailAlert
       "public_updated_at" => document["public_updated_at"],
       "publishing_app" => document["publishing_app"],
       "base_path" => document["base_path"],
+      "priority" => priority,
     }
   end
 
@@ -65,5 +68,9 @@ private
 
   def taxon_tree
     TaxonTree.ancestors(document.dig("expanded_links", "taxons").to_a)
+  end
+
+  def priority
+    HIGH_PRIORITY_DOCUMENT_TYPES.include?(document.fetch("document_type")) ? "high" : "normal"
   end
 end
