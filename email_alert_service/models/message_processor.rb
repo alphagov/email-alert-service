@@ -101,6 +101,10 @@ private
     # through on the queue:
     return true if %w(travel-advice-publisher specialist-publisher).include?(publishing_app)
 
+    # These publishing apps don't manage any content where it would make sense to
+    # subscribe to email updates for
+    return true if %w(collections-publisher).include?(publishing_app)
+
     false
   end
 
