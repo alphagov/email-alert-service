@@ -99,7 +99,13 @@ private
     # These publishing apps make direct calls to email-alert-api to send their
     # emails, so we need to avoid sending duplicate emails when they come
     # through on the queue:
-    ['travel-advice-publisher', 'specialist-publisher'].include?(publishing_app)
+    return true if %w(travel-advice-publisher specialist-publisher).include?(publishing_app)
+
+    # These publishing apps don't manage any content where it would make sense to
+    # subscribe to email updates for
+    return true if %w(collections-publisher).include?(publishing_app)
+
+    false
   end
 
   def blacklisted_document_type?(document_type)
