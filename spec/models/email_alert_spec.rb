@@ -71,6 +71,15 @@ RSpec.describe EmailAlert do
         govuk_request_id: govuk_request_id
       )
     end
+
+    it "logs if it receives a conflict" do
+      allow(alert_api).to receive(:send_alert).and_raise(GdsApi::HTTPConflict.new(409))
+      email_alert.trigger
+
+      expect(logger).to have_received(:info).with(
+        "email-alert-api returned conflict for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
+      )
+    end
   end
 
   describe "#format_for_email_api" do
