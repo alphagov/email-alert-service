@@ -11,7 +11,7 @@ GEM
       public_suffix (>= 2.0.2, < 4.0)
     amq-protocol (2.3.0)
     ast (2.3.0)
-    bunny (2.9.1)
+    bunny (2.9.2)
       amq-protocol (~> 2.3.0)
     byebug (9.1.0)
     coderay (1.1.2)
@@ -150,7 +150,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bunny (~> 2.8)
+  bunny (~> 2.9)
   gds-api-adapters (~> 51.2)
   govuk-lint (~> 3.6)
   govuk_app_config (~> 1.3)
