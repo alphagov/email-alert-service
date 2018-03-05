@@ -178,6 +178,10 @@ RSpec.describe EmailAlert do
       it "should be high priority" do
         expect(email_alert.format_for_email_api["priority"]).to eq("high")
       end
+
+      it "should have a blank description" do
+        expect(email_alert.format_for_email_api["description"]).to eq("")
+      end
     end
 
     context "with a medical safety alert" do
