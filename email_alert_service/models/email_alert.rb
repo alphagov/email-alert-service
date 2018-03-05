@@ -2,6 +2,7 @@ require "gds_api/email_alert_api"
 
 class EmailAlert
   HIGH_PRIORITY_DOCUMENT_TYPES = %w(travel_advice medical_safety_alert).freeze
+  BLANK_DESCRIPTION_DOCUMENT_TYPES = %w(travel_advice).freeze
 
   def initialize(document, logger)
     @document = document
@@ -22,13 +23,13 @@ class EmailAlert
   def format_for_email_api
     {
       "title" => document["title"],
-      "description" => document["description"],
+      "description" => description,
       "change_note" => change_note,
       "subject" => document["title"],
       "body" => EmailAlertTemplate.new(document).message_body,
       "tags" => strip_empty_arrays(document.fetch("details", {}).fetch("tags", {})),
       "links" => document_links,
-      "document_type" => document["document_type"],
+      "document_type" => document_type,
       "email_document_supertype" => document["email_document_supertype"],
       "government_document_supertype" => document["government_document_supertype"],
       "content_id" => document["content_id"],
@@ -74,7 +75,16 @@ private
     TaxonTree.ancestors(document.dig("expanded_links", "taxons").to_a)
   end
 
+  def document_type
+    document.fetch("document_type")
+  end
+
   def priority
-    HIGH_PRIORITY_DOCUMENT_TYPES.include?(document.fetch("document_type")) ? "high" : "normal"
+    HIGH_PRIORITY_DOCUMENT_TYPES.include?(document_type) ? "high" : "normal"
+  end
+
+  def description
+    return "" if BLANK_DESCRIPTION_DOCUMENT_TYPES.include?(document_type)
+    document["description"]
   end
 end
