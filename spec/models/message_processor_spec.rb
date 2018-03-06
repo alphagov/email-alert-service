@@ -180,10 +180,20 @@ RSpec.describe MessageProcessor do
       before do
         good_document["details"] = {}
         good_document["links"] = { "taxons" => ["taxon-uuid"] }
-        good_document["document_type"] = "coming_soon"
       end
 
-      it "acknowledges but doesn't trigger the email" do
+      it "acknowledges but doesn't trigger the email for coming_soon document type" do
+        good_document["document_type"] = "coming_soon"
+
+        processor.process(good_document.to_json, properties, delivery_info)
+
+        email_was_not_triggered
+        message_acknowledged
+      end
+
+      it "acknowledges but doesn't trigger the email for special_route document type" do
+        good_document["document_type"] = "special_route"
+
         processor.process(good_document.to_json, properties, delivery_info)
 
         email_was_not_triggered

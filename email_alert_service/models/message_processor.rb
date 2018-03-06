@@ -111,7 +111,7 @@ private
   def blacklisted_document_type?(document_type)
     # These are documents that don't make sense to email someone about as they
     # are not useful to an end user.
-    %w[coming_soon].include?(document_type)
+    %w[coming_soon special_route].include?(document_type)
   end
 
   def whitelisted_document_type?(document_type)
