@@ -32,6 +32,11 @@ private
       return
     end
 
+    unless has_change_note?(document)
+      @logger.info "not triggering email alert for document with no change note: #{document}"
+      return
+    end
+
     unless has_public_updated_at?(document)
       @logger.info "not triggering email alert for document with no public_updated_at: #{document}"
       return
@@ -146,6 +151,10 @@ private
 
   def has_title?(document)
     has_non_blank_value_for_key?(document: document, key: "title")
+  end
+
+  def has_change_note?(document)
+    has_non_blank_value_for_key?(document: document, key: "change_note")
   end
 
   def has_public_updated_at?(document)

@@ -294,6 +294,17 @@ RSpec.describe MessageProcessor do
       end
     end
 
+    context "document has no change note" do
+      before { good_document["change_note"] = nil }
+
+      it "acknowledges but doesn't trigger the email" do
+        processor.process(good_document.to_json, properties, delivery_info)
+
+        email_was_not_triggered
+        message_acknowledged
+      end
+    end
+
     context "document has blank title" do
       before { good_document["title"] = nil }
 
