@@ -80,6 +80,15 @@ RSpec.describe EmailAlert do
         "email-alert-api returned conflict for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
       )
     end
+
+    it "logs if it receives an unprocessable entity" do
+      allow(alert_api).to receive(:send_alert).and_raise(GdsApi::HTTPUnprocessableEntity.new(422))
+      email_alert.trigger
+
+      expect(logger).to have_received(:info).with(
+        "email-alert-api returned unprocessable entity for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
+      )
+    end
   end
 
   describe "#format_for_email_api" do

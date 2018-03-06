@@ -16,6 +16,8 @@ class EmailAlert
         email_api_client.send_alert(format_for_email_api, govuk_request_id: document['govuk_request_id'])
       rescue GdsApi::HTTPConflict
         logger.info "email-alert-api returned conflict for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
+      rescue GdsApi::HTTPUnprocessableEntity
+        logger.info "email-alert-api returned unprocessable entity for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
       end
     end
   end
