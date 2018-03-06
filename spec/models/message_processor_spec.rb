@@ -9,8 +9,16 @@ RSpec.describe MessageProcessor do
 
   let(:processor) { MessageProcessor.new(channel, logger) }
   let(:mock_email_alert) { double("EmailAlert", trigger: nil) }
+  let(:change_history) do
+    [
+      {
+        "note" => "First published.",
+        "public_timestamp" => "2014-10-06T13:39:19.000+00:00"
+      }
+    ]
+  end
 
-  let(:good_document) {
+  let(:good_document) do
     {
       "base_path" => "path/to-doc",
       "title" => "Example title",
@@ -18,6 +26,7 @@ RSpec.describe MessageProcessor do
       "description" => "example description",
       "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
       "details" => {
+        "change_history" => change_history,
         "tags" => {
           "topics" => ["example topic"]
         }
@@ -26,7 +35,7 @@ RSpec.describe MessageProcessor do
         "topics" => ["example-topic-uuid"]
       }
     }
-  }
+  end
 
   def email_was_triggered
     expect(mock_email_alert).to have_received(:trigger)
@@ -124,13 +133,39 @@ RSpec.describe MessageProcessor do
       end
     end
 
+    context "empty change note" do
+      before do
+        good_document["details"]["change_history"][0]["note"] = ""
+      end
+
+      it "acknowledges but doesn't trigger the email" do
+        processor.process(good_document.to_json, properties, delivery_info)
+
+        email_was_not_triggered
+        message_acknowledged
+      end
+    end
+
+    context "missing change history" do
+      before do
+        good_document["details"]["change_history"] = nil
+      end
+
+      it "acknowledges but doesn't trigger the email" do
+        processor.process(good_document.to_json, properties, delivery_info)
+
+        email_was_not_triggered
+        message_acknowledged
+      end
+    end
+
     context "missing details hash" do
       before { good_document.delete("details") }
 
-      it "still acknowledges and triggers the email" do
+      it "acknowledges but doesn't trigger the email" do
         processor.process(good_document.to_json, properties, delivery_info)
 
-        email_was_triggered
+        email_was_not_triggered
         message_acknowledged
       end
     end
@@ -148,7 +183,7 @@ RSpec.describe MessageProcessor do
 
     context "no links or tags but of whitelisted document type" do
       before do
-        good_document["details"] = {}
+        good_document["details"] = { "change_history" => change_history }
         good_document["links"] = { "parent" => ["parent-topic-uuid"] }
         good_document["document_type"] = "service_manual_guide"
       end
@@ -163,7 +198,7 @@ RSpec.describe MessageProcessor do
 
     context "has links but is from a blacklisted publishing application" do
       before do
-        good_document["details"] = {}
+        good_document["details"] = { "change_history" => change_history }
         good_document["links"] = { "taxons" => ["taxon-uuid"] }
         good_document["publishing_app"] = "travel-advice-publisher"
       end
@@ -178,7 +213,7 @@ RSpec.describe MessageProcessor do
 
     context "has links but is from a blacklisted document type" do
       before do
-        good_document["details"] = {}
+        good_document["details"] = { "change_history" => change_history }
         good_document["links"] = { "taxons" => ["taxon-uuid"] }
       end
 
@@ -203,7 +238,7 @@ RSpec.describe MessageProcessor do
 
     context "no links or tags but has a relevant document supertype" do
       before do
-        good_document["details"] = {}
+        good_document["details"] = { "change_history" => change_history }
         good_document["links"] = {}
         good_document["email_document_supertype"] = "announcements"
       end
