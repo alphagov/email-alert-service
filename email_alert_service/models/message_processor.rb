@@ -42,6 +42,11 @@ private
       return
     end
 
+    unless has_change_note?(document)
+      @logger.info "not triggering email alert for document missing change note #{document}"
+      return
+    end
+
     if email_alerts_supported?(document)
       @logger.info "triggering email alert for document #{document['title']}"
       trigger_email_alert(document)
@@ -150,6 +155,14 @@ private
 
   def has_public_updated_at?(document)
     has_non_blank_value_for_key?(document: document, key: "public_updated_at")
+  end
+
+  def has_change_note?(document)
+    note = ChangeHistory.new(
+      history: document.dig("details", "change_history")
+    ).latest_change_note
+
+    !note.nil? && !note.empty?
   end
 
   def acknowledge(message)

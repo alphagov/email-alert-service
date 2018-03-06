@@ -10,7 +10,12 @@ RSpec.describe "Receiving major change notifications", type: :integration do
       "description" => "example description",
       "public_updated_at" => updated_now,
       "details" => {
-        "change_note" => "this doc has been changed",
+        "change_history" => [
+          {
+            "note" => "First published.",
+            "public_timestamp" => "2014-10-06T13:39:19.000+00:00"
+          }
+        ],
         "tags" => {
           "browse_pages" => [],
           "topics" => ["example topic"]
