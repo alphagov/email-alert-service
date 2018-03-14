@@ -10,6 +10,9 @@ class MessageProcessor
     process_message(message)
 
     acknowledge(message)
+  rescue GdsApi::HTTPErrorResponse => e
+    @logger.info "Requeuing '#{document_json['title']}' due to a #{e.code} response"
+    requeue(delivery_info.delivery_tag)
   rescue MalformedDocumentError => e
     GovukError.notify(e)
     discard(delivery_info.delivery_tag)
@@ -171,6 +174,10 @@ private
 
   def discard(delivery_tag)
     channel.reject(delivery_tag, false)
+  end
+
+  def requeue(delivery_tag)
+    channel.nack(delivery_tag, false, true)
   end
 
   def has_non_blank_value_for_key?(document:, key:)
