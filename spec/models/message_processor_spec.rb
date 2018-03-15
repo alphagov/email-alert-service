@@ -4,7 +4,7 @@ RSpec.describe MessageProcessor do
   let(:delivery_tag) { double(:delivery_tag) }
   let(:delivery_info) { double(:delivery_info, delivery_tag: delivery_tag) }
   let(:properties) { double(:properties, content_type: nil) }
-  let(:channel) { double(:channel, acknowledge: nil, reject: nil) }
+  let(:channel) { double(:channel, acknowledge: nil, reject: nil, nack: nil) }
   let(:logger) { double(:logger, info: nil) }
 
   let(:processor) { MessageProcessor.new(channel, logger) }
@@ -51,6 +51,10 @@ RSpec.describe MessageProcessor do
 
   def message_rejected
     expect(channel).to have_received(:reject).with(delivery_tag, false)
+  end
+
+  def message_requeued
+    expect(channel).to have_received(:nack).with(delivery_tag, false, true)
   end
 
   before do
@@ -270,6 +274,18 @@ RSpec.describe MessageProcessor do
 
         email_was_not_triggered
         message_rejected
+      end
+    end
+
+    context "email alert api returns an error" do
+      before do
+        allow(mock_email_alert).to receive(:trigger)
+          .and_raise(GdsApi::HTTPBadGateway, 502, "Bad Request")
+      end
+
+      it "requeues the message and doesn't trigger an email" do
+        processor.process(good_document.to_json, properties, delivery_info)
+        message_requeued
       end
     end
 
