@@ -71,15 +71,6 @@ private
     document_links = document.fetch("links", {})
     document_type = document.fetch("document_type")
 
-    # Temporarily stop HMCTS-related content items from triggering
-    # email alerts while their forms are migrated to GOV.UK.
-    # This will be removed on 21/03/2018.
-    # This only works if HMCTS is the first organisation, which will
-    # be the case here.
-    document_expanded_links = document.fetch("expanded_links", {})
-    return false if document_expanded_links.dig("organisations", 0, "base_path") ==
-        "/government/organisations/hm-courts-and-tribunals-service"
-
     contains_supported_attribute?(document_links) \
       || contains_supported_attribute?(document_tags) \
       || whitelisted_document_type?(document_type) \

@@ -37,30 +37,6 @@ RSpec.describe MessageProcessor do
     }
   end
 
-  let(:hmcts_document) do
-    {
-      "base_path" => "path/to-doc",
-      "title" => "Example title",
-      "document_type" => "example",
-      "description" => "example description",
-      "public_updated_at" => "2014-10-06T13:39:19.000+00:00",
-      "details" => {
-        "change_history" => change_history,
-        "tags" => {
-          "topics" => ["example topic"]
-        }
-      },
-      "expanded_links" => {
-        "topics" => ["example-topic-uuid"],
-        "organisations" => [
-          {
-            "base_path" => "/government/organisations/hm-courts-and-tribunals-service"
-          }
-        ]
-      }
-    }
-  end
-
   def email_was_triggered
     expect(mock_email_alert).to have_received(:trigger)
   end
@@ -220,15 +196,6 @@ RSpec.describe MessageProcessor do
         processor.process(good_document.to_json, properties, delivery_info)
 
         email_was_triggered
-        message_acknowledged
-      end
-    end
-
-    context "organisation is HMCTS" do
-      it "acknowledges but doesn't trigger the email" do
-        processor.process(hmcts_document.to_json, properties, delivery_info)
-
-        email_was_not_triggered
         message_acknowledged
       end
     end
