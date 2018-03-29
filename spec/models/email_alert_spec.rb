@@ -19,11 +19,11 @@ RSpec.describe EmailAlert do
         },
         "change_history" => [
           {
-            "public_timestamp": "2017-10-19T16:09:23.000+01:00",
+            "public_timestamp" => "2017-10-19T16:09:23.000+01:00",
             "note" => "latest change note"
           },
           {
-            "public_timestamp": "2017-10-16T12:09:00.000+01:00",
+            "public_timestamp" => "2017-10-16T12:09:00.000+01:00",
             "note" => "old change note"
           }
         ]

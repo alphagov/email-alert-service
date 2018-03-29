@@ -13,8 +13,8 @@ RSpec.describe MessageProcessor do
     [
       {
         "note" => "First published.",
-        "public_timestamp" => "2014-10-06T13:39:19.000+00:00"
-      }
+        "public_timestamp" => "2014-10-06T13:39:19.000+00:00",
+      },
     ]
   end
 
