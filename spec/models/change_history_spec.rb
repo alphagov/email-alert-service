@@ -31,18 +31,18 @@ RSpec.describe ChangeHistory do
         ChangeHistory.new(
           history: [
             {
-              "public_timestamp": "2017-10-19T16:09:23.000+01:00",
-              "note" => "latest change note"
-            },
-            {
               "public_timestamp": "2017-10-18T16:09:23.000+01:00",
               "note" => "a different change note"
+            },
+            {
+              "public_timestamp": "2017-10-19T16:09:23.000+01:00",
+              "note" => "latest change note"
             }
           ]
         )
       }
 
-      it "returns the first" do
+      it "returns the latest" do
         expect(change_history.latest_change_note).to eq("latest change note")
       end
     end
