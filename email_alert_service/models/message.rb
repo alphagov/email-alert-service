@@ -22,4 +22,5 @@ class Message
   end
 end
 
-class MalformedDocumentError < StandardError; end
+class MalformedDocumentError < StandardError
+end
