@@ -20,5 +20,5 @@ group :test do
   gem 'rspec-core', '~> 3.7'
   gem 'rspec-expectations', '~> 3.7'
   gem 'rspec-mocks', '~> 3.7'
-  gem 'webmock', '~> 3.3'
+  gem 'webmock', '~> 3.4'
 end
