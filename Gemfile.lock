@@ -41,7 +41,7 @@ GEM
       sentry-raven (~> 2.7.1)
       statsd-ruby (~> 1.4.0)
       unicorn (~> 5.4.0)
-    govuk_schemas (3.1.0)
+    govuk_schemas (3.2.0)
       json-schema (~> 2.8.0)
     hashdiff (0.3.7)
     http-cookie (1.0.3)
@@ -153,7 +153,7 @@ DEPENDENCIES
   gds-api-adapters (~> 52.6)
   govuk-lint (~> 3.8)
   govuk_app_config (~> 1.7)
-  govuk_schemas (~> 3.0)
+  govuk_schemas (~> 3.2)
   plek (~> 2.1)
   pry-byebug
   rake
