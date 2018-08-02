@@ -27,6 +27,7 @@ RSpec.describe "Receiving major change notifications", type: :integration do
 
   let(:malformed_json) { '{23o*&£}' }
   let(:document_missing_fields) { '{"houses": "are for living in"}' }
+  let(:client) { double('client') }
 
   around :each do |example|
     start_listener
@@ -34,9 +35,13 @@ RSpec.describe "Receiving major change notifications", type: :integration do
     stop_listener
   end
 
+  before :each do
+    allow(Services).to receive(:email_api_client).and_return(client)
+  end
+
   it "discards malformed documents" do
     expect_any_instance_of(MajorChangeMessageProcessor).to receive(:discard).once.and_call_original
-    expect_any_instance_of(GdsApi::EmailAlertApi).not_to receive(:send_alert)
+    expect(client).not_to receive(:send_alert)
 
     send_message(malformed_json)
 
@@ -45,7 +50,7 @@ RSpec.describe "Receiving major change notifications", type: :integration do
 
   it "ignores documents which are missing required fields" do
     expect_any_instance_of(MajorChangeMessageProcessor).to receive(:acknowledge).once.and_call_original
-    expect_any_instance_of(GdsApi::EmailAlertApi).not_to receive(:send_alert)
+    expect(client).not_to receive(:send_alert)
 
     send_message(document_missing_fields)
 
@@ -54,7 +59,7 @@ RSpec.describe "Receiving major change notifications", type: :integration do
 
   it "acknowledges the message for documents experiencing major changes" do
     expect_any_instance_of(MajorChangeMessageProcessor).to receive(:acknowledge).and_call_original
-    expect_any_instance_of(GdsApi::EmailAlertApi).to receive(:send_alert)
+    expect(client).to receive(:send_alert)
 
     send_message(well_formed_document, routing_key: "policy.major")
 
@@ -63,7 +68,7 @@ RSpec.describe "Receiving major change notifications", type: :integration do
 
   it "doesn't process documents for other change types" do
     expect_any_instance_of(MajorChangeMessageProcessor).not_to receive(:process)
-    expect_any_instance_of(GdsApi::EmailAlertApi).not_to receive(:send_alert)
+    expect(client).to receive(:send_alert)
 
     send_message(well_formed_document, routing_key: "policy.minor")
     send_message(well_formed_document, routing_key: "policy.republish")
@@ -73,7 +78,7 @@ RSpec.describe "Receiving major change notifications", type: :integration do
 
   it "sends an email alert for documents experiencing major changes" do
     expect_any_instance_of(MajorChangeMessageProcessor).to receive(:acknowledge).and_call_original
-    expect_any_instance_of(GdsApi::EmailAlertApi).to receive(:send_alert)
+    expect(client).to receive(:send_alert)
 
     send_message(well_formed_document, routing_key: "policy.major")
 
