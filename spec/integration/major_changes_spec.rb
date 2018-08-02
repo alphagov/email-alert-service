@@ -35,7 +35,7 @@ RSpec.describe "Receiving major change notifications", type: :integration do
   end
 
   it "discards malformed documents" do
-    expect_any_instance_of(MessageProcessor).to receive(:discard).once.and_call_original
+    expect_any_instance_of(MajorChangeMessageProcessor).to receive(:discard).once.and_call_original
     expect_any_instance_of(GdsApi::EmailAlertApi).not_to receive(:send_alert)
 
     send_message(malformed_json)
@@ -44,7 +44,7 @@ RSpec.describe "Receiving major change notifications", type: :integration do
   end
 
   it "ignores documents which are missing required fields" do
-    expect_any_instance_of(MessageProcessor).to receive(:acknowledge).once.and_call_original
+    expect_any_instance_of(MajorChangeMessageProcessor).to receive(:acknowledge).once.and_call_original
     expect_any_instance_of(GdsApi::EmailAlertApi).not_to receive(:send_alert)
 
     send_message(document_missing_fields)
@@ -53,7 +53,7 @@ RSpec.describe "Receiving major change notifications", type: :integration do
   end
 
   it "acknowledges the message for documents experiencing major changes" do
-    expect_any_instance_of(MessageProcessor).to receive(:acknowledge).and_call_original
+    expect_any_instance_of(MajorChangeMessageProcessor).to receive(:acknowledge).and_call_original
     expect_any_instance_of(GdsApi::EmailAlertApi).to receive(:send_alert)
 
     send_message(well_formed_document, routing_key: "policy.major")
@@ -62,7 +62,7 @@ RSpec.describe "Receiving major change notifications", type: :integration do
   end
 
   it "doesn't process documents for other change types" do
-    expect_any_instance_of(MessageProcessor).not_to receive(:process)
+    expect_any_instance_of(MajorChangeMessageProcessor).not_to receive(:process)
     expect_any_instance_of(GdsApi::EmailAlertApi).not_to receive(:send_alert)
 
     send_message(well_formed_document, routing_key: "policy.minor")
@@ -72,7 +72,7 @@ RSpec.describe "Receiving major change notifications", type: :integration do
   end
 
   it "sends an email alert for documents experiencing major changes" do
-    expect_any_instance_of(MessageProcessor).to receive(:acknowledge).and_call_original
+    expect_any_instance_of(MajorChangeMessageProcessor).to receive(:acknowledge).and_call_original
     expect_any_instance_of(GdsApi::EmailAlertApi).to receive(:send_alert)
 
     send_message(well_formed_document, routing_key: "policy.major")
