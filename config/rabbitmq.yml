@@ -1,32 +1,54 @@
 defaults: &defaults
-  hosts: [localhost]
-  port: 5672
-  vhost: /
-  user: email_alert_service
-  pass: email_alert_service
-  recover_from_connection_close: true
+  amqp:
+    hosts: [localhost]
+    port: 5672
+    vhost: /
+    user: email_alert_service
+    pass: email_alert_service
+    recover_from_connection_close: true
 
 development:
   <<: *defaults
   exchange: published_documents
-  queue: email_alert_service
+  queues:
+    - processor: major_change_message_processor
+      name: email_alert_service
+      routing_key: '*.major.#'
+    - processor: unpublishing_message_processor
+      name: email_unpublishing
+      routing_key: 'redirect.unpublishing.#'
 
 test:
   <<: *defaults
-  user: email_alert_service_test
-  pass: email_alert_service_test
+  amqp:
+    user: email_alert_service_test
+    pass: email_alert_service_test
   exchange: email_alert_service_published_documents_test_exchange
-  queue: email_alert_service_published_documents_test_queue
+  queues:
+    - processor: major_change_message_processor
+      name: email_alert_service_published_documents_test_queue
+      routing_key: "*.major.#"
+    - processor: unpublishing_message_processor
+      name: email_alert_service_unpublishing_documents_test_queue
+      routing_key: "redirect.unpublishing.#"
 
 production:
   <<: *defaults
-  hosts:
-    <% hosts = ENV['RABBITMQ_HOSTS'] || 'localhost' %>
-    <% hosts.split(",").each do |host| %>
-    - <%= host %>
-    <% end %>
-  user: <%= ENV['RABBITMQ_USER'] %>
-  pass: <%= ENV['RABBITMQ_PASSWORD'] %>
+  amqp:
+    hosts:
+      <% hosts = ENV['RABBITMQ_HOSTS'] || 'localhost' %>
+      <% hosts.split(",").each do |host| %>
+      - <%= host %>
+      <% end %>
+    user: <%= ENV['RABBITMQ_USER'] %>
+    pass: <%= ENV['RABBITMQ_PASSWORD'] %>
+    recover_from_connection_close: true
   exchange: <%= ENV['RABBITMQ_EXCHANGE'] || 'published_documents' %>
-  queue: <%= ENV['RABBITMQ_QUEUE'] || 'email_alert_service' %>
-  recover_from_connection_close: true
+  queues:
+    - processor: major_change_message_processor
+      name: <%= ENV['RABBITMQ_QUEUE'] || 'email_alert_service' %>
+      routing_key: "*.major.#"
+    - processor: unpublishing_message_processor
+      name: email_unpublishing
+      routing_key: "redirect.unpublishing.#"
+
