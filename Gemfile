@@ -17,8 +17,8 @@ end
 
 group :test do
   gem 'govuk_schemas', '~> 3.2'
-  gem 'rspec-core', '~> 3.7'
-  gem 'rspec-expectations', '~> 3.7'
-  gem 'rspec-mocks', '~> 3.7'
+  gem 'rspec-core', '~> 3.8'
+  gem 'rspec-expectations', '~> 3.8'
+  gem 'rspec-mocks', '~> 3.8'
   gem 'webmock', '~> 3.4'
 end
