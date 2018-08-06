@@ -24,33 +24,43 @@ module ListenerTestHelpers
     logger = Logger.new(logfile)
 
     config = EmailAlertService.config
+
     rabbitmq_options = config.rabbitmq
-    @app_connection = AMQPConnection.new(rabbitmq_options)
+    amqp_options = rabbitmq_options[:amqp]
+    exhange_name = rabbitmq_options[:exchange]
+    queues_options = rabbitmq_options[:queues]
+
+    @app_connection = AMQPConnection.new(amqp_options, exhange_name)
     @app_connection.start
 
     channel = @app_connection.channel
 
-    queue_binding = MajorChangeQueue.new(@app_connection).bind
-    message_processor = MessageProcessor.new(channel, logger)
-    listener = Listener.new(queue_binding, message_processor)
+    listeners = queues_options.map do |queue_options|
+      queue = ::EmailAlertQueue.new(connection: @app_connection, routing_key: queue_options[:routing_key], name: queue_options[:name])
+      processor = queue_options[:processor].camelize.constantize.new(channel, logger)
+      Listener.new(queue.bind, processor)
+    end
 
     @thread = Thread.new do
-      listener.listen
+      listeners.each_with_index do |listener, _index|
+        listener.listen
+      end
+      loop { sleep 5 }
     end
   end
 
   def stop_listener
-    @app_connection.stop
     @thread.kill
 
     while @thread.alive?
       sleep 0.1
     end
+    @app_connection.stop
   end
 
   def wait_for_messages_to_process
     Timeout.timeout(5) do
-      while @read_queue.message_count > 0
+      while @read_queues.any? { |queue| queue.message_count > 0 }
         sleep 0.1
       end
     end

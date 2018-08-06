@@ -21,5 +21,4 @@ RSpec.describe UnpublishingMessageProcessor do
       processor.process(document.to_json, properties, delivery_info)
     end
   end
-
 end
