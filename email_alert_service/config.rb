@@ -36,10 +36,14 @@ module EmailAlertService
 
   private
 
-    def symbolize_keys(hash)
-      hash.inject({}) do |inner_hash, (key, value)|
-        inner_hash.merge(key.to_sym => value)
+    def symbolize_keys(obj)
+      return obj.map { |a| symbolize_keys(a) } if obj.is_a?(Array)
+      if obj.is_a?(Hash)
+        return obj.inject({}) do |inner_hash, (key, value)|
+          inner_hash.merge(key.to_sym => symbolize_keys(value))
+        end
       end
+      obj
     end
   end
 end
