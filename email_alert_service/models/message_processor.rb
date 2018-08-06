@@ -37,5 +37,4 @@ protected
   def requeue(delivery_tag)
     channel.nack(delivery_tag, false, true)
   end
-
 end

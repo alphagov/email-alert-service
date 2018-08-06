@@ -52,6 +52,5 @@ RSpec.describe MessageProcessor do
         message_acknowledged
       end
     end
-
   end
 end
