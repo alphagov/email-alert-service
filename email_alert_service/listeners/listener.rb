@@ -5,7 +5,7 @@ class Listener
   end
 
   def listen
-    @queue_binding.subscribe(block: true, manual_ack: true) do |delivery_info, properties, document_json|
+    @queue_binding.subscribe(block: false, manual_ack: true) do |delivery_info, properties, document_json|
       begin
         process_message(document_json, properties, delivery_info)
       rescue SignalException
