@@ -2,18 +2,22 @@
 
 require_relative "../email_alert_service/environment"
 rabbitmq_options = EmailAlertService.config.rabbitmq
+
+amqp_options = rabbitmq_options[:amqp]
+exchange_name = rabbitmq_options[:exchange]
+queues_options = rabbitmq_options[:queues]
+
 logger = EmailAlertService.config.logger
 
-connection = AMQPConnection.new(rabbitmq_options)
+connection = AMQPConnection.new(amqp_options, exchange_name)
 connection.start
 
-queue_binding = MajorChangeQueue.new(connection).bind
-
-message_processor = MessageProcessor.new(connection.channel, logger)
-
-listener = Listener.new(queue_binding, message_processor)
-
-logger.info "Bound to exchange #{connection.exchange_name} on queue #{connection.queue_name}, listening for major changes"
+listeners = queues_options.map do |queue_options|
+  queue = EmailAlertQueue.new(connection: connection, routing_key: queue_options[:routing_key], name: queue_options[:name])
+  processor = queue_options[:processor].camelize.constantize.new(connection.channel, logger)
+  logger.info "Bound to exchange #{exchange_name} on queue #{queue_options[:name]}"
+  Listener.new(queue.bind, processor)
+end
 
 at_exit do
   logger.info "Shutting down.."
@@ -21,10 +25,12 @@ at_exit do
 end
 
 begin
-  listener.listen
+  listeners.each(&:listen)
 rescue SignalException => e
   logger.info "Received #{e}: exiting"
 rescue Exception => e # rubocop:disable Lint/RescueException
   GovukError.notify(e)
   raise e
 end
+
+loop { sleep 5 } #Blocking method recommended in: http://rubybunny.info/articles/queues.html

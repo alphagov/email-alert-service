@@ -2,13 +2,18 @@
 
 require_relative "../email_alert_service/environment"
 rabbitmq_options = EmailAlertService.config.rabbitmq
+amqp_options = rabbitmq_options[:amqp]
+exhange_name = rabbitmq_options[:exchange]
+queues_options = rabbitmq_options[:queues]
 
-connection = AMQPConnection.new(rabbitmq_options)
+connection = AMQPConnection.new(amqp_options, exhange_name)
 connection.start
 channel = connection.channel
 
 begin
-  channel.queue(connection.queue_name, passive: true, no_declare: true).delete
+  queues_options.each do |queue_options|
+    channel.queue(queue_options[:queue_name], passive: true, no_declare: true).delete
+  end
 rescue Bunny::NotFound => _ # rubocop:disable Lint/HandleExceptions
   # Queue didn't exist anyway
 end
