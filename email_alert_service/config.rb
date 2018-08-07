@@ -27,11 +27,12 @@ module EmailAlertService
     end
 
     def logger
-      logfile = File.open(app_root + "log/#{environment}.log", "a")
+      @logger ||= begin
+        logfile = File.open(app_root + "log/#{environment}.log", "a")
 
-      logfile.sync = true
-
-      @logger ||= Logger.new(logfile, "daily")
+        logfile.sync = true
+        Logger.new(MultiIO.new(STDOUT, logfile), 'daily')
+      end
     end
 
   private
@@ -44,6 +45,20 @@ module EmailAlertService
         end
       end
       obj
+    end
+  end
+
+  class MultiIO
+    def initialize(*targets)
+      @targets = targets
+    end
+
+    def write(*args)
+      @targets.each { |t| t.write(*args) }
+    end
+
+    def close
+      @targets.each(&:close)
     end
   end
 end
