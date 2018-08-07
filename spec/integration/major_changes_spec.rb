@@ -29,12 +29,6 @@ RSpec.describe "Receiving major change notifications", type: :integration do
   let(:document_missing_fields) { '{"houses": "are for living in"}' }
   let(:client) { double('client') }
 
-  around :each do |example|
-    start_listener
-    example.run
-    stop_listener
-  end
-
   before :each do
     allow(Services).to receive(:email_api_client).and_return(client)
   end
@@ -43,45 +37,55 @@ RSpec.describe "Receiving major change notifications", type: :integration do
     expect_any_instance_of(MajorChangeMessageProcessor).to receive(:discard).once.and_call_original
     expect(client).not_to receive(:send_alert)
 
-    send_message(malformed_json)
+    with_listener do
+      send_message(malformed_json)
 
-    wait_for_messages_to_process
+      wait_for_messages_to_process
+    end
   end
 
   it "ignores documents which are missing required fields" do
     expect_any_instance_of(MajorChangeMessageProcessor).to receive(:acknowledge).once.and_call_original
     expect(client).not_to receive(:send_alert)
 
-    send_message(document_missing_fields)
+    with_listener do
+      send_message(document_missing_fields)
 
-    wait_for_messages_to_process
+      wait_for_messages_to_process
+    end
   end
 
   it "acknowledges the message for documents experiencing major changes" do
     expect_any_instance_of(MajorChangeMessageProcessor).to receive(:acknowledge).and_call_original
     expect(client).to receive(:send_alert)
 
-    send_message(well_formed_document, routing_key: "policy.major")
+    with_listener do
+      send_message(well_formed_document, routing_key: "policy.major")
 
-    wait_for_messages_to_process
+      wait_for_messages_to_process
+    end
   end
 
   it "doesn't process documents for other change types" do
     expect_any_instance_of(MajorChangeMessageProcessor).not_to receive(:process)
-    expect(client).to receive(:send_alert)
+    expect(client).not_to receive(:send_alert)
 
-    send_message(well_formed_document, routing_key: "policy.minor")
-    send_message(well_formed_document, routing_key: "policy.republish")
+    with_listener do
+      send_message(well_formed_document, routing_key: "policy.minor")
+      send_message(well_formed_document, routing_key: "policy.republish")
 
-    wait_for_messages_to_process
+      wait_for_messages_to_process
+    end
   end
 
   it "sends an email alert for documents experiencing major changes" do
     expect_any_instance_of(MajorChangeMessageProcessor).to receive(:acknowledge).and_call_original
     expect(client).to receive(:send_alert)
 
-    send_message(well_formed_document, routing_key: "policy.major")
+    with_listener do
+      send_message(well_formed_document, routing_key: "policy.major")
 
-    wait_for_messages_to_process
+      wait_for_messages_to_process
+    end
   end
 end

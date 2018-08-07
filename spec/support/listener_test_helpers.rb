@@ -3,6 +3,12 @@ require "tempfile"
 require "timeout"
 
 module ListenerTestHelpers
+  def with_listener
+    start_listener
+    yield
+    stop_listener
+  end
+
   def send_message(body, routing_key: "policy.major")
     @exchange.publish(
       body,
