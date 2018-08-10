@@ -48,7 +48,7 @@ production:
     - processor: major_change_message_processor
       name: <%= ENV['RABBITMQ_QUEUE'] || 'email_alert_service' %>
       routing_key: "*.major.#"
-    - processor: unpublishing_message_processor
-      name: email_unpublishing
-      routing_key: "redirect.unpublishing.#"
+    #- processor: unpublishing_message_processor
+    #  name: email_unpublishing
+    #  routing_key: "redirect.unpublishing.#"
 
