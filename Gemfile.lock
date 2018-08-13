@@ -24,7 +24,7 @@ GEM
     faraday (0.15.2)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.23)
-    gds-api-adapters (52.7.0)
+    gds-api-adapters (52.8.0)
       addressable
       link_header
       lrucache (~> 0.1.1)
@@ -60,9 +60,9 @@ GEM
     lrucache (0.1.4)
       PriorityQueue (~> 0.1.2)
     method_source (0.9.0)
-    mime-types (3.1)
+    mime-types (3.2.2)
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2016.0521)
+    mime-types-data (3.2018.0812)
     minitest (5.11.3)
     multipart-post (2.0.0)
     netrc (0.11.0)
@@ -150,7 +150,7 @@ PLATFORMS
 
 DEPENDENCIES
   bunny (~> 2.11)
-  gds-api-adapters (~> 52.7)
+  gds-api-adapters (~> 52.8)
   govuk-lint (~> 3.8)
   govuk_app_config (~> 1.8)
   govuk_schemas (~> 3.2)
