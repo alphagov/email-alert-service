@@ -41,7 +41,7 @@ RSpec.configure do |config|
   config.before(:each, type: :integration) do
     @test_config = EmailAlertService.config.rabbitmq
     @logger = EmailAlertService.config.logger
-    rabbit_options = @test_config.reject { |(key, _)| key == :queue }
+    rabbit_options = @test_config[:amqp]
 
     @test_connection = Bunny.new(rabbit_options)
     @test_connection.start
@@ -50,7 +50,9 @@ RSpec.configure do |config|
     @read_channel = @test_connection.create_channel
 
     @exchange = @write_channel.topic(@test_config.fetch(:exchange), passive: true)
-    @read_queue = @read_channel.queue(@test_config.fetch(:queue), durable: true)
+    @read_queues = @test_config.fetch(:queues).map do |queue|
+      @read_channel.queue(queue.fetch(:name), durable: true)
+    end
   end
 
   config.after(:each, type: :integration) do

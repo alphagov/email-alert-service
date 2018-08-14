@@ -8,7 +8,7 @@ RSpec.describe Listener do
       handler = double(:handler)
 
       expect(queue_binding).to receive(:subscribe).with(
-        block: true,
+        block: false,
         manual_ack: true,
       )
 

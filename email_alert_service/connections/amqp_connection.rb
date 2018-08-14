@@ -1,8 +1,6 @@
 require "bunny"
 
 class AMQPConnection
-  attr_reader :exchange_name, :queue_name
-
   # Only fetch one message at a time on the channel.
   #
   # By default, queues will grab messages eagerly, which reduces latency.
@@ -12,10 +10,9 @@ class AMQPConnection
   # time to share the work evenly.
   NUMBER_OF_MESSAGES_TO_PREFETCH = 1
 
-  def initialize(options)
-    @options = options
-    @exchange_name = options.fetch(:exchange)
-    @queue_name = options.fetch(:queue)
+  def initialize(amqp_options, exchange_name)
+    @amqp_options = amqp_options
+    @exchange_name = exchange_name
   end
 
   def start
@@ -38,7 +35,7 @@ class AMQPConnection
   end
 
   def exchange
-    channel.topic(exchange_name, passive: true)
+    channel.topic(@exchange_name, passive: true)
   end
 
 private
@@ -46,6 +43,6 @@ private
   attr_reader :options
 
   def service
-    @_service ||= Bunny.new(options)
+    @_service ||= Bunny.new(@amqp_options)
   end
 end

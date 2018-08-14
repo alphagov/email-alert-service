@@ -49,8 +49,8 @@ RSpec.describe EmailAlert do
   let(:email_alert) { EmailAlert.new(document, logger) }
   let(:fake_lock_handler) { FakeLockHandler.new }
 
-  before do
-    allow(GdsApi::EmailAlertApi).to receive(:new).and_return(alert_api)
+  before :each do
+    allow(Services).to receive(:email_api_client).and_return(alert_api)
     allow(LockHandler).to receive(:new).and_return(fake_lock_handler)
   end
 

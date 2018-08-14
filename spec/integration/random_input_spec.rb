@@ -12,7 +12,7 @@ RSpec.describe "Random input", type: :integration do
       stub_request(:post, "https://email-alert-api.test.gov.uk/notifications").
         to_return(body: "{}")
 
-      processor = MessageProcessor.new(channel, logger)
+      processor = MajorChangeMessageProcessor.new(channel, logger)
 
       5.times do
         random_example = GovukSchemas::RandomExample.new(schema: schema).payload

@@ -13,7 +13,7 @@ class EmailAlert
     logger.info "Received major change notification for #{document['title']}, with details #{document['details']}"
     lock_handler.with_lock_unless_done do
       begin
-        email_api_client.send_alert(format_for_email_api, govuk_request_id: document['govuk_request_id'])
+        Services.email_api_client.send_alert(format_for_email_api, govuk_request_id: document['govuk_request_id'])
       rescue GdsApi::HTTPConflict
         logger.info "email-alert-api returned conflict for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
       rescue GdsApi::HTTPUnprocessableEntity
@@ -54,13 +54,6 @@ private
 
   def lock_handler
     LockHandler.new(document.fetch("title"), document.fetch("public_updated_at"))
-  end
-
-  def email_api_client
-    GdsApi::EmailAlertApi.new(
-      Plek.find("email-alert-api"),
-      bearer_token: ENV.fetch("EMAIL_ALERT_API_BEARER_TOKEN", "email-alert-api-bearer-token")
-    )
   end
 
   def strip_empty_arrays(tag_hash)
