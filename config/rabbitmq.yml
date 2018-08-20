@@ -50,5 +50,5 @@ production:
       routing_key: "*.major.#"
     - processor: unpublishing_message_processor
       name: email_unpublishing
-      routing_key: "redirect.unpublishing.#"
+      routing_key: "redirect.unpublish.#"
 
