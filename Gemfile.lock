@@ -1,7 +1,6 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    PriorityQueue (0.1.2)
     activesupport (5.2.0)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
@@ -24,10 +23,9 @@ GEM
     faraday (0.15.2)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.23)
-    gds-api-adapters (52.8.0)
+    gds-api-adapters (53.0.0)
       addressable
       link_header
-      lrucache (~> 0.1.1)
       null_logger
       plek (>= 1.9.0)
       rack-cache
@@ -57,8 +55,6 @@ GEM
       activesupport (>= 4.0)
       logstash-event (~> 1.2.0)
       request_store
-    lrucache (0.1.4)
-      PriorityQueue (~> 0.1.2)
     method_source (0.9.0)
     mime-types (3.2.2)
       mime-types-data (~> 3.2015)
@@ -78,7 +74,7 @@ GEM
     pry-byebug (3.5.1)
       byebug (~> 9.1)
       pry (~> 0.10)
-    public_suffix (3.0.2)
+    public_suffix (3.0.3)
     rack (2.0.5)
     rack-cache (1.8.0)
       rack (>= 0.4)
@@ -150,7 +146,7 @@ PLATFORMS
 
 DEPENDENCIES
   bunny (~> 2.11)
-  gds-api-adapters (~> 52.8)
+  gds-api-adapters (~> 53.0)
   govuk-lint (~> 3.8)
   govuk_app_config (~> 1.8)
   govuk_schemas (~> 3.2)
