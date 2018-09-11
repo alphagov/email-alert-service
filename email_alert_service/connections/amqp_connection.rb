@@ -16,7 +16,7 @@ class AMQPConnection
   end
 
   def start
-    @_service_connection ||= service.start
+    @start ||= service.start
   end
 
   def stop
@@ -25,7 +25,7 @@ class AMQPConnection
   end
 
   def channel
-    @_channel ||= create_channel_and_set_prefetch
+    @channel ||= create_channel_and_set_prefetch
   end
 
   def create_channel_and_set_prefetch
@@ -43,6 +43,6 @@ private
   attr_reader :options
 
   def service
-    @_service ||= Bunny.new(@amqp_options)
+    @service ||= Bunny.new(@amqp_options)
   end
 end

@@ -27,7 +27,7 @@ RSpec.describe MessageProcessor do
   describe "#process" do
     context "document contains malformed JSON" do
       it "rejects the document and notifies an exception reporter" do
-        def processor.process_message(_)
+        def processor.process_message(_message)
           raise MalformedDocumentError
         end
         processor.process({}.to_json, properties, delivery_info)
@@ -37,7 +37,7 @@ RSpec.describe MessageProcessor do
 
     context "email alert api returns an error" do
       it "requeues the message" do
-        def processor.process_message(_)
+        def processor.process_message(_message)
           raise GdsApi::HTTPBadGateway.new(502, "Bad Request")
         end
         processor.process({}.to_json, properties, delivery_info)
