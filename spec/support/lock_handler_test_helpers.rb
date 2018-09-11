@@ -8,7 +8,7 @@ module LockHandlerTestHelpers
   end
 
   def updated_now
-    @_now ||= Time.now
+    @updated_now ||= Time.now
   end
 
   def generate_title

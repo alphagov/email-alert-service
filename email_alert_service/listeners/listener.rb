@@ -29,17 +29,19 @@ private
     exit(0)
   end
 
-  def exit_on_exception(e, document_json, properties, delivery_info)
+  def exit_on_exception(exception, document_json, properties, delivery_info)
     logger.error("Error processing message #{delivery_info.delivery_tag}: #{e.class} (#{e.message})\n#{e.backtrace.join("\n")}")
     # Rescue any exception, not just StandardError and subclasses.
     # We want to ensure that the process exits in such a situation, so we
     # explicitly call exit() after logging the error.
-    GovukError.notify(e,
+    GovukError.notify(
+      exception,
       extra: {
         delivery_info: delivery_info,
         properties: properties,
         payload: document_json,
-      })
+      }
+    )
     exit(1)
   end
 
