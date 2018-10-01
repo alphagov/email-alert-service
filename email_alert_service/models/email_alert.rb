@@ -28,7 +28,6 @@ class EmailAlert
       "description" => description,
       "change_note" => change_note,
       "subject" => document["title"],
-      "body" => EmailAlertTemplate.new(document).message_body,
       "tags" => strip_empty_arrays(document.fetch("details", {}).fetch("tags", {})),
       "links" => document_links,
       "document_type" => document_type,
