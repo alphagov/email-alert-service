@@ -204,7 +204,7 @@ RSpec.describe MajorChangeMessageProcessor do
       before do
         good_document["details"] = { "change_history" => change_history }
         good_document["links"] = { "taxons" => ["taxon-uuid"] }
-        good_document["publishing_app"] = "travel-advice-publisher"
+        good_document["publishing_app"] = "specialist-publisher"
       end
 
       it "acknowledges but doesn't trigger the email" do
