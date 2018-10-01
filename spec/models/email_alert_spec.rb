@@ -92,16 +92,9 @@ RSpec.describe EmailAlert do
   end
 
   describe "#format_for_email_api" do
-    before do
-      allow(EmailAlertTemplate).to receive(:new).and_return(
-        double(:email_template, message_body: "This is an email.")
-      )
-    end
-
     it "formats the message to send to the email alert api" do
       expect(email_alert.format_for_email_api).to eq(
         "subject" => "Example title",
-        "body" => "This is an email.",
         "content_id" => content_id,
         "public_updated_at" => public_updated_at,
         "publishing_app" => "Whitehall",
