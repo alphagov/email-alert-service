@@ -89,7 +89,7 @@ GEM
     rb-fsevent (0.10.3)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
-    redis (4.0.2)
+    redis (4.0.3)
     redis-namespace (1.6.0)
       redis (>= 3.0.4)
     request_store (1.4.1)
