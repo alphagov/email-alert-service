@@ -142,7 +142,7 @@ GEM
     unicorn (5.4.1)
       kgio (~> 2.6)
       raindrops (~> 0.7)
-    webmock (3.4.2)
+    webmock (3.5.1)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
@@ -166,7 +166,7 @@ DEPENDENCIES
   rspec-mocks (~> 3.8)
   tzinfo (~> 1.2)
   tzinfo-data (~> 1.2018)
-  webmock (~> 3.4)
+  webmock (~> 3.5)
 
 BUNDLED WITH
    1.16.0
