@@ -79,6 +79,7 @@ private
 
   def description
     return "" if BLANK_DESCRIPTION_DOCUMENT_TYPES.include?(document_type)
+
     document["description"]
   end
 end
