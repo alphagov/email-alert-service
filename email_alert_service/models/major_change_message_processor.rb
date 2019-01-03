@@ -151,6 +151,7 @@ protected
     # a key can be present but the value is nil, so fetch won't
     # protect us here
     return false unless document.key?(key)
+
     (document[key] || "") != ""
   end
 end
