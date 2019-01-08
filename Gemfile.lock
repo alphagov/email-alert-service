@@ -25,7 +25,7 @@ GEM
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.25)
-    gds-api-adapters (55.0.2)
+    gds-api-adapters (57.0.0)
       addressable
       link_header
       null_logger
@@ -152,7 +152,7 @@ PLATFORMS
 
 DEPENDENCIES
   bunny (~> 2.12)
-  gds-api-adapters (~> 55.0)
+  gds-api-adapters (~> 57.0)
   govuk-lint (~> 3.10)
   govuk_app_config (~> 1.11)
   govuk_schemas (~> 3.2)
