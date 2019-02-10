@@ -1,5 +1,7 @@
 source "https://rubygems.org"
 
+ruby File.read(".ruby-version").chomp
+
 gem "bunny", "~> 2.12"
 gem "gds-api-adapters", "~> 57.2"
 gem "govuk_app_config", "~> 1.11"

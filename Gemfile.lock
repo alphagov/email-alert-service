@@ -168,5 +168,8 @@ DEPENDENCIES
   tzinfo-data (~> 1.2018)
   webmock (~> 3.5)
 
+RUBY VERSION
+   ruby 2.6.1p33
+
 BUNDLED WITH
-   1.16.0
+   1.17.3
