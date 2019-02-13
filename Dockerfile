@@ -1,4 +1,4 @@
-FROM ruby:2.5.3
+FROM ruby:2.6.1
 
 ENV RABBITMQ_HOSTS rabbitmq
 ENV RABBITMQ_USER guest
