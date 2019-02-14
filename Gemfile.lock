@@ -12,7 +12,7 @@ GEM
     ast (2.4.0)
     aws-xray-sdk (0.10.2)
       oj (~> 3.0)
-    bunny (2.12.1)
+    bunny (2.13.0)
       amq-protocol (~> 2.3, >= 2.3.0)
     byebug (9.1.0)
     coderay (1.1.2)
@@ -151,7 +151,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bunny (~> 2.12)
+  bunny (~> 2.13)
   gds-api-adapters (~> 57.4)
   govuk-lint (~> 3.11)
   govuk_app_config (~> 1.11)
