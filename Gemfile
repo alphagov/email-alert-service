@@ -11,7 +11,7 @@ gem "tzinfo", "~> 1.2"
 gem "tzinfo-data", "~> 1.2018"
 
 group :development, :test do
-  gem "govuk-lint", "~> 3.10"
+  gem "govuk-lint", "~> 3.11"
   gem "pry-byebug"
 end
 
