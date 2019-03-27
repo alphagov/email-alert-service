@@ -8,7 +8,7 @@ gem "rake"
 gem "redis", "~> 4.1"
 gem "redis-namespace", "~> 1.6"
 gem "tzinfo", "~> 1.2"
-gem "tzinfo-data", "~> 1.2018"
+gem "tzinfo-data", "~> 1.2019"
 
 group :development, :test do
   gem "govuk-lint", "~> 3.11"
