@@ -10,7 +10,7 @@ class EmailAlert
   end
 
   def trigger
-    logger.info "Received major change notification for #{document['title']}, with details #{document['details']}"
+    logger.info "Received #{notification_type} notification for #{document['title']}, with details #{document['details']}"
     lock_handler.with_lock_unless_done do
       begin
         Services.email_api_client.send_alert(format_for_email_api, govuk_request_id: document['govuk_request_id'])
@@ -26,7 +26,7 @@ class EmailAlert
     {
       "title" => document["title"],
       "description" => description,
-      "change_note" => change_note,
+      "change_note" => workflow_message_or_change_note,
       "subject" => document["title"],
       "tags" => strip_empty_arrays(document.fetch("details", {}).fetch("tags", {})),
       "links" => document_links,
@@ -44,6 +44,18 @@ class EmailAlert
 private
 
   attr_reader :document, :logger
+
+  def workflow_message_or_change_note
+    if workflow_message.empty?
+      change_note
+    else
+      workflow_message
+    end
+  end
+
+  def workflow_message
+    document.fetch("workflow_message", "")
+  end
 
   def change_note
     ChangeHistory.new(
@@ -81,5 +93,13 @@ private
     return "" if BLANK_DESCRIPTION_DOCUMENT_TYPES.include?(document_type)
 
     document["description"]
+  end
+
+  def notification_type
+    if workflow_message.empty?
+      "major change"
+    else
+      "workflow message"
+    end
   end
 end

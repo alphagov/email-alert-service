@@ -89,6 +89,26 @@ RSpec.describe EmailAlert do
         "email-alert-api returned unprocessable entity for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
       )
     end
+
+    context "for a workflow notification" do
+      before do
+        document["workflow_message"] = "Something changed"
+        email_alert.trigger
+      end
+
+      it "logs receiving a workflow notification for a document" do
+        expect(logger).to have_received(:info).with(
+          "Received workflow message notification for #{document['title']}, with details #{document['details']}"
+        )
+      end
+
+      it "prefers the workflow message to the change note" do
+        expect(alert_api).to have_received(:send_alert).with(
+          hash_including("change_note" => "Something changed"),
+          govuk_request_id: govuk_request_id
+        )
+      end
+    end
   end
 
   describe "#format_for_email_api" do
