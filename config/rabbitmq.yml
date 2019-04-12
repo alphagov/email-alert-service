@@ -17,6 +17,9 @@ development:
     - processor: unpublishing_message_processor
       name: email_unpublishing
       routing_key: 'redirect.unpublishing.#'
+    - processor: workflow_message_processor
+      name: email_alert_service_workflow
+      routing_key: "*.workflow.#"
 
 test:
   <<: *defaults
@@ -31,6 +34,9 @@ test:
     - processor: unpublishing_message_processor
       name: email_alert_service_unpublishing_documents_test_queue
       routing_key: "redirect.unpublishing.#"
+    - processor: workflow_message_processor
+      name: email_alert_service_workflow_test_queue
+      routing_key: "*.workflow.#"
 
 production:
   <<: *defaults
@@ -51,4 +57,7 @@ production:
     - processor: unpublishing_message_processor
       name: email_unpublishing
       routing_key: "redirect.unpublish.#"
+    - processor: workflow_message_processor
+      name: <%= ENV['RABBITMQ_QUEUE'] || 'email_alert_service_workflow' %>
+      routing_key: "*.workflow.#"
 
