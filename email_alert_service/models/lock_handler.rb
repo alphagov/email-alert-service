@@ -8,7 +8,7 @@ class LockHandler
   # We remember sent messages for a long, but limited, period.  The period is
   # limited because we're using redis to store these, which is an in-memory
   # datastore so we can't let it grow indefinitely.
-  SECONDS_TO_REMEMBER_SENT_MESSAGES_FOR = (90 * SECONDS_IN_A_DAY).freeze
+  SECONDS_TO_REMEMBER_SENT_MESSAGES_FOR = 90 * SECONDS_IN_A_DAY
 
   # The lock is held while a message is being processed, to ensure that no
   # other worker tries to process the same message concurrently.  It will

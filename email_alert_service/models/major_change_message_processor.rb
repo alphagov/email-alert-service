@@ -1,7 +1,7 @@
 require_relative('./message_processor')
 
 class MajorChangeMessageProcessor < MessageProcessor
-protected
+protected # rubocop:disable Layout/IndentationWidth
 
   def process_message(message)
     document = message.parsed_document
