@@ -38,28 +38,6 @@ RSpec.configure do |config|
   config.expose_dsl_globally = false
   config.order = :random
 
-  config.before(:each, type: :integration) do
-    @test_config = EmailAlertService.config.rabbitmq
-    @logger = EmailAlertService.config.logger
-    rabbit_options = @test_config[:amqp]
-
-    @test_connection = Bunny.new(rabbit_options)
-    @test_connection.start
-
-    @write_channel = @test_connection.create_channel
-    @read_channel = @test_connection.create_channel
-
-    @exchange = @write_channel.topic(@test_config.fetch(:exchange), passive: true)
-    @read_queues = @test_config.fetch(:queues).map do |queue|
-      @read_channel.queue(queue.fetch(:name), durable: true)
-    end
-  end
-
-  config.after(:each, type: :integration) do
-    @test_connection.close
-  end
-
-  config.include(ListenerTestHelpers, type: :integration)
   config.include(GdsApi::TestHelpers::EmailAlertApi)
 end
 
