@@ -1,36 +1,6 @@
 #!/usr/bin/env ruby
+require 'rake'
 
-require_relative "../email_alert_service/environment"
-rabbitmq_options = EmailAlertService.config.rabbitmq
+Dir.glob('lib/tasks/*.rake').each { |r| load r }
 
-amqp_options = rabbitmq_options[:amqp]
-exchange_name = rabbitmq_options[:exchange]
-queues_options = rabbitmq_options[:queues]
-
-logger = EmailAlertService.config.logger
-
-connection = AMQPConnection.new(amqp_options, exchange_name)
-connection.start
-
-listeners = queues_options.map do |queue_options|
-  queue = EmailAlertQueue.new(connection: connection, routing_key: queue_options[:routing_key], name: queue_options[:name])
-  processor = queue_options[:processor].camelize.constantize.new(connection.channel, logger)
-  logger.info "Bound to exchange #{exchange_name} on queue #{queue_options[:name]}"
-  Listener.new(queue.bind, processor)
-end
-
-at_exit do
-  logger.info "Shutting down.."
-  connection.stop
-end
-
-begin
-  listeners.each(&:listen)
-rescue SignalException => e
-  logger.info "Received #{e}: exiting"
-rescue Exception => e # rubocop:disable Lint/RescueException
-  GovukError.notify(e)
-  raise e
-end
-
-loop { sleep 5 } #Blocking method recommended in: http://rubybunny.info/articles/queues.html
+Rake::Task['message_queues:consumer'].execute
