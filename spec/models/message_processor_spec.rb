@@ -7,8 +7,10 @@ RSpec.describe MessageProcessor do
     Class.new(MessageProcessor).new(logger)
   }
 
-  let(:message) { double(:message_queue_consumer_message, ack: nil, discard: nil, 
-                          retry: nil, payload: "title['test']") } 
+  let(:message) {
+    double(:message_queue_consumer_message, ack: nil, discard: nil,
+                          retry: nil, payload: "title['test']")
+  }
 
   def message_acknowledged
     expect(message).to have_received(:ack)
@@ -26,7 +28,7 @@ RSpec.describe MessageProcessor do
     context "message successfully processed" do
       it "acknowledges the message" do
         def processor.process_message(_message)
-          return true
+          true
         end
         processor.process(message)
         message_acknowledged

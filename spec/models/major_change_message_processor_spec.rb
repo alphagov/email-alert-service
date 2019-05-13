@@ -1,14 +1,17 @@
 require "spec_helper"
 
 RSpec.describe MajorChangeMessageProcessor do
-
   let(:logger) { double(:logger, info: nil) }
 
-  let(:message) { double(:message_queue_consumer_message, ack: nil, discard: nil, 
-    retry: nil, payload: good_document) }
+  let(:message) {
+    double(:message_queue_consumer_message, ack: nil, discard: nil,
+    retry: nil, payload: good_document)
+  }
 
-  let(:bad_message) { double(:message_queue_consumer_message, ack: nil, discard: nil, 
-    retry: nil, payload: nil) }
+  let(:bad_message) {
+    double(:message_queue_consumer_message, ack: nil, discard: nil,
+    retry: nil, payload: nil)
+  }
 
   let(:processor) { MajorChangeMessageProcessor.new(logger) }
   let(:mock_email_alert) { double("EmailAlert", trigger: nil) }
