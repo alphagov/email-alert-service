@@ -1,36 +1,43 @@
 require "spec_helper"
 
 RSpec.describe MessageProcessor do
-  let(:delivery_tag) { double(:delivery_tag) }
-  let(:delivery_info) { double(:delivery_info, delivery_tag: delivery_tag) }
-  let(:properties) { double(:properties, content_type: nil) }
-
-  let(:channel) { double(:channel, acknowledge: nil, reject: nil, nack: nil) }
   let(:logger) { double(:logger, info: nil) }
 
   let(:processor) {
-    Class.new(MessageProcessor).new(channel, logger)
+    Class.new(MessageProcessor).new(logger)
   }
 
+  let(:message) { double(:message_queue_consumer_message, ack: nil, discard: nil, 
+                          retry: nil, payload: "title['test']") } 
+
   def message_acknowledged
-    expect(channel).to have_received(:acknowledge).with(delivery_tag, false)
+    expect(message).to have_received(:ack)
   end
 
   def message_rejected
-    expect(channel).to have_received(:reject).with(delivery_tag, false)
+    expect(message).to have_received(:discard)
   end
 
   def message_requeued
-    expect(channel).to have_received(:nack).with(delivery_tag, false, true)
+    expect(message).to have_received(:retry)
   end
 
   describe "#process" do
+    context "message successfully processed" do
+      it "acknowledges the message" do
+        def processor.process_message(_message)
+          return true
+        end
+        processor.process(message)
+        message_acknowledged
+      end
+    end
     context "document contains malformed JSON" do
       it "rejects the document and notifies an exception reporter" do
         def processor.process_message(_message)
-          raise MalformedDocumentError
+          raise StandardError
         end
-        processor.process({}.to_json, properties, delivery_info)
+        processor.process(message)
         message_rejected
       end
     end
@@ -40,16 +47,8 @@ RSpec.describe MessageProcessor do
         def processor.process_message(_message)
           raise GdsApi::HTTPBadGateway.new(502, "Bad Request")
         end
-        processor.process({}.to_json, properties, delivery_info)
+        processor.process(message)
         message_requeued
-      end
-    end
-
-    context "content type identifies the document as a heartbeat" do
-      it "acknowledges" do
-        properties = double(:properties, content_type: "application/x-heartbeat")
-        processor.process({}.to_json, properties, delivery_info)
-        message_acknowledged
       end
     end
   end
