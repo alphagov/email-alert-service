@@ -4,8 +4,7 @@ class UnpublishingMessageProcessor < MessageProcessor
 protected # rubocop:disable Layout/IndentationWidth
 
   def process_message(message)
-    document = message.parsed_document
-
+    document = message.payload
     Services.email_api_client.send_unpublish_message(document)
   end
 end

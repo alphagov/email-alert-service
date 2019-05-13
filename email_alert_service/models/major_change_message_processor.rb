@@ -4,7 +4,7 @@ class MajorChangeMessageProcessor < MessageProcessor
 protected # rubocop:disable Layout/IndentationWidth
 
   def process_message(message)
-    document = message.parsed_document
+    document = message.payload
 
     unless has_base_path?(document)
       @logger.info "not triggering email alert for document with no base_path: #{document}"
