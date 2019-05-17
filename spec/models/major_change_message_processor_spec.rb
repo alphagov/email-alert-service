@@ -1,13 +1,19 @@
 require "spec_helper"
 
 RSpec.describe MajorChangeMessageProcessor do
-  let(:delivery_tag) { double(:delivery_tag) }
-  let(:delivery_info) { double(:delivery_info, delivery_tag: delivery_tag) }
-  let(:properties) { double(:properties, content_type: nil) }
-  let(:channel) { double(:channel, acknowledge: nil, reject: nil, nack: nil) }
   let(:logger) { double(:logger, info: nil) }
 
-  let(:processor) { MajorChangeMessageProcessor.new(channel, logger) }
+  let(:message) {
+    double(:message_queue_consumer_message, ack: nil, discard: nil,
+    retry: nil, payload: good_document)
+  }
+
+  let(:bad_message) {
+    double(:message_queue_consumer_message, ack: nil, discard: nil,
+    retry: nil, payload: nil)
+  }
+
+  let(:processor) { MajorChangeMessageProcessor.new(logger) }
   let(:mock_email_alert) { double("EmailAlert", trigger: nil) }
   let(:change_history) do
     [
@@ -46,15 +52,15 @@ RSpec.describe MajorChangeMessageProcessor do
   end
 
   def message_acknowledged
-    expect(channel).to have_received(:acknowledge).with(delivery_tag, false)
+    expect(message).to have_received(:ack)
   end
 
   def message_rejected
-    expect(channel).to have_received(:reject).with(delivery_tag, false)
+    expect(message).to have_received(:discard)
   end
 
   def message_requeued
-    expect(channel).to have_received(:nack).with(delivery_tag, false, true)
+    expect(message).to have_received(:retry)
   end
 
   before do
@@ -63,7 +69,7 @@ RSpec.describe MajorChangeMessageProcessor do
 
   describe "#process" do
     it "acknowledges and triggers the email for a correctly tagged document" do
-      processor.process(good_document.to_json, properties, delivery_info)
+      processor.process(message)
 
       email_was_triggered
       message_acknowledged
@@ -76,7 +82,7 @@ RSpec.describe MajorChangeMessageProcessor do
       end
 
       it "acknowledges and triggers the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_triggered
         message_acknowledged
@@ -89,7 +95,7 @@ RSpec.describe MajorChangeMessageProcessor do
       end
 
       it "still acknowledges and triggers the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_triggered
         message_acknowledged
@@ -102,7 +108,7 @@ RSpec.describe MajorChangeMessageProcessor do
       end
 
       it "still acknowledges and triggers the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_triggered
         message_acknowledged
@@ -116,7 +122,7 @@ RSpec.describe MajorChangeMessageProcessor do
       end
 
       it "acknowledges but doesn't trigger the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
@@ -130,7 +136,7 @@ RSpec.describe MajorChangeMessageProcessor do
       end
 
       it "acknowledges but doesn't trigger the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
@@ -143,7 +149,7 @@ RSpec.describe MajorChangeMessageProcessor do
       end
 
       it "acknowledges but doesn't trigger the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
@@ -156,7 +162,7 @@ RSpec.describe MajorChangeMessageProcessor do
       end
 
       it "acknowledges but doesn't trigger the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
@@ -167,7 +173,7 @@ RSpec.describe MajorChangeMessageProcessor do
       before { good_document.delete("details") }
 
       it "acknowledges but doesn't trigger the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
@@ -178,7 +184,7 @@ RSpec.describe MajorChangeMessageProcessor do
       before { good_document.delete("links") }
 
       it "still acknowledges and triggers the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_triggered
         message_acknowledged
@@ -193,7 +199,7 @@ RSpec.describe MajorChangeMessageProcessor do
       end
 
       it "still acknowledges and triggers the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_triggered
         message_acknowledged
@@ -208,7 +214,7 @@ RSpec.describe MajorChangeMessageProcessor do
       end
 
       it "acknowledges but doesn't trigger the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
@@ -224,7 +230,7 @@ RSpec.describe MajorChangeMessageProcessor do
       it "acknowledges but doesn't trigger the email for coming_soon document type" do
         good_document["document_type"] = "coming_soon"
 
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
@@ -233,7 +239,7 @@ RSpec.describe MajorChangeMessageProcessor do
       it "acknowledges but doesn't trigger the email for special_route document type" do
         good_document["document_type"] = "special_route"
 
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
@@ -248,7 +254,7 @@ RSpec.describe MajorChangeMessageProcessor do
       end
 
       it "still acknowledges and triggers the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_triggered
         message_acknowledged
@@ -259,21 +265,22 @@ RSpec.describe MajorChangeMessageProcessor do
       before { good_document.delete("links"); good_document.delete("details") }
 
       it "acknowledges but doesn't trigger the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
       end
     end
 
-    context "document contains malformed JSON" do
+    context "document raises an error" do
       it "rejects the document, doesn't trigger the email, and notifies an exception reporter" do
-        expect(GovukError).to receive(:notify).with(MalformedDocumentError)
+        expect(GovukError).to receive(:notify).with(StandardError)
+        allow(bad_message).to receive(:payload).and_return(StandardError)
 
-        processor.process("{]$£$*()}", properties, delivery_info)
+        processor.process(bad_message)
 
         email_was_not_triggered
-        message_rejected
+        expect(bad_message).to have_received(:discard)
       end
     end
 
@@ -284,19 +291,8 @@ RSpec.describe MajorChangeMessageProcessor do
       end
 
       it "requeues the message and doesn't trigger an email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
         message_requeued
-      end
-    end
-
-    context "content type identifies the document as a heartbeat" do
-      it "acknowledges but doesn't trigger the email" do
-        properties = double(:properties, content_type: "application/x-heartbeat")
-
-        processor.process(good_document.to_json, properties, delivery_info)
-
-        email_was_not_triggered
-        message_acknowledged
       end
     end
 
@@ -304,7 +300,7 @@ RSpec.describe MajorChangeMessageProcessor do
       before { good_document["locale"] = "fr" }
 
       it "acknowledges but doesn't trigger the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
@@ -315,7 +311,7 @@ RSpec.describe MajorChangeMessageProcessor do
       before { good_document["locale"] = nil }
 
       it "acknowledges but doesn't trigger the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
@@ -326,7 +322,7 @@ RSpec.describe MajorChangeMessageProcessor do
       before { good_document.delete("base_path") }
 
       it "acknowledges but doesn't trigger the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
@@ -337,7 +333,7 @@ RSpec.describe MajorChangeMessageProcessor do
       before { good_document["base_path"] = nil }
 
       it "acknowledges but doesn't trigger the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
@@ -348,7 +344,7 @@ RSpec.describe MajorChangeMessageProcessor do
       before { good_document.delete("title") }
 
       it "acknowledges but doesn't trigger the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
@@ -359,7 +355,7 @@ RSpec.describe MajorChangeMessageProcessor do
       before { good_document["title"] = nil }
 
       it "acknowledges but doesn't trigger the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
@@ -370,7 +366,7 @@ RSpec.describe MajorChangeMessageProcessor do
       before { good_document.delete("public_updated_at") }
 
       it "acknowledges but doesn't trigger the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
@@ -381,7 +377,7 @@ RSpec.describe MajorChangeMessageProcessor do
       before { good_document["public_updated_at"] = nil }
 
       it "acknowledges but doesn't trigger the email" do
-        processor.process(good_document.to_json, properties, delivery_info)
+        processor.process(message)
 
         email_was_not_triggered
         message_acknowledged
