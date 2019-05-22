@@ -1,4 +1,5 @@
 FROM ruby:2.6.3
+RUN gem install foreman
 
 ENV RABBITMQ_HOSTS rabbitmq
 ENV RABBITMQ_VHOST /
@@ -16,4 +17,4 @@ ADD Gemfile* $APP_HOME/
 RUN bundle install
 ADD . $APP_HOME
 
-CMD bin/email_alert_service
+CMD foreman run major-change-queue-consumer
