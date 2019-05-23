@@ -13,19 +13,20 @@ topics, it builds an email message, and passes it to email-alert-api.
 ### Dependencies
 
 - redis
-- rabbitMQ
-
-*(Installed by puppet on the VM for a local version the following applies)*
- * install rabbitMQ with brew install rabbitmq (or similar)
- * visit http://localhost:15672/cli/ and follow the instructions to install the admin CLI
-  * rabbitmqadmin declare user name=root password=CHANGEME tags=administrator
-  * rabbitmqadmin declare permission vhost="/" user=root configure='.*' write='.*' read='.*'
-  * rabbitmqadmin declare exchange name=published_documents type=topic durable=true
 
 ### Running the application
 
-The main daemon is run via `./bin/email_alert_service`.
-It connects to RabbitMQ, reading configs from `./config`.
+The email-alert-service uses the [govuk_message_queue_consumer](https://github.com/alphagov/govuk_message_queue_consumer)
+to connect to message queues on the `published_documents` exchange.
+
+There is a rake task to create the queues for this exchange:
+
+`bundle exec rake message_queues:create_queues`
+
+There are two rake tasks to start processors to consume from the queues:
+
+`bundle exec rake message_queues:major_change_consumer`
+`bundle exec rake message_queues:unpublishing_consumer`
 
 ### Running the test suite
 
