@@ -1,11 +1,4 @@
 defaults: &defaults
-  amqp:
-    hosts: [localhost]
-    port: 5672
-    vhost: /
-    user: email_alert_service
-    pass: email_alert_service
-    recover_from_connection_close: true
 
 development:
   <<: *defaults
@@ -20,9 +13,6 @@ development:
 
 test:
   <<: *defaults
-  amqp:
-    user: email_alert_service_test
-    pass: email_alert_service_test
   exchange: email_alert_service_published_documents_test_exchange
   queues:
     - processor: major_change_message_processor
@@ -34,15 +24,6 @@ test:
 
 production:
   <<: *defaults
-  amqp:
-    hosts:
-      <% hosts = ENV['RABBITMQ_HOSTS'] || 'localhost' %>
-      <% hosts.split(",").each do |host| %>
-      - <%= host %>
-      <% end %>
-    user: <%= ENV['RABBITMQ_USER'] %>
-    pass: <%= ENV['RABBITMQ_PASSWORD'] %>
-    recover_from_connection_close: true
   exchange: <%= ENV['RABBITMQ_EXCHANGE'] || 'published_documents' %>
   queues:
     - processor: major_change_message_processor
