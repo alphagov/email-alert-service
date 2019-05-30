@@ -73,7 +73,7 @@ GEM
     parallel (1.17.0)
     parser (2.6.3.0)
       ast (~> 2.4.0)
-    plek (2.1.1)
+    plek (3.0.0)
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
@@ -157,7 +157,7 @@ DEPENDENCIES
   govuk_app_config (~> 1.16)
   govuk_message_queue_consumer (~> 3.4)
   govuk_schemas (~> 3.2)
-  plek (~> 2.1)
+  plek (~> 3.0)
   pry-byebug
   rake
   redis (~> 4.1)
