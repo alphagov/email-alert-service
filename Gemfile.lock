@@ -46,7 +46,7 @@ GEM
       bunny (~> 2.11)
     govuk_schemas (3.2.0)
       json-schema (~> 2.8.0)
-    hashdiff (0.3.9)
+    hashdiff (0.4.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     i18n (1.6.0)
@@ -80,7 +80,7 @@ GEM
     pry-byebug (3.7.0)
       byebug (~> 11.0)
       pry (~> 0.10)
-    public_suffix (3.0.3)
+    public_suffix (3.1.0)
     rack (2.0.7)
     rack-cache (1.9.0)
       rack (>= 0.4)
@@ -142,10 +142,10 @@ GEM
     unicorn (5.4.1)
       kgio (~> 2.6)
       raindrops (~> 0.7)
-    webmock (3.5.1)
+    webmock (3.6.0)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
-      hashdiff
+      hashdiff (>= 0.4.0, < 2.0.0)
 
 PLATFORMS
   ruby
@@ -167,7 +167,7 @@ DEPENDENCIES
   rspec-mocks (~> 3.8)
   tzinfo (~> 1.2)
   tzinfo-data (~> 1.2019)
-  webmock (~> 3.5)
+  webmock (~> 3.6)
 
 BUNDLED WITH
    1.17.2
