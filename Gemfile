@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 gem "bunny", "~> 2.14"
-gem "gds-api-adapters", "~> 59.4"
+gem "gds-api-adapters", "~> 59.5"
 gem "govuk_app_config", "~> 1.18"
 gem "govuk_message_queue_consumer", "~> 3.4"
 gem "plek", "~> 3.0"
