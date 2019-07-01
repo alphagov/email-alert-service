@@ -115,12 +115,12 @@ RSpec.describe EmailAlert do
     end
 
     context "a link is present in the document" do
-      before { document.merge!("links" => { "topics" => ["uuid-888"] }) }
+      before { document.merge!("links" => { "topics" => %w[uuid-888] }) }
 
       it "formats the message to include the parent link" do
         expect(email_alert.format_for_email_api).to include(
           "links" => {
-            "topics" => ["uuid-888"]
+            "topics" => %w[uuid-888]
           }
         )
       end

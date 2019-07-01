@@ -38,7 +38,7 @@ RSpec.describe MajorChangeMessageProcessor do
         }
       },
       "links" => {
-        "topics" => ["example-topic-uuid"]
+        "topics" => %w[example-topic-uuid]
       }
     }
   end
@@ -78,7 +78,7 @@ RSpec.describe MajorChangeMessageProcessor do
     context "document tagged with a policy" do
       before do
         good_document["details"]["tags"] = { "policies" => ["example policy"] }
-        good_document["links"] = { "policies" => ["example-policy-uuid"] }
+        good_document["links"] = { "policies" => %w[example-policy-uuid] }
       end
 
       it "acknowledges and triggers the email" do
@@ -194,7 +194,7 @@ RSpec.describe MajorChangeMessageProcessor do
     context "no links or tags but of whitelisted document type" do
       before do
         good_document["details"] = { "change_history" => change_history }
-        good_document["links"] = { "parent" => ["parent-topic-uuid"] }
+        good_document["links"] = { "parent" => %w[parent-topic-uuid] }
         good_document["document_type"] = "service_manual_guide"
       end
 
@@ -209,7 +209,7 @@ RSpec.describe MajorChangeMessageProcessor do
     context "has links but is from a blacklisted publishing application" do
       before do
         good_document["details"] = { "change_history" => change_history }
-        good_document["links"] = { "taxons" => ["taxon-uuid"] }
+        good_document["links"] = { "taxons" => %w[taxon-uuid] }
         good_document["publishing_app"] = "travel-advice-publisher"
       end
 
@@ -224,7 +224,7 @@ RSpec.describe MajorChangeMessageProcessor do
     context "has links but is from a blacklisted document type" do
       before do
         good_document["details"] = { "change_history" => change_history }
-        good_document["links"] = { "taxons" => ["taxon-uuid"] }
+        good_document["links"] = { "taxons" => %w[taxon-uuid] }
       end
 
       it "acknowledges but doesn't trigger the email for coming_soon document type" do
