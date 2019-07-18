@@ -43,7 +43,7 @@ GEM
       sentry-raven (>= 2.7.1, < 2.10.0)
       statsd-ruby (~> 1.4.0)
       unicorn (>= 5.4, < 5.6)
-    govuk_message_queue_consumer (3.4.0)
+    govuk_message_queue_consumer (3.5.0)
       bunny (~> 2.11)
     govuk_schemas (3.3.0)
       json-schema (~> 2.8.0)
@@ -159,7 +159,7 @@ DEPENDENCIES
   gds-api-adapters (~> 59.5)
   govuk-lint (~> 3.11)
   govuk_app_config (~> 1.20)
-  govuk_message_queue_consumer (~> 3.4)
+  govuk_message_queue_consumer (~> 3.5)
   govuk_schemas (~> 3.3)
   plek (~> 3.0)
   pry-byebug
