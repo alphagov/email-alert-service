@@ -45,7 +45,7 @@ RSpec.describe EmailAlert do
   end
 
   let(:logger) { double(:logger, info: nil) }
-  let(:alert_api) { double(:alert_api, send_alert: nil) }
+  let(:alert_api) { double(:alert_api, create_content_change: nil) }
   let(:email_alert) { EmailAlert.new(document, logger) }
   let(:fake_lock_handler) { FakeLockHandler.new }
 
@@ -66,14 +66,14 @@ RSpec.describe EmailAlert do
     it "sends an alert to the Email Alert API" do
       email_alert.trigger
 
-      expect(alert_api).to have_received(:send_alert).with(
+      expect(alert_api).to have_received(:create_content_change).with(
         hash_including("content_id" => content_id),
         govuk_request_id: govuk_request_id
       )
     end
 
     it "logs if it receives a conflict" do
-      allow(alert_api).to receive(:send_alert).and_raise(GdsApi::HTTPConflict.new(409))
+      allow(alert_api).to receive(:create_content_change).and_raise(GdsApi::HTTPConflict.new(409))
       email_alert.trigger
 
       expect(logger).to have_received(:info).with(
@@ -82,7 +82,7 @@ RSpec.describe EmailAlert do
     end
 
     it "logs if it receives an unprocessable entity" do
-      allow(alert_api).to receive(:send_alert).and_raise(GdsApi::HTTPUnprocessableEntity.new(422))
+      allow(alert_api).to receive(:create_content_change).and_raise(GdsApi::HTTPUnprocessableEntity.new(422))
       email_alert.trigger
 
       expect(logger).to have_received(:info).with(

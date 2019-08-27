@@ -13,7 +13,7 @@ class EmailAlert
     logger.info "Received major change notification for #{document['title']}, with details #{document['details']}"
     lock_handler.with_lock_unless_done do
       begin
-        Services.email_api_client.send_alert(format_for_email_api, govuk_request_id: document['govuk_request_id'])
+        Services.email_api_client.create_content_change(format_for_email_api, govuk_request_id: document['govuk_request_id'])
       rescue GdsApi::HTTPConflict
         logger.info "email-alert-api returned conflict for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
       rescue GdsApi::HTTPUnprocessableEntity
