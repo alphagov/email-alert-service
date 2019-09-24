@@ -1,4 +1,4 @@
-require_relative('./message_processor')
+require_relative("./message_processor")
 
 class MajorChangeMessageProcessor < MessageProcessor
 protected # rubocop:disable Layout/IndentationWidth
@@ -107,7 +107,7 @@ protected # rubocop:disable Layout/IndentationWidth
   end
 
   def has_relevant_document_supertype?(document)
-    relevant_supertype = ->(supertype) { !['other', '', nil].include?(supertype) }
+    relevant_supertype = ->(supertype) { !["other", "", nil].include?(supertype) }
 
     # These supertypes were added to Whitehall content to aid the migration of
     # Whitehall subscriptions to email-alert-api. We'd like to get to the point
@@ -140,7 +140,7 @@ protected # rubocop:disable Layout/IndentationWidth
 
   def has_change_note?(document)
     note = ChangeHistory.new(
-      history: document.dig("details", "change_history")
+      history: document.dig("details", "change_history"),
     ).latest_change_note
 
     !note.nil? && !note.empty?

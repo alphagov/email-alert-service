@@ -13,7 +13,7 @@ class EmailAlert
     logger.info "Received major change notification for #{document['title']}, with details #{document['details']}"
     lock_handler.with_lock_unless_done do
       begin
-        Services.email_api_client.create_content_change(format_for_email_api, govuk_request_id: document['govuk_request_id'])
+        Services.email_api_client.create_content_change(format_for_email_api, govuk_request_id: document["govuk_request_id"])
       rescue GdsApi::HTTPConflict
         logger.info "email-alert-api returned conflict for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
       rescue GdsApi::HTTPUnprocessableEntity
@@ -47,7 +47,7 @@ private
 
   def change_note
     ChangeHistory.new(
-      history: document['details']['change_history']
+      history: document["details"]["change_history"],
     ).latest_change_note
   end
 
@@ -61,7 +61,7 @@ private
 
   def document_links
     strip_empty_arrays(
-      document.fetch("links", {}).merge("taxon_tree" => taxon_tree)
+      document.fetch("links", {}).merge("taxon_tree" => taxon_tree),
     )
   end
 

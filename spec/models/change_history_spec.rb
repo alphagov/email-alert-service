@@ -15,9 +15,9 @@ RSpec.describe ChangeHistory do
           history: [
             {
               "public_timestamp": "2017-10-19T16:09:23.000+01:00",
-              "note" => "latest change note"
-            }
-          ]
+              "note" => "latest change note",
+            },
+          ],
         )
       }
 
@@ -32,13 +32,13 @@ RSpec.describe ChangeHistory do
           history: [
             {
               "public_timestamp": "2017-10-18T16:09:23.000+01:00",
-              "note" => "a different change note"
+              "note" => "a different change note",
             },
             {
               "public_timestamp": "2017-10-19T16:09:23.000+01:00",
-              "note" => "latest change note"
-            }
-          ]
+              "note" => "latest change note",
+            },
+          ],
         )
       }
 

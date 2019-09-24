@@ -1,4 +1,4 @@
-require_relative('./message_processor')
+require_relative("./message_processor")
 
 class UnpublishingMessageProcessor < MessageProcessor
 protected # rubocop:disable Layout/IndentationWidth

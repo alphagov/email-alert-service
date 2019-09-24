@@ -34,12 +34,12 @@ RSpec.describe MajorChangeMessageProcessor do
       "details" => {
         "change_history" => change_history,
         "tags" => {
-          "topics" => ["example topic"]
-        }
+          "topics" => ["example topic"],
+        },
       },
       "links" => {
-        "topics" => %w[example-topic-uuid]
-      }
+        "topics" => %w[example-topic-uuid],
+      },
     }
   end
 

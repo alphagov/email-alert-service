@@ -20,6 +20,6 @@ EmailAlertService.services(
   :redis,
   Redis::Namespace.new(
     EmailAlertService.config.redis_config[:namespace],
-    redis: Redis.new(EmailAlertService.config.redis_config)
-  )
+    redis: Redis.new(EmailAlertService.config.redis_config),
+  ),
 )
