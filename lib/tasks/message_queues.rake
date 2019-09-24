@@ -1,4 +1,4 @@
-require_relative '../../email_alert_service/environment.rb'
+require_relative "../../email_alert_service/environment.rb"
 
 namespace :message_queues do
   logger = EmailAlertService.config.logger
@@ -25,7 +25,7 @@ namespace :message_queues do
       GovukMessageQueueConsumer::Consumer.new(
         queue_name: "email_alert_service",
         processor: MajorChangeMessageProcessor.new(logger),
-        logger: logger
+        logger: logger,
       ).run
     rescue SignalException => e
       logger.info "Signal Exception: #{e}"
@@ -43,7 +43,7 @@ namespace :message_queues do
       GovukMessageQueueConsumer::Consumer.new(
         queue_name: "email_unpublishing",
         processor: UnpublishingMessageProcessor.new(logger),
-        logger: logger
+        logger: logger,
       ).run
     rescue SignalException => e
       logger.info "Signal Exception: #{e}"

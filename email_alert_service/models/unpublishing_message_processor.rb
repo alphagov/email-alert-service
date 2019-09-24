@@ -1,7 +1,7 @@
-require_relative('./message_processor')
+require_relative("./message_processor")
 
 class UnpublishingMessageProcessor < MessageProcessor
-protected # rubocop:disable Layout/IndentationWidth
+protected
 
   def process_message(message)
     document = message.payload

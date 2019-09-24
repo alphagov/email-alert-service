@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 RSpec.describe MessageIdentifier, "#create" do
   it "generates a hexdigest from a title and timestamp" do

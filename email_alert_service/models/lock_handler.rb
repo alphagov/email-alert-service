@@ -1,4 +1,4 @@
-require 'securerandom'
+require "securerandom"
 
 class LockHandler
   class AlreadyLocked < StandardError; end

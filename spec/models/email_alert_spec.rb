@@ -20,13 +20,13 @@ RSpec.describe EmailAlert do
         "change_history" => [
           {
             "public_timestamp" => "2017-10-19T16:09:23.000+01:00",
-            "note" => "latest change note"
+            "note" => "latest change note",
           },
           {
             "public_timestamp" => "2017-10-16T12:09:00.000+01:00",
-            "note" => "old change note"
-          }
-        ]
+            "note" => "old change note",
+          },
+        ],
       },
       "links" => {},
       "public_updated_at" => public_updated_at,
@@ -59,7 +59,7 @@ RSpec.describe EmailAlert do
       email_alert.trigger
 
       expect(logger).to have_received(:info).with(
-        "Received major change notification for #{document['title']}, with details #{document['details']}"
+        "Received major change notification for #{document['title']}, with details #{document['details']}",
       )
     end
 
@@ -68,7 +68,7 @@ RSpec.describe EmailAlert do
 
       expect(alert_api).to have_received(:create_content_change).with(
         hash_including("content_id" => content_id),
-        govuk_request_id: govuk_request_id
+        govuk_request_id: govuk_request_id,
       )
     end
 
@@ -77,7 +77,7 @@ RSpec.describe EmailAlert do
       email_alert.trigger
 
       expect(logger).to have_received(:info).with(
-        "email-alert-api returned conflict for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
+        "email-alert-api returned conflict for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}",
       )
     end
 
@@ -86,7 +86,7 @@ RSpec.describe EmailAlert do
       email_alert.trigger
 
       expect(logger).to have_received(:info).with(
-        "email-alert-api returned unprocessable entity for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
+        "email-alert-api returned unprocessable entity for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}",
       )
     end
   end
@@ -100,7 +100,7 @@ RSpec.describe EmailAlert do
         "publishing_app" => "Whitehall",
         "tags" => {
           "browse_pages" => ["tax/vat"],
-          "topics" => ["oil-and-gas/licensing"]
+          "topics" => ["oil-and-gas/licensing"],
         },
         "links" => {},
         "document_type" => "example_document",
@@ -120,8 +120,8 @@ RSpec.describe EmailAlert do
       it "formats the message to include the parent link" do
         expect(email_alert.format_for_email_api).to include(
           "links" => {
-            "topics" => %w[uuid-888]
-          }
+            "topics" => %w[uuid-888],
+          },
         )
       end
     end
@@ -137,7 +137,7 @@ RSpec.describe EmailAlert do
       end
     end
 
-    context 'taxon links are present' do
+    context "taxon links are present" do
       before do
         document.merge!(
           "links" => { "taxons" => %w(uuid-1 uuid-3) },
@@ -148,23 +148,23 @@ RSpec.describe EmailAlert do
                 "links" => {
                   "parent_taxons" => [
                     { "content_id" => "uuid-2", "links" => {} },
-                  ]
-                }
+                  ],
+                },
               },
               {
                 "content_id" => "uuid-3",
                 "links" => {
                   "parent_taxons" => [
                     { "content_id" => "uuid-2", "links" => {} },
-                  ]
-                }
-              }
-            ]
-          }
+                  ],
+                },
+              },
+            ],
+          },
         )
       end
 
-      it 'adds the linked taxon and a unique list of its ancestors to the message' do
+      it "adds the linked taxon and a unique list of its ancestors to the message" do
         links_hash = email_alert.format_for_email_api["links"]
 
         expect(links_hash["taxons"]).to eq %w(uuid-1 uuid-3)

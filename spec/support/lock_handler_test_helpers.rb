@@ -32,7 +32,7 @@ module LockHandlerTestHelpers
   def message_key_for_email_data
     MessageIdentifier.new(
       email_data["formatted"]["subject"],
-      email_data["public_updated_at"]
+      email_data["public_updated_at"],
     ).create
   end
 

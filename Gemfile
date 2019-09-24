@@ -12,14 +12,14 @@ gem "tzinfo", "~> 1.2"
 gem "tzinfo-data", "~> 1.2019"
 
 group :development, :test do
-  gem "govuk-lint", "~> 3.11"
+  gem "govuk-lint", "~> 4.0"
   gem "pry-byebug"
 end
 
 group :test do
-  gem 'govuk_schemas', '~> 4.0'
-  gem 'rspec-core', '~> 3.8'
-  gem 'rspec-expectations', '~> 3.8'
-  gem 'rspec-mocks', '~> 3.8'
-  gem 'webmock', '~> 3.7'
+  gem "govuk_schemas", "~> 4.0"
+  gem "rspec-core", "~> 3.8"
+  gem "rspec-expectations", "~> 3.8"
+  gem "rspec-mocks", "~> 3.8"
+  gem "webmock", "~> 3.7"
 end

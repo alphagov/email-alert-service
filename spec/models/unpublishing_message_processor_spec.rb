@@ -13,7 +13,7 @@ RSpec.describe UnpublishingMessageProcessor do
   end
 
   describe "#process" do
-    it 'sends an unpublish message to the email api client' do
+    it "sends an unpublish message to the email api client" do
       expect(client).to receive(:send_unpublish_message).with(payload)
       processor.process(message)
     end
