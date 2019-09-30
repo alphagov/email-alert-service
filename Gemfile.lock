@@ -11,7 +11,7 @@ GEM
       public_suffix (>= 2.0.2, < 5.0)
     amq-protocol (2.3.0)
     ast (2.4.0)
-    bunny (2.14.2)
+    bunny (2.14.3)
       amq-protocol (~> 2.3, >= 2.3.0)
     byebug (11.0.1)
     coderay (1.1.2)
