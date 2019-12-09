@@ -4,9 +4,9 @@ module EmailAlertService
 
     if service
       @services[name] = service
-      return true
+      true
     elsif @services[name]
-      return @services[name]
+      @services[name]
     else
       raise ServiceNotRegisteredException.new(name)
     end
