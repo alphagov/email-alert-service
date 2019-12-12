@@ -7,7 +7,7 @@ gem "govuk_message_queue_consumer", "~> 3.5"
 gem "plek", "~> 3.0"
 gem "rake"
 gem "redis", "~> 4.1"
-gem "redis-namespace", "~> 1.6"
+gem "redis-namespace", "~> 1.7"
 gem "tzinfo", "~> 1.2"
 gem "tzinfo-data", "~> 1.2019"
 
