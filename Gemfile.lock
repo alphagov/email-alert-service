@@ -23,7 +23,7 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     faraday (0.17.3)
       multipart-post (>= 1.2, < 3)
-    gds-api-adapters (63.5.0)
+    gds-api-adapters (63.5.1)
       addressable
       link_header
       null_logger
