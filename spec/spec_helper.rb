@@ -23,7 +23,7 @@ require "webmock/rspec"
 require_relative "../email_alert_service/environment"
 require "gds_api/test_helpers/email_alert_api"
 
-Dir[File.join(EmailAlertService.config.app_root, "spec/support/**/*.rb")].each { |f| require f }
+Dir[File.join(EmailAlertService.config.app_root, "spec/support/**/*.rb")].sort.each { |f| require f }
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

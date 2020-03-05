@@ -20,6 +20,6 @@ require "govuk_app_config"
 
 EmailAlertService.config.logger.level = Logger::DEBUG
 
-Dir.glob("email_alert_service/**/*.rb").each { |r| require r }
+Dir.glob("email_alert_service/**/*.rb").sort.each { |r| require r }
 
-Dir[File.join(EmailAlertService.config.app_root, "config/initializers/**/*.rb")].each { |f| require f }
+Dir[File.join(EmailAlertService.config.app_root, "config/initializers/**/*.rb")].sort.each { |f| require f }
