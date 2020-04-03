@@ -1,4 +1,4 @@
-FROM ruby:2.6.5
+FROM ruby:2.6.6
 RUN gem install foreman
 
 ENV RABBITMQ_HOSTS rabbitmq
