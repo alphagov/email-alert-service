@@ -9,10 +9,10 @@ GEM
       zeitwerk (~> 2.2)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    amq-protocol (2.3.0)
+    amq-protocol (2.3.1)
     ast (2.4.0)
-    bunny (2.14.4)
-      amq-protocol (~> 2.3, >= 2.3.0)
+    bunny (2.15.0)
+      amq-protocol (~> 2.3, >= 2.3.1)
     byebug (11.1.1)
     coderay (1.1.2)
     concurrent-ruby (1.1.6)
@@ -145,7 +145,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bunny (~> 2.14)
+  bunny (~> 2.15)
   gds-api-adapters (~> 63.5)
   govuk_app_config (~> 2.1)
   govuk_message_queue_consumer (~> 3.5)
