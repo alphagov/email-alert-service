@@ -127,7 +127,7 @@ GEM
       faraday (>= 1.0)
     statsd-ruby (1.4.0)
     thread_safe (0.3.6)
-    tzinfo (1.2.6)
+    tzinfo (1.2.7)
       thread_safe (~> 0.1)
     tzinfo-data (1.2019.3)
       tzinfo (>= 1.0.0)
