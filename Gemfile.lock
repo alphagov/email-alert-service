@@ -129,7 +129,7 @@ GEM
     thread_safe (0.3.6)
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
-    tzinfo-data (1.2019.3)
+    tzinfo-data (1.2020.1)
       tzinfo (>= 1.0.0)
     unf (0.1.4)
       unf_ext
@@ -163,7 +163,7 @@ DEPENDENCIES
   rspec-mocks (~> 3.9)
   rubocop-govuk
   tzinfo (~> 1.2)
-  tzinfo-data (~> 1.2019)
+  tzinfo-data (~> 1.2020)
   webmock (~> 3.8)
 
 BUNDLED WITH
