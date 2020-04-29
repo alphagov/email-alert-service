@@ -15,7 +15,6 @@ module EmailAlertService
   class ServiceNotRegisteredException < StandardError; end
 end
 
-
 EmailAlertService.services(
   :redis,
   Redis::Namespace.new(
