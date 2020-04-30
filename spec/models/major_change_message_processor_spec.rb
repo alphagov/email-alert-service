@@ -262,7 +262,10 @@ RSpec.describe MajorChangeMessageProcessor do
     end
 
     context "no details hash, no links hash" do
-      before { good_document.delete("links"); good_document.delete("details") }
+      before do
+        good_document.delete("links")
+        good_document.delete("details")
+      end
 
       it "acknowledges but doesn't trigger the email" do
         processor.process(message)
