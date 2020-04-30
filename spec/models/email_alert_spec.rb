@@ -140,7 +140,7 @@ RSpec.describe EmailAlert do
     context "taxon links are present" do
       before do
         document.merge!(
-          "links" => { "taxons" => %w(uuid-1 uuid-3) },
+          "links" => { "taxons" => %w[uuid-1 uuid-3] },
           "expanded_links" => {
             "taxons" => [
               {
@@ -167,8 +167,8 @@ RSpec.describe EmailAlert do
       it "adds the linked taxon and a unique list of its ancestors to the message" do
         links_hash = email_alert.format_for_email_api["links"]
 
-        expect(links_hash["taxons"]).to eq %w(uuid-1 uuid-3)
-        expect(links_hash["taxon_tree"].sort).to eq %w(uuid-1 uuid-2 uuid-3)
+        expect(links_hash["taxons"]).to eq %w[uuid-1 uuid-3]
+        expect(links_hash["taxon_tree"].sort).to eq %w[uuid-1 uuid-2 uuid-3]
       end
     end
 

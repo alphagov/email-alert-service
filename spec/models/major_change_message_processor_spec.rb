@@ -5,12 +5,12 @@ RSpec.describe MajorChangeMessageProcessor do
 
   let(:message) {
     double(:message_queue_consumer_message, ack: nil, discard: nil,
-    retry: nil, payload: good_document)
+                                            retry: nil, payload: good_document)
   }
 
   let(:bad_message) {
     double(:message_queue_consumer_message, ack: nil, discard: nil,
-    retry: nil, payload: nil)
+                                            retry: nil, payload: nil)
   }
 
   let(:processor) { MajorChangeMessageProcessor.new(logger) }

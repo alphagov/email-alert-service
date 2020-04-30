@@ -64,7 +64,7 @@ protected
     # things which aren't appropriate. has_relevant_document_supertype? will
     # let through anything for which Whitehall would have sent emails to
     # organisation-based lists if none of these other attributes exist on it.
-    supported_attributes = %w(
+    supported_attributes = %w[
       topics
       policies
       service_manual_topics
@@ -74,7 +74,7 @@ protected
       people
       policy_areas
       roles
-    )
+    ]
 
     supported_attributes.any? do |tag_name|
       tags_hash[tag_name] && tags_hash[tag_name].any?
@@ -85,11 +85,11 @@ protected
     # These publishing apps make direct calls to email-alert-api to send their
     # emails, so we need to avoid sending duplicate emails when they come
     # through on the queue:
-    return true if %w(travel-advice-publisher specialist-publisher).include?(publishing_app)
+    return true if %w[travel-advice-publisher specialist-publisher].include?(publishing_app)
 
     # These publishing apps don't manage any content where it would make sense to
     # subscribe to email updates for
-    return true if %w(collections-publisher).include?(publishing_app)
+    return true if %w[collections-publisher].include?(publishing_app)
 
     false
   end

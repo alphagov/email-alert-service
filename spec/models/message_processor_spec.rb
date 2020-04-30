@@ -9,7 +9,7 @@ RSpec.describe MessageProcessor do
 
   let(:message) {
     double(:message_queue_consumer_message, ack: nil, discard: nil,
-                          retry: nil, payload: "title['test']")
+                                            retry: nil, payload: "title['test']")
   }
 
   def message_acknowledged

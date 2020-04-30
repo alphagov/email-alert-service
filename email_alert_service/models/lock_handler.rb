@@ -46,7 +46,7 @@ private
   end
 
   def try_acquire_lock
-    temp_key = "temp:#{SecureRandom::base64(18)}"
+    temp_key = "temp:#{SecureRandom.base64(18)}"
     redis.multi {
       redis.setex temp_key, LOCK_PERIOD_IN_SECONDS, email_title
       redis.renamenx temp_key, lock_key
