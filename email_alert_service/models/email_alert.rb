@@ -1,8 +1,8 @@
 require "gds_api/email_alert_api"
 
 class EmailAlert
-  HIGH_PRIORITY_DOCUMENT_TYPES = %w(travel_advice medical_safety_alert).freeze
-  BLANK_DESCRIPTION_DOCUMENT_TYPES = %w(travel_advice).freeze
+  HIGH_PRIORITY_DOCUMENT_TYPES = %w[travel_advice medical_safety_alert].freeze
+  BLANK_DESCRIPTION_DOCUMENT_TYPES = %w[travel_advice].freeze
 
   def initialize(document, logger)
     @document = document
@@ -12,13 +12,11 @@ class EmailAlert
   def trigger
     logger.info "Received major change notification for #{document['title']}, with details #{document['details']}"
     lock_handler.with_lock_unless_done do
-      begin
-        Services.email_api_client.create_content_change(format_for_email_api, govuk_request_id: document["govuk_request_id"])
-      rescue GdsApi::HTTPConflict
-        logger.info "email-alert-api returned conflict for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
-      rescue GdsApi::HTTPUnprocessableEntity
-        logger.info "email-alert-api returned unprocessable entity for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
-      end
+      Services.email_api_client.create_content_change(format_for_email_api, govuk_request_id: document["govuk_request_id"])
+    rescue GdsApi::HTTPConflict
+      logger.info "email-alert-api returned conflict for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
+    rescue GdsApi::HTTPUnprocessableEntity
+      logger.info "email-alert-api returned unprocessable entity for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
     end
   end
 

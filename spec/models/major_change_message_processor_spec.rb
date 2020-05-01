@@ -5,12 +5,12 @@ RSpec.describe MajorChangeMessageProcessor do
 
   let(:message) {
     double(:message_queue_consumer_message, ack: nil, discard: nil,
-    retry: nil, payload: good_document)
+                                            retry: nil, payload: good_document)
   }
 
   let(:bad_message) {
     double(:message_queue_consumer_message, ack: nil, discard: nil,
-    retry: nil, payload: nil)
+                                            retry: nil, payload: nil)
   }
 
   let(:processor) { MajorChangeMessageProcessor.new(logger) }
@@ -262,7 +262,10 @@ RSpec.describe MajorChangeMessageProcessor do
     end
 
     context "no details hash, no links hash" do
-      before { good_document.delete("links"); good_document.delete("details") }
+      before do
+        good_document.delete("links")
+        good_document.delete("details")
+      end
 
       it "acknowledges but doesn't trigger the email" do
         processor.process(message)
