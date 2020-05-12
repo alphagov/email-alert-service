@@ -3,15 +3,15 @@ require "spec_helper"
 RSpec.describe MajorChangeMessageProcessor do
   let(:logger) { double(:logger, info: nil) }
 
-  let(:message) {
+  let(:message) do
     double(:message_queue_consumer_message, ack: nil, discard: nil,
                                             retry: nil, payload: good_document)
-  }
+  end
 
-  let(:bad_message) {
+  let(:bad_message) do
     double(:message_queue_consumer_message, ack: nil, discard: nil,
                                             retry: nil, payload: nil)
-  }
+  end
 
   let(:processor) { MajorChangeMessageProcessor.new(logger) }
   let(:mock_email_alert) { double("EmailAlert", trigger: nil) }

@@ -3,14 +3,14 @@ require "spec_helper"
 RSpec.describe MessageProcessor do
   let(:logger) { double(:logger, info: nil) }
 
-  let(:processor) {
+  let(:processor) do
     Class.new(MessageProcessor).new(logger)
-  }
+  end
 
-  let(:message) {
+  let(:message) do
     double(:message_queue_consumer_message, ack: nil, discard: nil,
                                             retry: nil, payload: "title['test']")
-  }
+  end
 
   def message_acknowledged
     expect(message).to have_received(:ack)

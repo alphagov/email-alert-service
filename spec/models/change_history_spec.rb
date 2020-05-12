@@ -10,7 +10,7 @@ RSpec.describe ChangeHistory do
     end
 
     context "change_history has one entry" do
-      let(:change_history) {
+      let(:change_history) do
         ChangeHistory.new(
           history: [
             {
@@ -19,7 +19,7 @@ RSpec.describe ChangeHistory do
             },
           ],
         )
-      }
+      end
 
       it "returns the note" do
         expect(change_history.latest_change_note).to eq("latest change note")
@@ -27,7 +27,7 @@ RSpec.describe ChangeHistory do
     end
 
     context "change_history has multiple entries" do
-      let(:change_history) {
+      let(:change_history) do
         ChangeHistory.new(
           history: [
             {
@@ -40,7 +40,7 @@ RSpec.describe ChangeHistory do
             },
           ],
         )
-      }
+      end
 
       it "returns the latest" do
         expect(change_history.latest_change_note).to eq("latest change note")
