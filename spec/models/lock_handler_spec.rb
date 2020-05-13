@@ -3,13 +3,13 @@ require "spec_helper"
 RSpec.describe LockHandler do
   include LockHandlerTestHelpers
 
-  let(:lock_handler) {
+  let(:lock_handler) do
     LockHandler.new(
       email_data["formatted"]["subject"],
       email_data["public_updated_at"],
       updated_now,
     )
-  }
+  end
 
   let(:redis) { EmailAlertService.services(:redis) }
   let(:redis_connection) { redis.redis }
@@ -97,13 +97,13 @@ RSpec.describe LockHandler do
     end
 
     context "if email is too old to handle" do
-      let(:lock_handler) {
+      let(:lock_handler) do
         LockHandler.new(
           expired_email_data["formatted"]["subject"],
           expired_email_data["public_updated_at"],
           updated_now,
         )
-      }
+      end
 
       it "won't call the block" do
         expect { |b| lock_handler.with_lock_unless_done(&b) }.not_to yield_control
