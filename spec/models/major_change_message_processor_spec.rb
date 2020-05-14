@@ -4,13 +4,23 @@ RSpec.describe MajorChangeMessageProcessor do
   let(:logger) { double(:logger, info: nil) }
 
   let(:message) do
-    double(:message_queue_consumer_message, ack: nil, discard: nil,
-                                            retry: nil, payload: good_document)
+    double(
+      :message_queue_consumer_message,
+      ack: nil,
+      discard: nil,
+      retry: nil,
+      payload: good_document,
+    )
   end
 
   let(:bad_message) do
-    double(:message_queue_consumer_message, ack: nil, discard: nil,
-                                            retry: nil, payload: nil)
+    double(
+      :message_queue_consumer_message,
+      ack: nil,
+      discard: nil,
+      retry: nil,
+      payload: nil,
+    )
   end
 
   let(:processor) { MajorChangeMessageProcessor.new(logger) }

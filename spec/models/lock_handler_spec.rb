@@ -91,8 +91,8 @@ RSpec.describe LockHandler do
         lock_handler.with_lock_unless_done {}
 
         ttl = redis.ttl(done_marker_for_email_data)
-        expect(ttl).to be <= 86400 * 90
-        expect(ttl).to be > 86400 * 89
+        expect(ttl).to be <= 86_400 * 90
+        expect(ttl).to be > 86_400 * 89
       end
     end
 
