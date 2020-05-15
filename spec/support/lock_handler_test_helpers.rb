@@ -1,6 +1,6 @@
 module LockHandlerTestHelpers
   def seconds_in_90_days
-    90 * 86400
+    90 * 86_400
   end
 
   def expired_date

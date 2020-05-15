@@ -3,7 +3,7 @@ require "securerandom"
 class LockHandler
   class AlreadyLocked < StandardError; end
 
-  SECONDS_IN_A_DAY = 86400
+  SECONDS_IN_A_DAY = 86_400
 
   # We remember sent messages for a long, but limited, period.  The period is
   # limited because we're using redis to store these, which is an in-memory

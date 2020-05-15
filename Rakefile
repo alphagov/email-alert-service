@@ -8,6 +8,11 @@ rescue LoadError # rubocop:disable Lint/SuppressedException
 end
 # rubocop:enable Lint/SuppressedException
 
+desc "Lint Ruby"
+task :lint do
+  sh "bundle exec rubocop"
+end
+
 Dir.glob("lib/tasks/*.rake").each { |r| load r }
 
 task default: %i[lint spec]

@@ -8,7 +8,7 @@ module EmailAlertService
     elsif @services[name]
       @services[name]
     else
-      raise ServiceNotRegisteredException.new(name)
+      raise ServiceNotRegisteredException, name
     end
   end
 
