@@ -201,7 +201,7 @@ RSpec.describe MajorChangeMessageProcessor do
       end
     end
 
-    context "no links or tags but of whitelisted document type" do
+    context "no links or tags but allowed document type" do
       before do
         good_document["details"] = { "change_history" => change_history }
         good_document["links"] = { "parent" => %w[parent-topic-uuid] }
@@ -216,7 +216,7 @@ RSpec.describe MajorChangeMessageProcessor do
       end
     end
 
-    context "has links but is from a blacklisted publishing application" do
+    context "has links but is from a blocked publishing application" do
       before do
         good_document["details"] = { "change_history" => change_history }
         good_document["links"] = { "taxons" => %w[taxon-uuid] }
@@ -231,7 +231,7 @@ RSpec.describe MajorChangeMessageProcessor do
       end
     end
 
-    context "has links but is from a blacklisted document type" do
+    context "has links but is from a blocked document type" do
       before do
         good_document["details"] = { "change_history" => change_history }
         good_document["links"] = { "taxons" => %w[taxon-uuid] }
