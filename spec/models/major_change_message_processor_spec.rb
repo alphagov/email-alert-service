@@ -201,11 +201,10 @@ RSpec.describe MajorChangeMessageProcessor do
       end
     end
 
-    context "no links or tags but allowed document type" do
+    context "has a link to the service standard" do
       before do
         good_document["details"] = { "change_history" => change_history }
-        good_document["links"] = { "parent" => %w[parent-topic-uuid] }
-        good_document["document_type"] = "service_manual_guide"
+        good_document["links"] = { "parent" => %w[00f693d4-866a-4fe6-a8d6-09cd7db8980b] }
       end
 
       it "still acknowledges and triggers the email" do

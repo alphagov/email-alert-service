@@ -46,12 +46,11 @@ protected
 
     document_tags = document.fetch("details", {}).fetch("tags", {})
     document_links = document.fetch("links", {})
-    document_type = document.fetch("document_type")
 
-    contains_supported_attribute?(document_links)
-      || contains_supported_attribute?(document_tags)
-      || allowed_document_type?(document_type)
-      || has_relevant_document_supertype?(document)
+    contains_supported_attribute?(document_links) ||
+      contains_supported_attribute?(document_tags) ||
+      links_to_singleton_page?(document_links) ||
+      has_relevant_document_supertype?(document)
   end
 
   def contains_supported_attribute?(tags_hash)
@@ -99,10 +98,9 @@ protected
     %w[coming_soon special_route].include?(document_type)
   end
 
-  def allowed_document_type?(document_type)
-    # It's possible to subscribe to these without any other filtering, so we
-    # should always let them through
-    document_type == "service_manual_guide"
+  def links_to_singleton_page?(document_links)
+    # These documents link to the single-instance of service_manual_service_standard
+    document_links["parent"] == %w[00f693d4-866a-4fe6-a8d6-09cd7db8980b]
   end
 
   def has_relevant_document_supertype?(document)
