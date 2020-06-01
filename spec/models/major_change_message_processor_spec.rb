@@ -201,11 +201,10 @@ RSpec.describe MajorChangeMessageProcessor do
       end
     end
 
-    context "no links or tags but of whitelisted document type" do
+    context "has a link to the service standard" do
       before do
         good_document["details"] = { "change_history" => change_history }
-        good_document["links"] = { "parent" => %w[parent-topic-uuid] }
-        good_document["document_type"] = "service_manual_guide"
+        good_document["links"] = { "parent" => %w[00f693d4-866a-4fe6-a8d6-09cd7db8980b] }
       end
 
       it "still acknowledges and triggers the email" do
@@ -216,7 +215,7 @@ RSpec.describe MajorChangeMessageProcessor do
       end
     end
 
-    context "has links but is from a blacklisted publishing application" do
+    context "has links but is from a blocked publishing application" do
       before do
         good_document["details"] = { "change_history" => change_history }
         good_document["links"] = { "taxons" => %w[taxon-uuid] }
@@ -231,7 +230,7 @@ RSpec.describe MajorChangeMessageProcessor do
       end
     end
 
-    context "has links but is from a blacklisted document type" do
+    context "has links but is from a blocked document type" do
       before do
         good_document["details"] = { "change_history" => change_history }
         good_document["links"] = { "taxons" => %w[taxon-uuid] }

@@ -41,18 +41,16 @@ protected
   end
 
   def email_alerts_supported?(document)
-    blacklisted = blacklisted_publishing_app?(document["publishing_app"]) \
-      || blacklisted_document_type?(document["document_type"])
-    return false if blacklisted
+    return false if blocked_publishing_app?(document["publishing_app"]) ||
+      blocked_document_type?(document["document_type"])
 
     document_tags = document.fetch("details", {}).fetch("tags", {})
     document_links = document.fetch("links", {})
-    document_type = document.fetch("document_type")
 
-    contains_supported_attribute?(document_links) \
-      || contains_supported_attribute?(document_tags) \
-      || whitelisted_document_type?(document_type) \
-      || has_relevant_document_supertype?(document)
+    contains_supported_attribute?(document_links) ||
+      contains_supported_attribute?(document_tags) ||
+      links_to_singleton_page?(document_links) ||
+      has_relevant_document_supertype?(document)
   end
 
   def contains_supported_attribute?(tags_hash)
@@ -81,7 +79,7 @@ protected
     end
   end
 
-  def blacklisted_publishing_app?(publishing_app)
+  def blocked_publishing_app?(publishing_app)
     # These publishing apps make direct calls to email-alert-api to send their
     # emails, so we need to avoid sending duplicate emails when they come
     # through on the queue:
@@ -94,16 +92,15 @@ protected
     false
   end
 
-  def blacklisted_document_type?(document_type)
+  def blocked_document_type?(document_type)
     # These are documents that don't make sense to email someone about as they
     # are not useful to an end user.
     %w[coming_soon special_route].include?(document_type)
   end
 
-  def whitelisted_document_type?(document_type)
-    # It's possible to subscribe to these without any other filtering, so we
-    # should always let them through
-    document_type == "service_manual_guide"
+  def links_to_singleton_page?(document_links)
+    # These documents link to the single-instance of service_manual_service_standard
+    document_links["parent"] == %w[00f693d4-866a-4fe6-a8d6-09cd7db8980b]
   end
 
   def has_relevant_document_supertype?(document)
