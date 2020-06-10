@@ -79,7 +79,7 @@ GEM
     rainbow (3.0.0)
     raindrops (0.19.1)
     rake (13.0.1)
-    redis (4.1.4)
+    redis (4.2.0)
     redis-namespace (1.7.0)
       redis (>= 3.0.4)
     regexp_parser (1.7.0)
@@ -159,7 +159,7 @@ DEPENDENCIES
   plek (~> 3.0)
   pry-byebug
   rake
-  redis (~> 4.1)
+  redis (~> 4.2)
   redis-namespace (~> 1.7)
   rspec-core (~> 3.9)
   rspec-expectations (~> 3.9)
