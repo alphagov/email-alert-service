@@ -36,7 +36,7 @@ GEM
       unicorn (>= 5.4, < 5.6)
     govuk_message_queue_consumer (3.5.0)
       bunny (~> 2.11)
-    govuk_schemas (4.0.0)
+    govuk_schemas (4.1.0)
       json-schema (~> 2.8.0)
     hashdiff (1.0.1)
     http-accept (1.7.0)
@@ -152,7 +152,7 @@ DEPENDENCIES
   gds-api-adapters (~> 67.0)
   govuk_app_config (~> 2.2)
   govuk_message_queue_consumer (~> 3.5)
-  govuk_schemas (~> 4.0)
+  govuk_schemas (~> 4.1)
   plek (~> 4.0)
   pry-byebug
   rake
