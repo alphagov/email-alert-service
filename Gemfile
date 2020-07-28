@@ -17,7 +17,7 @@ group :development, :test do
 end
 
 group :test do
-  gem "govuk_schemas", "~> 4.0"
+  gem "govuk_schemas", "~> 4.1"
   gem "rspec-core", "~> 3.9"
   gem "rspec-expectations", "~> 3.9"
   gem "rspec-mocks", "~> 3.9"
