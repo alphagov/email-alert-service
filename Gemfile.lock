@@ -153,24 +153,24 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bunny (~> 2.15)
-  gds-api-adapters (~> 67.0)
-  govuk_app_config (~> 2.3)
-  govuk_message_queue_consumer (~> 3.5)
-  govuk_schemas (~> 4.1)
-  plek (~> 4.0)
+  bunny
+  gds-api-adapters
+  govuk_app_config
+  govuk_message_queue_consumer
+  govuk_schemas
+  plek
   pry-byebug
   rake
-  redis (~> 4.2)
-  redis-namespace (~> 1.7)
-  rspec-core (~> 3.9)
-  rspec-expectations (~> 3.9)
-  rspec-mocks (~> 3.9)
+  redis
+  redis-namespace
+  rspec-core
+  rspec-expectations
+  rspec-mocks
   rubocop-govuk
   simplecov
-  tzinfo (~> 1.2)
-  tzinfo-data (~> 1.2020)
-  webmock (~> 3.8)
+  tzinfo
+  tzinfo-data
+  webmock
 
 BUNDLED WITH
    1.17.3
