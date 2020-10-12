@@ -2,6 +2,7 @@ require "pathname"
 require "yaml"
 require "logger"
 require "erb"
+require "json"
 
 module EmailAlertService
   class Config
@@ -28,7 +29,11 @@ module EmailAlertService
 
     def logger
       @logger ||= begin
-        Logger.new(STDOUT)
+        formatter = proc do |_severity, datetime, _progname, msg|
+          JSON.dump("@timestamp" => datetime.iso8601, message: msg) + "\n"
+        end
+
+        Logger.new(STDOUT, formatter: formatter)
       end
     end
 
