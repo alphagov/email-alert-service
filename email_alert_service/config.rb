@@ -28,7 +28,7 @@ module EmailAlertService
 
     def logger
       @logger ||= begin
-        Logger.new(STDOUT, "daily")
+        Logger.new(STDOUT)
       end
     end
 
