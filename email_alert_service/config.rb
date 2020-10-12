@@ -28,10 +28,7 @@ module EmailAlertService
 
     def logger
       @logger ||= begin
-        logfile = File.open(app_root + "log/#{environment}.log", "a")
-
-        logfile.sync = true
-        Logger.new(MultiIO.new(STDOUT, logfile), "daily")
+        Logger.new(STDOUT, "daily")
       end
     end
 
