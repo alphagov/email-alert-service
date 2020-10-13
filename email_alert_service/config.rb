@@ -2,6 +2,7 @@ require "pathname"
 require "yaml"
 require "logger"
 require "erb"
+require "json"
 
 module EmailAlertService
   class Config
@@ -28,10 +29,11 @@ module EmailAlertService
 
     def logger
       @logger ||= begin
-        logfile = File.open(app_root + "log/#{environment}.log", "a")
+        formatter = proc do |_severity, datetime, _progname, msg|
+          JSON.dump("@timestamp" => datetime.iso8601, message: msg) + "\n"
+        end
 
-        logfile.sync = true
-        Logger.new(MultiIO.new(STDOUT, logfile), "daily")
+        Logger.new(STDOUT, formatter: formatter)
       end
     end
 
