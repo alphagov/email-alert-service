@@ -28,13 +28,7 @@ module EmailAlertService
     end
 
     def logger
-      @logger ||= begin
-        formatter = proc do |_severity, datetime, _progname, msg|
-          JSON.dump("@timestamp" => datetime.iso8601, message: msg) + "\n"
-        end
-
-        Logger.new(STDOUT, formatter: formatter)
-      end
+      @logger ||= Logger.new(STDOUT)
     end
 
   private
