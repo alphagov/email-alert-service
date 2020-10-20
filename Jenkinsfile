@@ -3,5 +3,5 @@
 library("govuk")
 
 node {
-  govuk.buildProject(publishingE2ETests: true, rubyLintDiff: false)
+  govuk.buildProject()
 }
