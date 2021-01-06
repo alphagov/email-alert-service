@@ -25,7 +25,7 @@ GEM
     faraday (1.1.0)
       multipart-post (>= 1.2, < 3)
       ruby2_keywords
-    gds-api-adapters (67.2.1)
+    gds-api-adapters (68.1.0)
       addressable
       link_header
       null_logger
