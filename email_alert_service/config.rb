@@ -23,10 +23,6 @@ module EmailAlertService
       @rabbitmq ||= symbolize_keys(environment_config).freeze
     end
 
-    def redis_config
-      symbolize_keys(YAML.safe_load(ERB.new(File.read(app_root + "config/redis.yml")).result, [], [], true))
-    end
-
     def logger
       @logger ||= Logger.new(STDOUT)
     end

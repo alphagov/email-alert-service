@@ -17,8 +17,5 @@ end
 
 EmailAlertService.services(
   :redis,
-  Redis::Namespace.new(
-    EmailAlertService.config.redis_config[:namespace],
-    redis: Redis.new(EmailAlertService.config.redis_config),
-  ),
+  Redis::Namespace.new("email-alert-service", redis: Redis.new),
 )
