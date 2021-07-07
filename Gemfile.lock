@@ -35,7 +35,7 @@ GEM
     faraday-excon (1.1.0)
     faraday-net_http (1.0.1)
     faraday-net_http_persistent (1.1.0)
-    gds-api-adapters (71.8.0)
+    gds-api-adapters (71.9.0)
       addressable
       link_header
       null_logger
