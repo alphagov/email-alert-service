@@ -8,7 +8,7 @@ end
 
 [
   EmailAlertService.config.app_root,
-  EmailAlertService.config.app_root + "email_alert_service",
+  "#{EmailAlertService.config.app_root}/email_alert_service",
 ].each do |path|
   $LOAD_PATH << path.to_s
 end

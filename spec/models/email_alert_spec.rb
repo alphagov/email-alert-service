@@ -38,16 +38,18 @@ RSpec.describe EmailAlert do
     }
   end
 
-  class FakeLockHandler
-    def with_lock_unless_done
-      yield
+  let(:fake_lock_handler_class) do
+    Class.new do
+      def with_lock_unless_done
+        yield
+      end
     end
   end
 
   let(:logger) { double(:logger, info: nil) }
   let(:alert_api) { double(:alert_api, create_content_change: nil) }
   let(:email_alert) { EmailAlert.new(document, logger) }
-  let(:fake_lock_handler) { FakeLockHandler.new }
+  let(:fake_lock_handler) { fake_lock_handler_class.new }
 
   before :each do
     allow(Services).to receive(:email_api_client).and_return(alert_api)

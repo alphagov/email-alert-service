@@ -1,4 +1,4 @@
-require_relative "../../email_alert_service/environment.rb"
+require_relative "../../email_alert_service/environment"
 
 namespace :message_queues do
   logger = EmailAlertService.config.logger

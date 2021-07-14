@@ -17,14 +17,14 @@ module EmailAlertService
     end
 
     def rabbitmq
-      all_configs = YAML.safe_load(ERB.new(File.read(app_root + "config/rabbitmq.yml")).result, [], [], true)
+      all_configs = YAML.safe_load(ERB.new(File.read("#{app_root}/config/rabbitmq.yml")).result, [], [], true)
       environment_config = all_configs.fetch(environment)
 
       @rabbitmq ||= symbolize_keys(environment_config).freeze
     end
 
     def logger
-      @logger ||= Logger.new(STDOUT)
+      @logger ||= Logger.new($stdout)
     end
 
   private
