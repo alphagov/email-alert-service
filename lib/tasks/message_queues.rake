@@ -22,6 +22,7 @@ namespace :message_queues do
   task :major_change_consumer do
     logger.info "Bound to exchange #{exchange_name} on major change queue"
     begin
+      GovukError.configure
       GovukMessageQueueConsumer::Consumer.new(
         queue_name: "email_alert_service",
         processor: MajorChangeMessageProcessor.new(logger),
