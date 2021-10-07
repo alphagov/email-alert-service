@@ -38,7 +38,7 @@ GEM
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     erubi (1.10.0)
-    faraday (1.7.0)
+    faraday (1.8.0)
       faraday-em_http (~> 1.0)
       faraday-em_synchrony (~> 1.0)
       faraday-excon (~> 1.1)
@@ -63,7 +63,7 @@ GEM
       null_logger
       plek (>= 1.9.0)
       rest-client (~> 2.0)
-    govuk_app_config (4.0.0)
+    govuk_app_config (4.0.1)
       logstasher (>= 1.2.2, < 2.2.0)
       sentry-rails (~> 4.5.0)
       sentry-ruby (~> 4.5.0)
