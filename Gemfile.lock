@@ -63,8 +63,9 @@ GEM
       null_logger
       plek (>= 1.9.0)
       rest-client (~> 2.0)
-    govuk_app_config (4.0.1)
+    govuk_app_config (4.1.0)
       logstasher (>= 1.2.2, < 2.2.0)
+      puma (~> 5.0)
       sentry-rails (~> 4.5.0)
       sentry-ruby (~> 4.5.0)
       statsd-ruby (~> 1.5.0)
@@ -97,6 +98,7 @@ GEM
     minitest (5.14.4)
     multipart-post (2.1.1)
     netrc (0.11.0)
+    nio4r (2.5.8)
     nokogiri (1.12.5)
       mini_portile2 (~> 2.6.1)
       racc (~> 1.4)
@@ -112,7 +114,9 @@ GEM
       byebug (~> 11.0)
       pry (~> 0.13.0)
     public_suffix (4.0.6)
-    racc (1.5.2)
+    puma (5.5.2)
+      nio4r (~> 2.0)
+    racc (1.6.0)
     rack (2.2.3)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -212,7 +216,7 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
-    zeitwerk (2.4.2)
+    zeitwerk (2.5.1)
 
 PLATFORMS
   ruby
