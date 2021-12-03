@@ -5,7 +5,7 @@ Date: 2021-12-03
 ## Context
 
 We have just launched a new email notifications feature that allows users to subscribe to updates on a single page.
-Currently this feature is only enabled on a few selected pages (eg. [Open standards for government][open-standards-for-government]), 
+Currently this feature is only enabled on a few selected pages (eg. [Open standards for government][open-standards-for-government]),
 but it is expected to roll out to the majority of pages and content types by early 2022.
 There is a user need to let subscribers know when a page they are subscribed to has been withdrawn or redirected.
 
@@ -26,11 +26,11 @@ The previous version of this feature was removed for several good reasons. We be
 
 #### It only worked for topic taxons
 
-The new unsubscribe emails will only apply to single page subscriptions. This is a deliberate decision to keep the scope small and allow us to address the other concerns about handling an unpublished page in a taxon. 
+The new unsubscribe emails will only apply to single page subscriptions. This is a deliberate decision to keep the scope small and allow us to address the other concerns about handling an unpublished page in a taxon.
 
 #### It only worked if the unpublished page was redirected
 
-The new unsubscribe emails will handle pages that are redirected published in error with or without an alternative URL. This covers the publisher-facing [unpublishing types][unpublishing-types]. 
+The new unsubscribe emails will handle pages that are redirected published in error with or without an alternative URL. This covers the publisher-facing [unpublishing types][unpublishing-types].
 
 #### It wasn't monitored so we didn't know if it was working
 
@@ -43,6 +43,12 @@ The new unsubscribe emails will be implemented from the ground up and will use t
 There's only one single page subscriber list for each page, so it's much easier to know which list to remove when a page is unpublished.
 
 #### There was no evidence it met user needs
+
+Single page notifications are an answer to the user need to stay up to date with specific pieces of government guidance. Especially when the area might be subject to frequent updates or changes.
+
+Our hypothesis is that some users will subscribe to taxons that are broader than their actual area of interest. So they will receive updates about areas they are not interested in, in order to get the few relevant updates to them.
+
+Our hypothesis is that users who subscribe to be notified for major updates, will also want to know if the guidance is unpublished as part of staying up-to-date, and will find it unexpected if guidance they have been monitoring disappears from their account subscriptions without warning.
 
 ### Other related issues
 
