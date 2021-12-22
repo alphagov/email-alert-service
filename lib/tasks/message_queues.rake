@@ -37,4 +37,22 @@ namespace :message_queues do
       exit 1
     end
   end
+
+  desc "Run worker to consume unpublishing messages from rabbitmq"
+  task :unpublishing_consumer do
+    logger.info "Bound to exchange #{exchange_name} on email_unpublishing queue"
+    begin
+      GovukMessageQueueConsumer::Consumer.new(
+        queue_name: "email_unpublishing",
+        processor: SinglePageUnpublishingMessageProcessor.new(logger),
+        logger: logger,
+      ).run
+    rescue SignalException => e
+      logger.info "Signal Exception: #{e}"
+      exit 1
+    rescue StandardError => e
+      logger.info "Error: #{e}"
+      exit 1
+    end
+  end
 end
