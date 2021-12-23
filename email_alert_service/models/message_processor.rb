@@ -21,10 +21,6 @@ protected
     raise("This method should be called in a subclass.")
   end
 
-  def trigger_email_alert(document)
-    EmailAlert.new(document, @logger).trigger
-  end
-
   def has_base_path?(document)
     has_non_blank_value_for_key?(document: document, key: "base_path")
   end

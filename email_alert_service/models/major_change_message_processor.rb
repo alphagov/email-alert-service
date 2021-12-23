@@ -38,6 +38,10 @@ protected
 
 private
 
+  def trigger_email_alert(document)
+    EmailAlert.new(document, @logger).trigger
+  end
+
   def email_alerts_supported?(document)
     return false if blocked_publishing_app?(document["publishing_app"]) ||
       blocked_document_type?(document["document_type"])

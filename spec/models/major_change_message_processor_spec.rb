@@ -1,6 +1,8 @@
 require "spec_helper"
 
 RSpec.describe MajorChangeMessageProcessor do
+  include MessageProcessorHelpers
+
   let(:logger) { double(:logger, info: nil) }
 
   let(:message) do
@@ -59,18 +61,6 @@ RSpec.describe MajorChangeMessageProcessor do
 
   def email_was_not_triggered
     expect(mock_email_alert).to_not have_received(:trigger)
-  end
-
-  def message_acknowledged
-    expect(message).to have_received(:ack)
-  end
-
-  def message_rejected
-    expect(message).to have_received(:discard)
-  end
-
-  def message_requeued
-    expect(message).to have_received(:retry)
   end
 
   before do
