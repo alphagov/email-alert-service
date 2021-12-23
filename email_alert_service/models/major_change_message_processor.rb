@@ -36,10 +36,6 @@ protected
     end
   end
 
-  def trigger_email_alert(document)
-    EmailAlert.new(document, @logger).trigger
-  end
-
   def email_alerts_supported?(document)
     return false if blocked_publishing_app?(document["publishing_app"]) ||
       blocked_document_type?(document["document_type"])
@@ -116,23 +112,8 @@ protected
       relevant_supertype.call(document["email_document_supertype"])
   end
 
-  def is_english?(document)
-    # A missing locale is assumed to be English, but a "null" locale is not
-    return true unless document.key?("locale")
-
-    document["locale"] == "en"
-  end
-
-  def has_base_path?(document)
-    has_non_blank_value_for_key?(document: document, key: "base_path")
-  end
-
   def has_title?(document)
     has_non_blank_value_for_key?(document: document, key: "title")
-  end
-
-  def has_public_updated_at?(document)
-    has_non_blank_value_for_key?(document: document, key: "public_updated_at")
   end
 
   def has_change_note?(document)
@@ -141,13 +122,5 @@ protected
     ).latest_change_note
 
     !note.nil? && !note.empty?
-  end
-
-  def has_non_blank_value_for_key?(document:, key:)
-    # a key can be present but the value is nil, so fetch won't
-    # protect us here
-    return false unless document.key?(key)
-
-    (document[key] || "") != ""
   end
 end
