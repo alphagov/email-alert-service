@@ -26,17 +26,19 @@ The previous version of this feature was removed for several good reasons. We be
 
 #### It only worked for topic taxons
 
-The new unsubscribe emails will only apply to single page subscriptions. This is a deliberate decision to keep the scope small and allow us to address the other concerns about handling an unpublished page in a taxon.
+The new unpublished emails will only apply to single page subscriptions. This is a deliberate decision to keep the scope small and allow us to address the other concerns about handling an unpublished page in a taxon.
 
 #### It only worked if the unpublished page was redirected
 
-The new unsubscribe emails will handle pages that are redirected published in error with or without an alternative URL. This covers the publisher-facing [unpublishing types][unpublishing-types].
+The new unpublished emails will handle pages that are redirected published in error with or without an alternative URL. This covers the publisher-facing [unpublishing types][unpublishing-types].
 
 #### It wasn't monitored so we didn't know if it was working
 
+Because the new emails will only be for single page subscriptions, it will be easier to test the whole system. We will also use existing methods for templating and sending emails so we can benefit from the monitoring that's already in place.
+
 #### It rendered email using ERB, unlike the rest of the system
 
-The new unsubscribe emails will be implemented from the ground up and will use the same method to render emails as the content changes.
+The new unpublished emails will use the same method to render emails as the content changes.
 
 #### It removed any subscriber lists that included the page, even those for a different taxon
 
