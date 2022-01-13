@@ -67,3 +67,8 @@ This proposal does not directly address this Tech Debt, but by removing the sing
 Proposed
 
 ## Consequences
+
+- Increased complexity in email-alert-service with new MessageProcessors monitoring for unpublication events
+- A new email-api endpoint to mass unsubscribe users from a subscription list.
+
+Subscription lists may end up unpopulated and empty as a result of this, the proposed endpoint does not clear them up themselves (so is not a strict destroy endpoint), instead it relies on other existing workers which periodically clear up empty subscription lists.
