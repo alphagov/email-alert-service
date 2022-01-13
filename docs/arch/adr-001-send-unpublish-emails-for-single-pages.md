@@ -7,7 +7,9 @@ Date: 2021-12-03
 We have just launched a new email notifications feature that allows users to subscribe to updates on a single page.
 Currently this feature is only enabled on a few selected pages (eg. [Open standards for government][open-standards-for-government]),
 but it is expected to roll out to the majority of pages and content types by early 2022.
-There is a user need to let subscribers know when a page they are subscribed to has been withdrawn or redirected.
+
+Unpublished content will become unavailable and receive no further updates. Users who have demonstrated a desire to stay up to date
+with an item of content may find it unexpected if content they were subscribed to disappears without notification, or becomes unavailable through their account. This change is part of meeting a user need to stay up to date with changing content, including when that content is changed through unpublication.
 
 The email alert API used to send emails when a page in a taxon subscription was unpublished.
 This feature was [removed in Jan 2021][remove-previous-unpublish-emails] for good reasons.
