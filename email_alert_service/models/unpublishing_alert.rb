@@ -11,7 +11,7 @@ class UnpublishingAlert
   def trigger
     logger.info "Received unsubscription notification for #{document['title']}, unpublishing_scenario: #{unpublishing_scenario}, full payload: #{document}"
     get_subscriber_list
-    bulk_unsubscribe
+    bulk_unsubscribe if subscriber_list_id
   end
 
 private
@@ -19,11 +19,6 @@ private
   attr_reader :document, :logger, :unpublishing_scenario, :content_item, :subscriber_list, :subscriber_list_id, :page_title
 
   def bulk_unsubscribe
-    unless subscriber_list_id
-      logger.error "no subscription_list_id found for content id #{document['content_id']}"
-      return
-    end
-
     lock_handler.with_lock_unless_done do
       Services.email_api_client.bulk_unsubscribe(
         {

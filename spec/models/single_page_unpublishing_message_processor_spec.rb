@@ -139,7 +139,7 @@ RSpec.describe SinglePageUnpublishingMessageProcessor do
     end
 
     describe "following published_in_error_with_url event" do
-      let(:unpublishing_scenario) { "published_in_error_with_url" }
+      let(:unpublishing_scenario) { :published_in_error_with_url }
       let(:alternative_path) { "/foo/alternative" }
       let(:document) { published_in_error_payload }
 
@@ -147,14 +147,14 @@ RSpec.describe SinglePageUnpublishingMessageProcessor do
     end
 
     describe "following consolidated event" do
-      let(:unpublishing_scenario) { "consolidated" }
+      let(:unpublishing_scenario) { :consolidated }
       let(:document) { consolidated_payload }
 
       it_behaves_like "a validated and acknowledged message"
     end
 
     describe "following published_in_error_without_url event" do
-      let(:unpublishing_scenario) { "published_in_error_without_url" }
+      let(:unpublishing_scenario) { :published_in_error_without_url }
       let(:alternative_path) { "" }
       let(:document) { published_in_error_payload }
 

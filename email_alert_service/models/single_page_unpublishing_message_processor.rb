@@ -43,12 +43,12 @@ private
   def unpublishing_scenario
     if was_published_in_error?
       if has_alternative_url?
-        "published_in_error_with_url"
+        :published_in_error_with_url
       else
-        "published_in_error_without_url"
+        :published_in_error_without_url
       end
     elsif was_consolidated?
-      "consolidated"
+      :consolidated
     end
   end
 
