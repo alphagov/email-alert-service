@@ -17,8 +17,8 @@ class LockHandler
   # deliver the message.
   LOCK_PERIOD_IN_SECONDS = 120
 
-  def initialize(email_title, public_updated_at, now = Time.now)
-    @email_title = email_title
+  def initialize(lock_name, public_updated_at, now = Time.now)
+    @lock_name = lock_name
     @public_updated_at = public_updated_at
     @now = now
   end
@@ -37,7 +37,7 @@ class LockHandler
 
 private
 
-  attr_reader :email_title, :public_updated_at, :now
+  attr_reader :lock_name, :public_updated_at, :now
 
   def lock!
     unless try_acquire_lock
@@ -48,7 +48,7 @@ private
   def try_acquire_lock
     temp_key = "temp:#{SecureRandom.base64(18)}"
     redis.multi {
-      redis.setex temp_key, LOCK_PERIOD_IN_SECONDS, email_title
+      redis.setex temp_key, LOCK_PERIOD_IN_SECONDS, lock_name
       redis.renamenx temp_key, lock_key
       redis.del temp_key
     }[1]
@@ -69,7 +69,7 @@ private
   end
 
   def mark_message_handled
-    redis.setex done_marker_key, SECONDS_TO_REMEMBER_SENT_MESSAGES_FOR, email_title
+    redis.setex done_marker_key, SECONDS_TO_REMEMBER_SENT_MESSAGES_FOR, lock_name
   end
 
   def lock_key
@@ -81,7 +81,7 @@ private
   end
 
   def message_key
-    @message_key ||= MessageIdentifier.new(email_title, public_updated_at).create
+    @message_key ||= MessageIdentifier.new(lock_name, public_updated_at).create
   end
 
   def within_marker_period?
