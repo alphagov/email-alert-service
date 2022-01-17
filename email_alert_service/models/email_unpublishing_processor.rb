@@ -1,6 +1,6 @@
 require_relative("./message_processor")
 
-class SinglePageUnpublishingMessageProcessor < MessageProcessor
+class EmailUnpublishingProcessor < MessageProcessor
 protected
 
   def process_message(message)
@@ -26,14 +26,14 @@ protected
       return
     end
 
-    unpublishing_scenario_string = unpublishing_scenario
+    unpublishing_scenario_category = unpublishing_scenario
 
-    unless unpublishing_scenario_string
+    unless unpublishing_scenario_category
       @logger.info "not triggering bulk unsubscription and alert for document with a unknown unpublishing scenario. Document type: #{document['document_type']}"
       return
     end
 
-    UnpublishingAlert.new(@document, @logger, unpublishing_scenario_string).trigger
+    UnpublishingAlert.new(@document, @logger, unpublishing_scenario_category).trigger
   end
 
 private

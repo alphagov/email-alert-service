@@ -1,6 +1,6 @@
 require "spec_helper"
 
-RSpec.describe SinglePageUnpublishingMessageProcessor do
+RSpec.describe EmailUnpublishingProcessor do
   include MessageProcessorHelpers
 
   let(:logger)  { double(:logger, info: nil) }
@@ -14,7 +14,7 @@ RSpec.describe SinglePageUnpublishingMessageProcessor do
     )
   end
 
-  let(:processor) { SinglePageUnpublishingMessageProcessor.new(logger) }
+  let(:processor) { EmailUnpublishingProcessor.new(logger) }
   let(:mock_unpublishing_alert) { double("UnpublishingAlert", trigger: nil) }
 
   let(:content_id) { SecureRandom.uuid }

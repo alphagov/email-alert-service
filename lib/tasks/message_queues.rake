@@ -44,7 +44,7 @@ namespace :message_queues do
     begin
       GovukMessageQueueConsumer::Consumer.new(
         queue_name: "email_unpublishing",
-        processor: SinglePageUnpublishingMessageProcessor.new(logger),
+        processor: EmailUnpublishingProcessor.new(logger),
         logger: logger,
       ).run
     rescue SignalException => e
