@@ -9,7 +9,7 @@ class UnpublishingAlert
   end
 
   def trigger
-    logger.info "Received unsubscription notification for #{document['title']}, unpublishing_scenario: #{unpublishing_scenario}, full payload: #{document}"
+    logger.info "Received unsubscription notification for #{document['base_path']}, unpublishing_scenario: #{unpublishing_scenario}, full payload: #{document}"
     get_subscriber_list
     bulk_unsubscribe if subscriber_list_id
   end
