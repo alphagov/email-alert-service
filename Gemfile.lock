@@ -42,7 +42,7 @@ GEM
       faraday-net_http (~> 2.0)
       ruby2_keywords (>= 0.0.4)
     faraday-net_http (2.0.1)
-    gds-api-adapters (77.1.0)
+    gds-api-adapters (78.0.0)
       addressable
       link_header
       null_logger
