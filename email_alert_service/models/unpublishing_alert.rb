@@ -38,7 +38,7 @@ private
 
   def get_subscriber_list
     @subscriber_list = Services.email_api_client.find_subscriber_list(content_id: document.fetch("content_id"))
-    @subscriber_list_id = @subscriber_list.to_h.fetch("subscriber_list").fetch("id")
+    @subscriber_list_id = @subscriber_list.to_h.fetch("subscriber_list").fetch("slug")
   rescue GdsApi::HTTPNotFound
     logger.info "subscriber list not found for content id #{document['content_id']}"
     nil

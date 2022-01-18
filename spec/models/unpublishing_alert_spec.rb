@@ -59,11 +59,11 @@ RSpec.describe UnpublishingAlert do
   let(:logger) { double(:logger, info: nil) }
   let(:unpublishing_alert) { UnpublishingAlert.new(document, logger, unpublishing_scenario) }
   let(:fake_lock_handler) { fake_lock_handler_class.new }
-  let(:subscriber_list_uuid) { SecureRandom.uuid }
+  let(:subscriber_list_slug) { "i_am_a_subscriber_list_slug" }
   let(:subscriber_list_response) do
     {
       "subscriber_list" => {
-        "id" => subscriber_list_uuid,
+        "slug" => subscriber_list_slug,
         "title" => "Subscriber List Title",
       },
     }
@@ -90,7 +90,7 @@ RSpec.describe UnpublishingAlert do
 
         expect(alert_api).to have_received(:bulk_unsubscribe).with(
           {
-            "subscriber_list_id" => subscriber_list_uuid,
+            "subscriber_list_id" => subscriber_list_slug,
             "body" => email_markdown.strip,
             "sender_message_id" => sender_message_id,
           }.to_json,
