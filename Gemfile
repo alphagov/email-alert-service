@@ -10,6 +10,7 @@ gem "redis"
 gem "redis-namespace"
 gem "tzinfo"
 gem "tzinfo-data"
+gem "uuidtools"
 
 group :development, :test do
   gem "pry-byebug"
