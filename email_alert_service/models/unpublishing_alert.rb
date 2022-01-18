@@ -11,18 +11,18 @@ class UnpublishingAlert
   def trigger
     logger.info "Received unsubscription notification for #{document['base_path']}, unpublishing_scenario: #{unpublishing_scenario}, full payload: #{document}"
     get_subscriber_list
-    bulk_unsubscribe if subscriber_list_id
+    bulk_unsubscribe if subscriber_list_slug
   end
 
 private
 
-  attr_reader :document, :logger, :unpublishing_scenario, :content_item, :subscriber_list, :subscriber_list_id, :page_title
+  attr_reader :document, :logger, :unpublishing_scenario, :content_item, :subscriber_list, :subscriber_list_slug, :page_title
 
   def bulk_unsubscribe
     lock_handler.with_lock_unless_done do
       Services.email_api_client.bulk_unsubscribe(
         {
-          subscriber_list_id: subscriber_list_id,
+          slug: subscriber_list_slug,
           body: unpublishing_message,
           sender_message_id: sender_message_id(document),
         }.to_json,
@@ -38,7 +38,7 @@ private
 
   def get_subscriber_list
     @subscriber_list = Services.email_api_client.find_subscriber_list(content_id: document.fetch("content_id"))
-    @subscriber_list_id = @subscriber_list.to_h.fetch("subscriber_list").fetch("slug")
+    @subscriber_list_slug = @subscriber_list.to_h.fetch("subscriber_list").fetch("slug")
   rescue GdsApi::HTTPNotFound
     logger.info "subscriber list not found for content id #{document['content_id']}"
     nil
