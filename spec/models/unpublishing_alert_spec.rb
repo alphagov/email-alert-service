@@ -81,7 +81,7 @@ RSpec.describe UnpublishingAlert do
         unpublishing_alert.trigger
 
         expect(logger).to have_received(:info).with(
-          "Received unsubscription notification for #{document['title']}, unpublishing_scenario: #{unpublishing_scenario}, full payload: #{document}",
+          "Received unsubscription notification for #{document['base_path']}, unpublishing_scenario: #{unpublishing_scenario}, full payload: #{document}",
         )
       end
 
