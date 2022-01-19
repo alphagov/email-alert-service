@@ -90,7 +90,7 @@ RSpec.describe UnpublishingAlert do
 
         expect(alert_api).to have_received(:bulk_unsubscribe).with(
           {
-            "subscriber_list_id" => subscriber_list_slug,
+            "slug" => subscriber_list_slug,
             "body" => email_markdown.strip,
             "sender_message_id" => sender_message_id,
           }.to_json,
