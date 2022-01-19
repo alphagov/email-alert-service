@@ -6,6 +6,6 @@ module UUIDv5
     UUIDTools::UUID.sha1_create(
       UUIDTools::UUID.parse(namespace),
       name,
-    )
+    ).to_s
   end
 end
