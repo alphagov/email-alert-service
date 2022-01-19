@@ -21,11 +21,10 @@ private
   def bulk_unsubscribe
     lock_handler.with_lock_unless_done do
       Services.email_api_client.bulk_unsubscribe(
-        {
-          slug: subscriber_list_slug,
-          body: unpublishing_message,
-          sender_message_id: sender_message_id(document),
-        }.to_json,
+        slug: subscriber_list_slug,
+        govuk_request_id: document["govuk_request_id"],
+        body: unpublishing_message,
+        sender_message_id: sender_message_id(document),
       )
     rescue GdsApi::HTTPConflict
       logger.info "email-alert-api returned conflict for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
