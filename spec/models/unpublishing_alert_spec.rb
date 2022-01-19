@@ -4,7 +4,7 @@ require "lib/uuid_v5"
 RSpec.describe UnpublishingAlert do
   include LockHandlerTestHelpers
   let(:content_id) { SecureRandom.uuid }
-  let(:govuk_request_id) { SecureRandom.uuid }
+  let(:govuk_request_id) { "govuk_request_id" }
   let(:public_updated_at) { updated_now.iso8601 }
   let(:sender_message_id) { UUIDv5.call(content_id, public_updated_at) }
   let(:formatted_time) { Time.new(public_updated_at).strftime(UnpublishingMessagePresenter::EMAIL_DATE_FORMAT) }
@@ -89,11 +89,10 @@ RSpec.describe UnpublishingAlert do
         unpublishing_alert.trigger
 
         expect(alert_api).to have_received(:bulk_unsubscribe).with(
-          {
-            "slug" => subscriber_list_slug,
-            "body" => email_markdown.strip,
-            "sender_message_id" => sender_message_id,
-          }.to_json,
+          slug: subscriber_list_slug,
+          govuk_request_id: govuk_request_id,
+          body: email_markdown.strip,
+          sender_message_id: sender_message_id,
         )
       end
 
