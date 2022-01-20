@@ -3,8 +3,9 @@ require "spec_helper"
 RSpec.describe UnpublishingMessagePresenter do
   let(:content_id) { SecureRandom.uuid }
   let(:govuk_request_id) { SecureRandom.uuid }
-  let(:public_updated_at) { Time.now.iso8601 }
-  let(:formatted_time) { Time.new(public_updated_at).strftime(UnpublishingMessagePresenter::EMAIL_DATE_FORMAT) }
+  let(:time) { Time.now }
+  let(:public_updated_at) { time.iso8601 }
+  let(:formatted_time) { time.strftime(UnpublishingMessagePresenter::EMAIL_DATE_FORMAT) }
   let(:alternative_path) { nil }
   let(:website_domain) { "https://www.test.gov.uk" }
   let(:presenter) { UnpublishingMessagePresenter.new(unpublishing_scenario, document) }

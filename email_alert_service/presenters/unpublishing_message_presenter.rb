@@ -19,7 +19,7 @@ private
   attr_reader :unpublishing_scenario, :document
 
   def formatted_time
-    Time.new(document["public_updated_at"]).strftime(EMAIL_DATE_FORMAT)
+    Time.iso8601(document["public_updated_at"]).strftime(EMAIL_DATE_FORMAT)
   end
 
   def unpublishing_scenario_note
