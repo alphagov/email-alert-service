@@ -118,10 +118,6 @@ private
       relevant_supertype.call(document["email_document_supertype"])
   end
 
-  def has_title?(document)
-    has_non_blank_value_for_key?(document: document, key: "title")
-  end
-
   def has_change_note?(document)
     note = ChangeHistory.new(
       history: document.dig("details", "change_history"),
