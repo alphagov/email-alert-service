@@ -10,6 +10,12 @@ development:
     - processor: email_unpublishing_processor
       name: email_unpublishing
       routing_key: '*.unpublish.#'
+    - processor: subscriber_list_details_update_processor_major
+      name: update_subscriber_list_details_major
+      routing_key: "*.major.#"
+    - processor: subscriber_list_details_update_processor_minor
+      name: update_subscriber_list_details_minor
+      routing_key: "*.minor.#"
 
 test:
   <<: *defaults
@@ -21,6 +27,12 @@ test:
     - processor: email_unpublishing_processor
       name: email_unpublishing
       routing_key: "*.unpublish.#"
+    - processor: subscriber_list_details_update_processor_major
+      name: update_subscriber_list_details_major
+      routing_key: "*.major.#"
+    - processor: subscriber_list_details_update_processor_minor
+      name: update_subscriber_list_details_minor
+      routing_key: "*.minor.#"
 
 production:
   <<: *defaults
@@ -32,4 +44,10 @@ production:
     - processor: email_unpublishing_processor
       name: email_unpublishing
       routing_key: "*.unpublish.#"
+    - processor: subscriber_list_details_update_processor_major
+      name: 'update_subscriber_list_details_major'
+      routing_key: "*.major.#"
+    - processor: subscriber_list_details_update_processor_minor
+      name: 'update_subscriber_list_details_minor'
+      routing_key: "*.minor.#"
 
