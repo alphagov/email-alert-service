@@ -57,4 +57,44 @@ namespace :message_queues do
       exit 1
     end
   end
+
+  desc "Run workers to consume subscriber list updates for major change messages from rabbitmq"
+  task :subscriber_list_details_update_major_consumer do
+    logger.info "Bound to exchange #{exchange_name} on major change"
+    begin
+      GovukError.configure
+      EmailAlertService.services(:redis)
+      GovukMessageQueueConsumer::Consumer.new(
+        queue_name: "subscriber_list_details_major_update",
+        processor: SubscriberListDetailsUpdateProcessor.new(logger),
+        logger: logger,
+      ).run
+    rescue SignalException => e
+      logger.info "Signal Exception: #{e}"
+      exit 1
+    rescue StandardError => e
+      logger.info "Error: #{e}"
+      exit 1
+    end
+  end
+
+  desc "Run workers to consume subscriber list updates for minor change messages from rabbitmq"
+  task :subscriber_list_details_update_minor_consumer do
+    logger.info "Bound to exchange #{exchange_name} on minor change"
+    begin
+      GovukError.configure
+      EmailAlertService.services(:redis)
+      GovukMessageQueueConsumer::Consumer.new(
+        queue_name: "subscriber_list_details_minor_update",
+        processor: SubscriberListDetailsUpdateProcessor.new(logger),
+        logger: logger,
+      ).run
+    rescue SignalException => e
+      logger.info "Signal Exception: #{e}"
+      exit 1
+    rescue StandardError => e
+      logger.info "Error: #{e}"
+      exit 1
+    end
+  end
 end
