@@ -43,6 +43,7 @@ namespace :message_queues do
     logger.info "Bound to exchange #{exchange_name} on email_unpublishing queue"
     begin
       GovukError.configure
+      EmailAlertService.services(:redis)
       GovukMessageQueueConsumer::Consumer.new(
         queue_name: "email_unpublishing",
         processor: EmailUnpublishingProcessor.new(logger),
