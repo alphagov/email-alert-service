@@ -69,59 +69,82 @@ RSpec.describe UnpublishingAlert do
       },
     }
   end
-  let(:alert_api) { double(:alert_api, bulk_unsubscribe: nil, find_subscriber_list: subscriber_list_response) }
-
   before :each do
     allow(LockHandler).to receive(:new).and_return(fake_lock_handler)
-    allow(Services).to receive(:email_api_client).and_return(alert_api)
   end
 
   describe "#trigger" do
     shared_examples "a request to bulk unsubscribe with appropriate logging" do
-      it "logs an unsubscription notification" do
+      it "logs that the list does not exist and does not make a request to bulk-unsubscribe" do
+        stub_email_alert_api_does_not_have_subscriber_list("content_id" => content_id)
+
         unpublishing_alert.trigger
 
         expect(logger).to have_received(:info).with(
-          "Received unsubscription notification for #{document['base_path']}, unpublishing_scenario: #{unpublishing_scenario}, full payload: #{document}",
+          "subscriber list not found for content id #{document['content_id']}",
         )
       end
 
-      it "sends a bulk unsubscribe request to the Email Alert API" do
-        unpublishing_alert.trigger
+      context "when the list exists" do
+        before do
+          stub_email_alert_api_has_subscriber_list(
+            "content_id" => content_id,
+            "slug" => subscriber_list_slug,
+          )
+        end
 
-        expect(alert_api).to have_received(:bulk_unsubscribe).with(
-          slug: subscriber_list_slug,
-          govuk_request_id: govuk_request_id,
-          body: email_markdown.strip,
-          sender_message_id: sender_message_id,
-        )
-      end
+        it "logs an unsubscription notification" do
+          stub_email_alert_api_bulk_unsubscribe(slug: subscriber_list_slug)
 
-      it "logs if it recieves a conflict" do
-        allow(alert_api).to receive(:bulk_unsubscribe).and_raise(GdsApi::HTTPConflict.new(409))
-        unpublishing_alert.trigger
+          unpublishing_alert.trigger
 
-        expect(logger).to have_received(:info).with(
-          "email-alert-api returned conflict for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}",
-        )
-      end
+          expect(logger).to have_received(:info).with(
+            "Received unsubscription notification for #{document['base_path']}, unpublishing_scenario: #{unpublishing_scenario}, full payload: #{document}",
+          )
+        end
 
-      it "logs if it recieves an unprocessable entity" do
-        allow(alert_api).to receive(:bulk_unsubscribe).and_raise(GdsApi::HTTPUnprocessableEntity.new(422))
-        unpublishing_alert.trigger
+        it "sends a bulk unsubscribe request to the Email Alert API" do
+          stub = stub_email_alert_api_bulk_unsubscribe_with_message(
+            slug: subscriber_list_slug,
+            govuk_request_id: govuk_request_id,
+            body: email_markdown.strip,
+            sender_message_id: sender_message_id,
+          )
 
-        expect(logger).to have_received(:info).with(
-          "email-alert-api returned unprocessable entity for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}",
-        )
-      end
+          unpublishing_alert.trigger
 
-      it "logs if it recieves not found" do
-        allow(alert_api).to receive(:bulk_unsubscribe).and_raise(GdsApi::HTTPNotFound.new(404))
-        unpublishing_alert.trigger
+          expect(stub).to have_been_made
+        end
 
-        expect(logger).to have_received(:info).with(
-          "email-alert-api returned not_found for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}",
-        )
+        it "logs if it receives a conflict" do
+          stub_email_alert_api_bulk_unsubscribe_conflict(slug: subscriber_list_slug)
+
+          unpublishing_alert.trigger
+
+          expect(logger).to have_received(:info).with(
+            "email-alert-api returned conflict for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}",
+          )
+        end
+
+        it "logs if it receives an unprocessable entity" do
+          stub_email_alert_api_bulk_unsubscribe_bad_request(slug: subscriber_list_slug)
+
+          unpublishing_alert.trigger
+
+          expect(logger).to have_received(:info).with(
+            "email-alert-api returned unprocessable entity for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}",
+          )
+        end
+
+        it "logs if it receives not found" do
+          stub_email_alert_api_bulk_unsubscribe_not_found(slug: subscriber_list_slug)
+
+          unpublishing_alert.trigger
+
+          expect(logger).to have_received(:info).with(
+            "email-alert-api returned not_found for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}",
+          )
+        end
       end
     end
 
