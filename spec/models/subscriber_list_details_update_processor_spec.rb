@@ -15,28 +15,9 @@ RSpec.describe SubscriberListDetailsUpdateProcessor do
     )
   end
 
-  let(:bad_message) do
-    double(
-      :message_queue_consumer_message,
-      ack: nil,
-      discard: nil,
-      retry: nil,
-      payload: nil,
-    )
-  end
-
   let(:processor) { SubscriberListDetailsUpdateProcessor.new(logger) }
 
   let(:content_id) { SecureRandom.uuid }
-
-  let(:change_history) do
-    [
-      {
-        "note" => "First published.",
-        "public_timestamp" => "2014-10-06T13:39:19.000+00:00",
-      },
-    ]
-  end
 
   let(:document_title) { "Example title" }
   let(:subscriber_list_title) { "An old outdated title" }
