@@ -1,4 +1,8 @@
+require "lib/email_alert_api_helpers"
+
 class UpdateSubscriberList
+  include EmailAlertApiHelpers
+
   def initialize(document, logger)
     @document = document
     @logger = logger
@@ -29,14 +33,6 @@ private
     logger.info "email-alert-api returned unproessable entity updating subscriber list: #{subscriber_list_slug}, with: #{updateable_parameters}"
   rescue GdsApi::HTTPNotFound
     logger.info "email-alert-api cannot find subscriber list with slug #{subscriber_list_slug}"
-  end
-
-  def get_subscriber_list
-    @subscriber_list = Services.email_api_client.find_subscriber_list(content_id: document.fetch("content_id"))
-                                               .to_h.fetch("subscriber_list")
-    @subscriber_list_slug = @subscriber_list.fetch("slug")
-  rescue GdsApi::HTTPNotFound
-    logger.info "subscriber list not found for content id #{document['content_id']}"
   end
 
   def updateable_parameters
