@@ -18,7 +18,7 @@ class UpdateSubscriberList
     end
 
     if paramaters_need_updating?
-      logger.info "Attempting to update subscriber list: #{subscriber_list_slug}, with: #{updateable_parameters}"
+      logger.info "Updating subscriber list: #{subscriber_list_slug}, with: #{updateable_parameters}"
       update_subscriber_list_details
     else
       logger.info "No update needed to subscriber list: #{subscriber_list_slug}"

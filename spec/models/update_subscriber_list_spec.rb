@@ -38,7 +38,7 @@ RSpec.describe UpdateSubscriberList do
           update_subscriber_list.trigger
 
           expect(logger).to have_received(:info).with(
-            "Attempting to update subscriber list: #{subscriber_list_slug}, with: #{updateable_parameters}",
+            "Updating subscriber list: #{subscriber_list_slug}, with: #{updateable_parameters}",
           )
         end
 
