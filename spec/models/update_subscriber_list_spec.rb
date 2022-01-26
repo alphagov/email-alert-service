@@ -3,21 +3,12 @@ require "spec_helper"
 RSpec.describe UpdateSubscriberList do
   let(:content_id) { SecureRandom.uuid }
   let(:document_title) { "Example Title" }
-  let(:major_change_document) do
+  let(:document) do
     {
       "base_path" => "/foo",
       "content_id" => content_id,
       "title" => document_title,
-      "update_type" => "major",
-    }
-  end
-
-  let(:minor_change_document) do
-    {
-      "base_path" => "/foo",
-      "content_id" => content_id,
-      "title" => document_title,
-      "update_type" => "minor",
+      "update_type" => update_type,
     }
   end
 
@@ -105,13 +96,13 @@ RSpec.describe UpdateSubscriberList do
     end
 
     describe "after a major change" do
-      let(:document) { major_change_document }
+      let(:update_type) { "major" }
 
       it_behaves_like "an attempt to update subscriber lists with appropriate logging"
     end
 
     describe "after a minor change" do
-      let(:document) { minor_change_document }
+      let(:update_type) { "minor" }
 
       it_behaves_like "an attempt to update subscriber lists with appropriate logging"
     end
