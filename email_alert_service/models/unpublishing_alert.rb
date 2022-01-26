@@ -1,7 +1,10 @@
 require "gds_api/email_alert_api"
 require "lib/uuid_v5"
+require "lib/email_alert_api_helpers"
 
 class UnpublishingAlert
+  include EmailAlertApiHelpers
+
   def initialize(document, logger, unpublishing_scenario)
     @document = document
     @logger = logger
@@ -33,14 +36,6 @@ private
     rescue GdsApi::HTTPNotFound
       logger.info "email-alert-api returned not_found for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
     end
-  end
-
-  def get_subscriber_list
-    @subscriber_list = Services.email_api_client.find_subscriber_list(content_id: document.fetch("content_id"))
-    @subscriber_list_slug = @subscriber_list.to_h.fetch("subscriber_list").fetch("slug")
-  rescue GdsApi::HTTPNotFound
-    logger.info "subscriber list not found for content id #{document['content_id']}"
-    nil
   end
 
   def unpublishing_message
