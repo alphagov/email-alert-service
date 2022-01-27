@@ -47,17 +47,17 @@ RSpec.describe EmailAlert do
   end
 
   let(:logger) { double(:logger, info: nil) }
-  let(:alert_api) { double(:alert_api, create_content_change: nil) }
   let(:email_alert) { EmailAlert.new(document, logger) }
   let(:fake_lock_handler) { fake_lock_handler_class.new }
 
   before :each do
-    allow(Services).to receive(:email_api_client).and_return(alert_api)
     allow(LockHandler).to receive(:new).and_return(fake_lock_handler)
   end
 
   describe "#trigger" do
     it "logs receiving a major change notification for a document" do
+      stub_create_content_change.to_return(status: 202)
+
       email_alert.trigger
 
       expect(logger).to have_received(:info).with(
@@ -66,16 +66,18 @@ RSpec.describe EmailAlert do
     end
 
     it "sends an alert to the Email Alert API" do
+      stub = stub_create_content_change
+        .with(body: hash_including(content_id: content_id), headers: { "GOVUK-Request-Id" => govuk_request_id })
+        .to_return(status: 202)
+
       email_alert.trigger
 
-      expect(alert_api).to have_received(:create_content_change).with(
-        hash_including("content_id" => content_id),
-        govuk_request_id: govuk_request_id,
-      )
+      expect(stub).to have_been_made
     end
 
     it "logs if it receives a conflict" do
-      allow(alert_api).to receive(:create_content_change).and_raise(GdsApi::HTTPConflict.new(409))
+      stub_create_content_change.to_return(status: 409)
+
       email_alert.trigger
 
       expect(logger).to have_received(:info).with(
@@ -84,12 +86,17 @@ RSpec.describe EmailAlert do
     end
 
     it "logs if it receives an unprocessable entity" do
-      allow(alert_api).to receive(:create_content_change).and_raise(GdsApi::HTTPUnprocessableEntity.new(422))
+      stub_create_content_change.to_return(status: 422)
+
       email_alert.trigger
 
       expect(logger).to have_received(:info).with(
         "email-alert-api returned unprocessable entity for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}",
       )
+    end
+
+    def stub_create_content_change
+      stub_request(:post, "#{GdsApi::TestHelpers::EmailAlertApi::EMAIL_ALERT_API_ENDPOINT}/content-changes")
     end
   end
 
