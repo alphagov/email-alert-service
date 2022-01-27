@@ -3,30 +3,34 @@ require "spec_helper"
 RSpec.describe UpdateSubscriberList do
   let(:content_id) { SecureRandom.uuid }
   let(:document_title) { "Example Title" }
+  let(:document_description) { "Example description" }
   let(:document) do
     {
       "base_path" => "/foo",
       "content_id" => content_id,
       "title" => document_title,
+      "description" => document_description,
     }
   end
 
   let(:logger) { double(:logger, info: nil) }
   let(:update_subscriber_list) { UpdateSubscriberList.new(document, logger) }
   let(:subscriber_list_slug) { "subscriber_list_slug" }
-  let(:updateable_parameters) { { "title" => document_title } }
+  let(:updateable_parameters) { { "title" => document_title, "description" => document_description } }
 
   let(:subscriber_list_attributes) do
     {
       "content_id" => content_id,
       "slug" => subscriber_list_slug,
       "title" => subscriber_list_title,
+      "description" => subscriber_list_description,
     }
   end
 
   describe "#trigger" do
     describe "with a document for a major or minor content update" do
       let(:subscriber_list_title) { "An old outdated title" }
+      let(:subscriber_list_description) { document_description }
 
       context "subscriber list found by content id" do
         before { stub_email_alert_api_has_subscriber_list(subscriber_list_attributes) }
@@ -50,6 +54,20 @@ RSpec.describe UpdateSubscriberList do
 
             expect(logger).to have_received(:info).with(
               "No update needed to subscriber list: #{subscriber_list_slug}",
+            )
+          end
+        end
+
+        context "subscriber list description doesn't match document" do
+          let(:subscriber_list_description) { "An old description" }
+
+          it "logs an update to the subscriber list and triggers the api to update the title and description" do
+            stub_email_alert_api_has_subscriber_list(subscriber_list_attributes)
+            stub_update_subscriber_list_details(slug: subscriber_list_slug, params: updateable_parameters)
+            update_subscriber_list.trigger
+
+            expect(logger).to have_received(:info).with(
+              "Updating subscriber list: #{subscriber_list_slug}, with: #{updateable_parameters}",
             )
           end
         end

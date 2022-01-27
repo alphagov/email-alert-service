@@ -20,6 +20,7 @@ RSpec.describe SubscriberListDetailsUpdateProcessor do
   let(:content_id) { SecureRandom.uuid }
 
   let(:document_title) { "Example title" }
+  let(:document_description) { "A description" }
   let(:subscriber_list_title) { "An old outdated title" }
   let(:subscriber_list_slug) { "subscriber_list_slug" }
 
@@ -29,6 +30,7 @@ RSpec.describe SubscriberListDetailsUpdateProcessor do
       "content_id" => content_id,
       "title" => document_title,
       "locale" => "en",
+      "description" => document_description,
     }
   end
 
@@ -37,10 +39,11 @@ RSpec.describe SubscriberListDetailsUpdateProcessor do
       "content_id" => content_id,
       "slug" => subscriber_list_slug,
       "title" => subscriber_list_title,
+      "description" => document_description,
     }
   end
 
-  let(:updateable_parameters) { { "title" => document_title } }
+  let(:updateable_parameters) { { "title" => document_title, "description" => document_description } }
 
   describe "#process" do
     it "acknowledges and triggers the update for a correctly formatted document" do

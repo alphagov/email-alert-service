@@ -38,10 +38,11 @@ private
   def updateable_parameters
     {
       "title" => document["title"],
+      "description" => document["description"],
     }
   end
 
   def parameters_need_updating?
-    subscriber_list["title"] != document["title"]
+    subscriber_list["title"] != document["title"] || subscriber_list["description"] != document["description"]
   end
 end
