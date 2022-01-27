@@ -1,13 +1,15 @@
 class UnpublishingMessagePresenter
   EMAIL_DATE_FORMAT = "%l:%M%P, %-d %B %Y".freeze
 
-  def initialize(unpublishing_scenario, document)
+  def initialize(unpublishing_scenario, document, subscriber_list)
     @unpublishing_scenario = unpublishing_scenario
     @document = document
+    @subscriber_list = subscriber_list
   end
 
   def call
     [
+      ["Page summary:\n", subscriber_list["description"]].join,
       ["Change made:\n", unpublishing_scenario_note].join,
       ["Time updated:\n", formatted_time].join,
       "^You’ve been automatically unsubscribed from this page because it was removed.",
@@ -16,7 +18,7 @@ class UnpublishingMessagePresenter
 
 private
 
-  attr_reader :unpublishing_scenario, :document
+  attr_reader :unpublishing_scenario, :document, :subscriber_list
 
   def formatted_time
     Time.iso8601(document["public_updated_at"]).strftime(EMAIL_DATE_FORMAT)

@@ -8,7 +8,7 @@ RSpec.describe UnpublishingMessagePresenter do
   let(:formatted_time) { time.strftime(UnpublishingMessagePresenter::EMAIL_DATE_FORMAT) }
   let(:alternative_path) { nil }
   let(:website_domain) { "https://www.test.gov.uk" }
-  let(:presenter) { UnpublishingMessagePresenter.new(unpublishing_scenario, document) }
+  let(:presenter) { UnpublishingMessagePresenter.new(unpublishing_scenario, document, subscriber_list) }
 
   let(:published_in_error_payload) do
     {
@@ -49,6 +49,12 @@ RSpec.describe UnpublishingMessagePresenter do
     }
   end
 
+  let(:subscriber_list) do
+    {
+      "description" => "An example page description.",
+    }
+  end
+
   describe "#call" do
     context "presenting a consolidated event" do
       let(:unpublishing_scenario) { :consolidated }
@@ -56,6 +62,9 @@ RSpec.describe UnpublishingMessagePresenter do
 
       it "presents markdown for an email" do
         expected_markdown = <<~UNPUBLISHING_MESSAGE
+          Page summary:
+          An example page description.
+
           Change made:
           This page was removed from GOV.UK. It’s been replaced by #{website_domain}/government/publications/foobar
 
@@ -76,6 +85,9 @@ RSpec.describe UnpublishingMessagePresenter do
 
       it "presents markdown for an email" do
         expected_markdown = <<~UNPUBLISHING_MESSAGE
+          Page summary:
+          An example page description.
+
           Change made:
           This page was removed from GOV.UK because it was published in error. It’s been replaced by: #{website_domain}/foo/alternative
 
@@ -94,6 +106,9 @@ RSpec.describe UnpublishingMessagePresenter do
 
       it "presents markdown for an email" do
         expected_markdown = <<~UNPUBLISHING_MESSAGE
+          Page summary:
+          An example page description.
+
           Change made:
           This page was removed from GOV.UK because it was published in error.
 
