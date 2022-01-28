@@ -63,8 +63,4 @@ private
   def was_published_in_error?
     document["document_type"] == "gone"
   end
-
-  def has_content_id?(document)
-    has_non_blank_value_for_key?(document: document, key: "content_id")
-  end
 end

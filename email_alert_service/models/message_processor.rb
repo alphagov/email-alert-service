@@ -43,4 +43,12 @@ protected
 
     document["locale"] == "en"
   end
+
+  def has_content_id?(document)
+    has_non_blank_value_for_key?(document: document, key: "content_id")
+  end
+
+  def has_title?(document)
+    has_non_blank_value_for_key?(document: document, key: "title")
+  end
 end
