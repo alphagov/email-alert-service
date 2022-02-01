@@ -61,14 +61,7 @@ RSpec.describe UnpublishingAlert do
   let(:unpublishing_alert) { UnpublishingAlert.new(document, logger, unpublishing_scenario) }
   let(:fake_lock_handler) { fake_lock_handler_class.new }
   let(:subscriber_list_slug) { "i_am_a_subscriber_list_slug" }
-  let(:subscriber_list_response) do
-    {
-      "subscriber_list" => {
-        "slug" => subscriber_list_slug,
-        "title" => "Subscriber List Title",
-      },
-    }
-  end
+
   before :each do
     allow(LockHandler).to receive(:new).and_return(fake_lock_handler)
   end
@@ -90,6 +83,7 @@ RSpec.describe UnpublishingAlert do
           stub_email_alert_api_has_subscriber_list(
             "content_id" => content_id,
             "slug" => subscriber_list_slug,
+            "description" => "A subscriber list description.",
           )
         end
 
@@ -154,6 +148,9 @@ RSpec.describe UnpublishingAlert do
       let(:document) { published_in_error_payload }
       let(:email_markdown) do
         <<~UNPUBLISHING_MESSAGE
+          Page summary:
+          A subscriber list description.
+
           Change made:
           This page was removed from GOV.UK because it was published in error. It’s been replaced by: https://www.test.gov.uk/foo/alternative
 
@@ -173,6 +170,9 @@ RSpec.describe UnpublishingAlert do
       let(:document) { published_in_error_payload }
       let(:email_markdown) do
         <<~UNPUBLISHING_MESSAGE
+          Page summary:
+          A subscriber list description.
+
           Change made:
           This page was removed from GOV.UK because it was published in error.
 
@@ -191,6 +191,9 @@ RSpec.describe UnpublishingAlert do
       let(:document) { consolidated_payload }
       let(:email_markdown) do
         <<~UNPUBLISHING_MESSAGE
+          Page summary:
+          A subscriber list description.
+
           Change made:
           This page was removed from GOV.UK. It’s been replaced by https://www.test.gov.uk/government/publications/foobar
 

@@ -39,7 +39,7 @@ private
   end
 
   def unpublishing_message
-    UnpublishingMessagePresenter.new(unpublishing_scenario, document).call
+    UnpublishingMessagePresenter.new(unpublishing_scenario, document, subscriber_list).call
   end
 
   def lock_handler

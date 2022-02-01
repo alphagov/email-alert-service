@@ -1,22 +1,24 @@
 class UnpublishingMessagePresenter
   EMAIL_DATE_FORMAT = "%l:%M%P, %-d %B %Y".freeze
 
-  def initialize(unpublishing_scenario, document)
+  def initialize(unpublishing_scenario, document, subscriber_list)
     @unpublishing_scenario = unpublishing_scenario
     @document = document
+    @subscriber_list = subscriber_list
   end
 
   def call
     [
+      page_summary,
       ["Change made:\n", unpublishing_scenario_note].join,
       ["Time updated:\n", formatted_time].join,
       "^You’ve been automatically unsubscribed from this page because it was removed.",
-    ].join("\n\n")
+    ].compact.join("\n\n")
   end
 
 private
 
-  attr_reader :unpublishing_scenario, :document
+  attr_reader :unpublishing_scenario, :document, :subscriber_list
 
   def formatted_time
     Time.iso8601(document["public_updated_at"]).strftime(EMAIL_DATE_FORMAT)
@@ -50,5 +52,15 @@ private
 
     uri.query = URI.encode_www_form(query).presence
     uri.to_s
+  end
+
+  def page_summary
+    description = subscriber_list["description"]
+    if description.nil? || description.empty?
+      GovukError.notify("Recieved unpublishing message with empty or missing description for subscriber list ID: #{subscriber_list['id']}")
+      return nil
+    end
+
+    ["Page summary:\n", description].join
   end
 end

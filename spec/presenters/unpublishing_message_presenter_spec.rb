@@ -8,7 +8,7 @@ RSpec.describe UnpublishingMessagePresenter do
   let(:formatted_time) { time.strftime(UnpublishingMessagePresenter::EMAIL_DATE_FORMAT) }
   let(:alternative_path) { nil }
   let(:website_domain) { "https://www.test.gov.uk" }
-  let(:presenter) { UnpublishingMessagePresenter.new(unpublishing_scenario, document) }
+  let(:presenter) { UnpublishingMessagePresenter.new(unpublishing_scenario, document, subscriber_list) }
 
   let(:published_in_error_payload) do
     {
@@ -49,6 +49,15 @@ RSpec.describe UnpublishingMessagePresenter do
     }
   end
 
+  let(:subscriber_list) do
+    {
+      "description" => "An example page description.",
+      "id" => 1,
+    }
+  end
+
+  let(:expected_error) { "Recieved unpublishing message with empty or missing description for subscriber list ID: #{subscriber_list['id']}" }
+
   describe "#call" do
     context "presenting a consolidated event" do
       let(:unpublishing_scenario) { :consolidated }
@@ -56,6 +65,9 @@ RSpec.describe UnpublishingMessagePresenter do
 
       it "presents markdown for an email" do
         expected_markdown = <<~UNPUBLISHING_MESSAGE
+          Page summary:
+          An example page description.
+
           Change made:
           This page was removed from GOV.UK. It’s been replaced by #{website_domain}/government/publications/foobar
 
@@ -67,6 +79,52 @@ RSpec.describe UnpublishingMessagePresenter do
 
         expect(presenter.call).to eq(expected_markdown.strip)
       end
+
+      context "when the subscriber list description is nil" do
+        let(:subscriber_list) { { "description" => nil, "id" => 1 } }
+
+        it "omits the page summary section from the email" do
+          expected_markdown = <<~UNPUBLISHING_MESSAGE
+            Change made:
+            This page was removed from GOV.UK. It’s been replaced by #{website_domain}/government/publications/foobar
+
+            Time updated:
+            #{formatted_time}
+
+            ^You’ve been automatically unsubscribed from this page because it was removed.
+          UNPUBLISHING_MESSAGE
+
+          expect(presenter.call).to eq(expected_markdown.strip)
+        end
+
+        it "raises an error with Sentry" do
+          expect(GovukError).to receive(:notify).with(expected_error)
+          presenter.call
+        end
+      end
+
+      context "when the subscriber list description is empty" do
+        let(:subscriber_list) { { "description" => "", "id" => 1 } }
+
+        it "omits the page summary section from the email" do
+          expected_markdown = <<~UNPUBLISHING_MESSAGE
+            Change made:
+            This page was removed from GOV.UK. It’s been replaced by #{website_domain}/government/publications/foobar
+
+            Time updated:
+            #{formatted_time}
+
+            ^You’ve been automatically unsubscribed from this page because it was removed.
+          UNPUBLISHING_MESSAGE
+
+          expect(presenter.call).to eq(expected_markdown.strip)
+        end
+
+        it "raises an error with Sentry" do
+          expect(GovukError).to receive(:notify).with(expected_error)
+          presenter.call
+        end
+      end
     end
 
     context "presenting a published_in_error_with_url event" do
@@ -76,6 +134,9 @@ RSpec.describe UnpublishingMessagePresenter do
 
       it "presents markdown for an email" do
         expected_markdown = <<~UNPUBLISHING_MESSAGE
+          Page summary:
+          An example page description.
+
           Change made:
           This page was removed from GOV.UK because it was published in error. It’s been replaced by: #{website_domain}/foo/alternative
 
@@ -94,6 +155,9 @@ RSpec.describe UnpublishingMessagePresenter do
 
       it "presents markdown for an email" do
         expected_markdown = <<~UNPUBLISHING_MESSAGE
+          Page summary:
+          An example page description.
+
           Change made:
           This page was removed from GOV.UK because it was published in error.
 
