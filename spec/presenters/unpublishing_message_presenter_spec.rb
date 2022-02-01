@@ -52,8 +52,11 @@ RSpec.describe UnpublishingMessagePresenter do
   let(:subscriber_list) do
     {
       "description" => "An example page description.",
+      "id" => 1,
     }
   end
+
+  let(:expected_error) { "Recieved unpublishing message with empty or missing description for subscriber list ID: #{subscriber_list['id']}" }
 
   describe "#call" do
     context "presenting a consolidated event" do
@@ -75,6 +78,52 @@ RSpec.describe UnpublishingMessagePresenter do
         UNPUBLISHING_MESSAGE
 
         expect(presenter.call).to eq(expected_markdown.strip)
+      end
+
+      context "when the subscriber list description is nil" do
+        let(:subscriber_list) { { "description" => nil, "id" => 1 } }
+
+        it "omits the page summary section from the email" do
+          expected_markdown = <<~UNPUBLISHING_MESSAGE
+            Change made:
+            This page was removed from GOV.UK. It’s been replaced by #{website_domain}/government/publications/foobar
+
+            Time updated:
+            #{formatted_time}
+
+            ^You’ve been automatically unsubscribed from this page because it was removed.
+          UNPUBLISHING_MESSAGE
+
+          expect(presenter.call).to eq(expected_markdown.strip)
+        end
+
+        it "raises an error with Sentry" do
+          expect(GovukError).to receive(:notify).with(expected_error)
+          presenter.call
+        end
+      end
+
+      context "when the subscriber list description is empty" do
+        let(:subscriber_list) { { "description" => "", "id" => 1 } }
+
+        it "omits the page summary section from the email" do
+          expected_markdown = <<~UNPUBLISHING_MESSAGE
+            Change made:
+            This page was removed from GOV.UK. It’s been replaced by #{website_domain}/government/publications/foobar
+
+            Time updated:
+            #{formatted_time}
+
+            ^You’ve been automatically unsubscribed from this page because it was removed.
+          UNPUBLISHING_MESSAGE
+
+          expect(presenter.call).to eq(expected_markdown.strip)
+        end
+
+        it "raises an error with Sentry" do
+          expect(GovukError).to receive(:notify).with(expected_error)
+          presenter.call
+        end
       end
     end
 

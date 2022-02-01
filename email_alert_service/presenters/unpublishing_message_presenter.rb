@@ -9,11 +9,11 @@ class UnpublishingMessagePresenter
 
   def call
     [
-      ["Page summary:\n", subscriber_list["description"]].join,
+      page_summary,
       ["Change made:\n", unpublishing_scenario_note].join,
       ["Time updated:\n", formatted_time].join,
       "^You’ve been automatically unsubscribed from this page because it was removed.",
-    ].join("\n\n")
+    ].compact.join("\n\n")
   end
 
 private
@@ -52,5 +52,15 @@ private
 
     uri.query = URI.encode_www_form(query).presence
     uri.to_s
+  end
+
+  def page_summary
+    description = subscriber_list["description"]
+    if description.nil? || description.empty?
+      GovukError.notify("Recieved unpublishing message with empty or missing description for subscriber list ID: #{subscriber_list['id']}")
+      return nil
+    end
+
+    ["Page summary:\n", description].join
   end
 end
