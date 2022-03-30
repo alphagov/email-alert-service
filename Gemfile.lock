@@ -42,7 +42,7 @@ GEM
       faraday-net_http (~> 2.0)
       ruby2_keywords (>= 0.0.4)
     faraday-net_http (2.0.1)
-    gds-api-adapters (79.1.0)
+    gds-api-adapters (79.1.1)
       addressable
       link_header
       null_logger
@@ -193,7 +193,7 @@ GEM
       tzinfo (>= 1.0.0)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.8)
+    unf_ext (0.0.8.1)
     unicode-display_width (2.1.0)
     unicorn (5.8.0)
       kgio (~> 2.6)
