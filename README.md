@@ -30,6 +30,6 @@ There are two rake tasks to start processors to consume from the queues:
 bundle exec rake
 ```
 
-## Licence
+## License
 
-[MIT License](LICENCE)
+[MIT License](LICENSE)
