@@ -31,7 +31,7 @@ private
     when :published_in_error_with_url
       "This page was removed from GOV.UK because it was published in error. It’s been replaced by: #{url_for(base_path: document['details']['alternative_path'])}"
     when :published_in_error_without_url
-      "This page was removed from GOV.UK because it was published in error."
+      "THIS page was published in error and has been removed from GOV.UK."
     end
   end
 
