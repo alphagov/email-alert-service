@@ -1,4 +1,5 @@
 require_relative("./message_processor")
+require "active_support/core_ext/object/blank"
 
 class EmailUnpublishingProcessor < MessageProcessor
 protected
