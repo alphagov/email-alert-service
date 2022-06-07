@@ -1,3 +1,5 @@
+require "active_support/core_ext/object/blank"
+
 class UnpublishingMessagePresenter
   EMAIL_DATE_FORMAT = "%l:%M%P, %-d %B %Y".freeze
 
