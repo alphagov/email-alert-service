@@ -37,7 +37,7 @@ GEM
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     erubi (1.10.0)
-    gds-api-adapters (81.0.2)
+    gds-api-adapters (81.0.3)
       addressable
       link_header
       null_logger
