@@ -47,10 +47,10 @@ private
 
   def try_acquire_lock
     temp_key = "temp:#{SecureRandom.base64(18)}"
-    redis.multi {
-      redis.setex temp_key, LOCK_PERIOD_IN_SECONDS, lock_name
-      redis.renamenx temp_key, lock_key
-      redis.del temp_key
+    redis.multi { |pipeline|
+      pipeline.setex temp_key, LOCK_PERIOD_IN_SECONDS, lock_name
+      pipeline.renamenx temp_key, lock_key
+      pipeline.del temp_key
     }[1]
   end
 
