@@ -100,9 +100,9 @@ RSpec.describe UnpublishingAlert do
         it "sends a bulk unsubscribe request to the Email Alert API" do
           stub = stub_email_alert_api_bulk_unsubscribe_with_message(
             slug: subscriber_list_slug,
-            govuk_request_id: govuk_request_id,
+            govuk_request_id:,
             body: email_markdown.strip,
-            sender_message_id: sender_message_id,
+            sender_message_id:,
           )
 
           unpublishing_alert.trigger

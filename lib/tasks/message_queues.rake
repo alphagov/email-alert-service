@@ -65,9 +65,9 @@ def run_processor_worker(processor, queue_name, exchange_name, logger)
     GovukError.configure
     EmailAlertService.services(:redis)
     GovukMessageQueueConsumer::Consumer.new(
-      queue_name: queue_name,
+      queue_name:,
       processor: processor.new(logger),
-      logger: logger,
+      logger:,
     ).run
   rescue SignalException => e
     logger.info "Signal Exception: #{e}"

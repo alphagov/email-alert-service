@@ -67,7 +67,7 @@ RSpec.describe EmailAlert do
 
     it "sends an alert to the Email Alert API" do
       stub = stub_create_content_change
-        .with(body: hash_including(content_id: content_id), headers: { "GOVUK-Request-Id" => govuk_request_id })
+        .with(body: hash_including(content_id:), headers: { "GOVUK-Request-Id" => govuk_request_id })
         .to_return(status: 202)
 
       email_alert.trigger
