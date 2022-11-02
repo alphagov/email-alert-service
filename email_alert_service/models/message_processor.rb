@@ -22,11 +22,11 @@ protected
   end
 
   def has_base_path?(document)
-    has_non_blank_value_for_key?(document: document, key: "base_path")
+    has_non_blank_value_for_key?(document:, key: "base_path")
   end
 
   def has_public_updated_at?(document)
-    has_non_blank_value_for_key?(document: document, key: "public_updated_at")
+    has_non_blank_value_for_key?(document:, key: "public_updated_at")
   end
 
   def has_non_blank_value_for_key?(document:, key:)
@@ -45,10 +45,10 @@ protected
   end
 
   def has_content_id?(document)
-    has_non_blank_value_for_key?(document: document, key: "content_id")
+    has_non_blank_value_for_key?(document:, key: "content_id")
   end
 
   def has_title?(document)
-    has_non_blank_value_for_key?(document: document, key: "title")
+    has_non_blank_value_for_key?(document:, key: "title")
   end
 end

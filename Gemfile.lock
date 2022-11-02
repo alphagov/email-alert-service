@@ -213,7 +213,10 @@ GEM
     zeitwerk (2.6.1)
 
 PLATFORMS
+  aarch64-linux
+  arm64-darwin
   ruby
+  x86_64-linux
 
 DEPENDENCIES
   bunny
@@ -237,4 +240,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   2.1.4
+   2.3.24
