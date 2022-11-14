@@ -181,6 +181,32 @@ RSpec.describe EmailAlert do
       end
     end
 
+    context "document collection links are present" do
+      before do
+        document.merge!(
+          "expanded_links" => {
+            "document_collections" => [
+              {
+                "content_id" => "uuid-of-document-collection",
+                "title" => "Document Collection Title",
+                "links" => {
+                  "documents" => [
+                    { "content_id" => content_id, "links" => {} },
+                  ],
+                },
+              },
+            ],
+          },
+        )
+      end
+
+      it "formats the message to include document collection ids" do
+        links_hash = email_alert.format_for_email_api["links"]
+
+        expect(links_hash["document_collections"]).to eq %w[uuid-of-document-collection]
+      end
+    end
+
     context "with a travel advice" do
       before do
         document.merge!("document_type" => "travel_advice")
