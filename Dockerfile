@@ -22,5 +22,4 @@ COPY --from=builder /app /app/
 
 USER app
 
-CMD bundle exec rake message_queues:major_change_consumer && \
-    bundle exec rake message_queues:unpublishing_consumer
+CMD bundle exec rake message_queues:major_change_consumer
