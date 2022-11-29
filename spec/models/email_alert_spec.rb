@@ -29,6 +29,7 @@ RSpec.describe EmailAlert do
         ],
       },
       "links" => {},
+      "expanded_links" => {},
       "public_updated_at" => public_updated_at,
       "document_type" => "example_document",
       "email_document_supertype" => "publications",
@@ -124,7 +125,21 @@ RSpec.describe EmailAlert do
     end
 
     context "a link is present in the document" do
-      before { document.merge!("links" => { "topics" => %w[uuid-888] }) }
+      before do
+        document.merge!(
+          "links" => {
+            "topics" => %w[uuid-888],
+          },
+          "expanded_links" => {
+            "topics" => [
+              {
+                "content_id" => "uuid-888",
+                "title" => "This topic",
+              },
+            ],
+          },
+        )
+      end
 
       it "formats the message to include the parent link" do
         expect(email_alert.format_for_email_api).to include(
@@ -178,6 +193,40 @@ RSpec.describe EmailAlert do
 
         expect(links_hash["taxons"]).to eq %w[uuid-1 uuid-3]
         expect(links_hash["taxon_tree"].sort).to eq %w[uuid-1 uuid-2 uuid-3]
+      end
+    end
+
+    context "expanded links contain reverse links" do
+      before do
+        document.merge!(
+          "links" => {},
+          "expanded_links" => {
+            "document_collections" => [
+              { "content_id" => "uuid-of-document-collection",
+                "title" => "Document Collection Title",
+                "links" => { "documents" => [{ "content_id" => content_id, "links" => {} }] } },
+            ],
+            "policies" => [
+              { "content_id" => "uuid-of-policy-paper",
+                "title" => "Policy Paper Title",
+                "links" => { "working_groups" => [{ "content_id" => content_id, "links" => {} }] } },
+            ],
+            "available_translations" => [
+              { "title" => "Document title",
+                "base_path" => "/government/publications/document-title",
+                "locale" => "en" },
+            ],
+          },
+        )
+      end
+
+      it "formats the message to include content ids of all the reverse linked documents except available_translations" do
+        expected = {
+          "document_collections" => %w[uuid-of-document-collection],
+          "policies" => %w[uuid-of-policy-paper],
+        }
+
+        expect(email_alert.format_for_email_api["links"]).to eq(expected)
       end
     end
 
