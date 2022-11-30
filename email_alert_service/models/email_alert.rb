@@ -27,7 +27,7 @@ class EmailAlert
       "change_note" => change_note,
       "subject" => document["title"],
       "tags" => strip_empty_arrays(document.fetch("details", {}).fetch("tags", {})),
-      "links" => document_links,
+      "links" => strip_empty_arrays(document_links),
       "document_type" => document_type,
       "email_document_supertype" => document["email_document_supertype"],
       "government_document_supertype" => document["government_document_supertype"],
@@ -58,13 +58,7 @@ private
   end
 
   def document_links
-    strip_empty_arrays(
-      document.fetch("links", {}).merge("taxon_tree" => taxon_tree),
-    )
-  end
-
-  def taxon_tree
-    TaxonTree.ancestors(document.dig("expanded_links", "taxons").to_a)
+    DocumentLinks.call(document)
   end
 
   def document_type
