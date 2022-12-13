@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com//alphagov/govuk_message_queue_consumer.git
+  revision: 671e9bef36cba4cfb3a3b99c88db89d6fb7c6e16
+  branch: sengi/rabbitmq_url
+  specs:
+    govuk_message_queue_consumer (4.1.0)
+      bunny (~> 2.17)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -55,8 +63,6 @@ GEM
       sentry-ruby (~> 5.3)
       statsd-ruby (~> 1.5)
       unicorn (~> 6.1)
-    govuk_message_queue_consumer (4.0.0)
-      bunny (~> 2.11)
     govuk_schemas (4.5.0)
       json-schema (>= 2.8, < 3.1)
     hashdiff (1.0.1)
@@ -228,7 +234,7 @@ DEPENDENCIES
   bunny
   gds-api-adapters
   govuk_app_config
-  govuk_message_queue_consumer
+  govuk_message_queue_consumer!
   govuk_schemas
   plek
   pry-byebug
