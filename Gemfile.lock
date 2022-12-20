@@ -24,7 +24,7 @@ GEM
     amq-protocol (2.3.2)
     ast (2.4.2)
     builder (3.2.4)
-    bunny (2.19.0)
+    bunny (2.20.1)
       amq-protocol (~> 2.3, >= 2.3.1)
       sorted_set (~> 1, >= 1.0.2)
     byebug (11.1.3)
