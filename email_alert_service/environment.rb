@@ -1,3 +1,10 @@
+require "bundler/setup"
+require "bootsnap"
+Bootsnap.setup(
+  cache_dir: ENV.fetch("BOOTSNAP_CACHE_DIR", "tmp/cache"),
+  development_mode: ENV["RACK_ENV"] == "development",
+)
+
 require_relative "../email_alert_service/config"
 
 module EmailAlertService
@@ -13,7 +20,6 @@ end
   $LOAD_PATH << path.to_s
 end
 
-require "bundler/setup"
 Bundler.require(:default, EmailAlertService.config.environment)
 
 require "govuk_app_config"

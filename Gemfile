@@ -1,5 +1,6 @@
 source "https://rubygems.org"
 
+gem "bootsnap", require: false
 gem "bunny"
 gem "gds-api-adapters"
 gem "govuk_app_config"

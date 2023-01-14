@@ -23,6 +23,8 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     amq-protocol (2.3.2)
     ast (2.4.2)
+    bootsnap (1.15.0)
+      msgpack (~> 1.2)
     builder (3.2.4)
     bunny (2.20.2)
       amq-protocol (~> 2.3, >= 2.3.1)
@@ -82,6 +84,7 @@ GEM
     mime-types-data (3.2022.0105)
     mini_portile2 (2.8.1)
     minitest (5.17.0)
+    msgpack (1.6.0)
     netrc (0.11.0)
     nio4r (2.5.8)
     nokogiri (1.13.10)
@@ -225,6 +228,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  bootsnap
   bunny
   gds-api-adapters
   govuk_app_config
