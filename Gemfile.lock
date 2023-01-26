@@ -23,7 +23,7 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     amq-protocol (2.3.2)
     ast (2.4.2)
-    bootsnap (1.15.0)
+    bootsnap (1.16.0)
       msgpack (~> 1.2)
     builder (3.2.4)
     bunny (2.20.3)
