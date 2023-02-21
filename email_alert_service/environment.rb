@@ -5,6 +5,7 @@ Bootsnap.setup(
   development_mode: ENV["RACK_ENV"] == "development",
 )
 
+require_relative "../config/prometheus"
 require_relative "../email_alert_service/config"
 
 module EmailAlertService
