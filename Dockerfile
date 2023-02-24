@@ -22,4 +22,4 @@ COPY --from=builder $BOOTSNAP_CACHE_DIR $BOOTSNAP_CACHE_DIR
 COPY --from=builder $APP_HOME .
 
 USER app
-CMD ["rake", "message_queues:major_change_consumer"]
+CMD ["bin/email-alert-service"]
