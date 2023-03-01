@@ -24,6 +24,7 @@ module EmailAlertService
     end
 
     def logger
+      $stdout.sync = true
       @logger ||= Logger.new($stdout)
     end
 

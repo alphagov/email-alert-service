@@ -18,6 +18,8 @@ namespace :message_queues do
     end
   end
 
+  # TODO(#623): remove *_consumer and run_processor_worker once
+  # email-alert-service is running in Kubernetes in production.
   desc "Run worker to consume major change messages from rabbitmq"
   task :major_change_consumer do
     run_processor_worker(

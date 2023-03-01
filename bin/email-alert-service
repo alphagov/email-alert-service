@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+require_relative "../email_alert_service/environment"
+
+EmailAlertService.run_processor(MajorChangeMessageProcessor, "email_alert_service")
+EmailAlertService.run_processor(EmailUnpublishingProcessor, "email_unpublishing")
+EmailAlertService.run_processor(SubscriberListDetailsUpdateProcessor, "subscriber_list_details_update_major")
+EmailAlertService.run_processor(SubscriberListDetailsUpdateProcessor, "subscriber_list_details_update_minor")
+Process.wait  # Exit with error status if any child process exits.
+exit 1
