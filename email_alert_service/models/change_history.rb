@@ -6,7 +6,7 @@ class ChangeHistory
   end
 
   def latest_change_note
-    change_note = history&.sort_by { |note| note["public_timestamp"] }&.last
+    change_note = history&.max_by { |note| note["public_timestamp"] }
     change_note["note"] if change_note
   end
 end
