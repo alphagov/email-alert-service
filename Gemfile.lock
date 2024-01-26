@@ -52,7 +52,7 @@ GEM
     drb (2.2.0)
       ruby2_keywords
     erubi (1.12.0)
-    gds-api-adapters (92.1.0)
+    gds-api-adapters (93.0.0)
       addressable
       link_header
       null_logger
