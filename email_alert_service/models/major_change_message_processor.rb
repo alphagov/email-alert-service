@@ -65,7 +65,6 @@ private
     # let through anything for which Whitehall would have sent emails to
     # organisation-based lists if none of these other attributes exist on it.
     supported_attributes = %w[
-      topics
       policies
       service_manual_topics
       taxons
