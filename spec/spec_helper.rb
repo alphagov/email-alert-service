@@ -2,7 +2,10 @@ ENV["GOVUK_ENV"] = "test"
 ENV["GOVUK_APP_DOMAIN"] = "test.gov.uk"
 
 require "simplecov"
-SimpleCov.start
+SimpleCov.start "rails" do
+  enable_coverage :branch
+  minimum_coverage line: 90
+end
 
 require "webmock/rspec"
 
