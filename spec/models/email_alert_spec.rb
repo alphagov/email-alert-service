@@ -14,7 +14,6 @@ RSpec.describe EmailAlert do
       "details" => {
         "tags" => {
           "browse_pages" => ["tax/vat"],
-          "topics" => ["oil-and-gas/licensing"],
           "some_other_missing_tags" => [],
         },
         "change_history" => [
@@ -110,7 +109,6 @@ RSpec.describe EmailAlert do
         "publishing_app" => "Whitehall",
         "tags" => {
           "browse_pages" => ["tax/vat"],
-          "topics" => ["oil-and-gas/licensing"],
         },
         "links" => {},
         "document_type" => "example_document",
@@ -128,13 +126,13 @@ RSpec.describe EmailAlert do
       before do
         document.merge!(
           "links" => {
-            "topics" => %w[uuid-888],
+            "world_locations" => %w[uuid-888],
           },
           "expanded_links" => {
-            "topics" => [
+            "world_locations" => [
               {
                 "content_id" => "uuid-888",
-                "title" => "This topic",
+                "title" => "This world location",
               },
             ],
           },
@@ -144,7 +142,7 @@ RSpec.describe EmailAlert do
       it "formats the message to include the parent link" do
         expect(email_alert.format_for_email_api).to include(
           "links" => {
-            "topics" => %w[uuid-888],
+            "world_locations" => %w[uuid-888],
           },
         )
       end
@@ -152,12 +150,12 @@ RSpec.describe EmailAlert do
 
     context "blank tags are present" do
       before do
-        document["links"] = { "topics" => [] }
-        document["details"]["tags"].merge!("topics" => [])
+        document["links"] = { "world_locations" => [] }
+        document["details"]["tags"].merge!("roles" => [])
       end
 
       it "strips these out" do
-        expect(email_alert.format_for_email_api["tags"]).not_to include("topics")
+        expect(email_alert.format_for_email_api["tags"]).not_to include("roles")
       end
     end
 
@@ -206,9 +204,9 @@ RSpec.describe EmailAlert do
                 "title" => "Document Collection Title",
                 "links" => { "documents" => [{ "content_id" => content_id, "links" => {} }] } },
             ],
-            "policies" => [
-              { "content_id" => "uuid-of-policy-paper",
-                "title" => "Policy Paper Title",
+            "world_locations" => [
+              { "content_id" => "uuid-of-location",
+                "title" => "World Location Title",
                 "links" => { "working_groups" => [{ "content_id" => content_id, "links" => {} }] } },
             ],
             "available_translations" => [
@@ -223,7 +221,7 @@ RSpec.describe EmailAlert do
       it "formats the message to include content ids of all the reverse linked documents except available_translations" do
         expected = {
           "document_collections" => %w[uuid-of-document-collection],
-          "policies" => %w[uuid-of-policy-paper],
+          "world_locations" => %w[uuid-of-location],
         }
 
         expect(email_alert.format_for_email_api["links"]).to eq(expected)

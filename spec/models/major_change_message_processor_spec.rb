@@ -46,11 +46,11 @@ RSpec.describe MajorChangeMessageProcessor do
       "details" => {
         "change_history" => change_history,
         "tags" => {
-          "topics" => ["example topic"],
+          "roles" => %w[prime-minister],
         },
       },
       "links" => {
-        "topics" => %w[example-topic-uuid],
+        "world_locations" => %w[example-location-uuid],
       },
     }
   end
@@ -75,12 +75,7 @@ RSpec.describe MajorChangeMessageProcessor do
       message_acknowledged
     end
 
-    context "document tagged with a policy" do
-      before do
-        good_document["details"]["tags"] = { "policies" => ["example policy"] }
-        good_document["links"] = { "policies" => %w[example-policy-uuid] }
-      end
-
+    context "document tagged with a role" do
       it "acknowledges and triggers the email" do
         processor.process(message)
 
@@ -104,7 +99,7 @@ RSpec.describe MajorChangeMessageProcessor do
 
     context "document with no tags in its links hash" do
       before do
-        good_document["links"].delete("topics")
+        good_document["links"].delete("world_locations")
       end
 
       it "still acknowledges and triggers the email" do
@@ -117,8 +112,8 @@ RSpec.describe MajorChangeMessageProcessor do
 
     context "document with empty tags" do
       before do
-        good_document["details"]["tags"] = { "topics" => [] }
-        good_document["links"] = { "topics" => [] }
+        good_document["details"]["tags"] = { "roles" => [] }
+        good_document["links"] = { "world_locations" => [] }
       end
 
       it "acknowledges but doesn't trigger the email" do
@@ -131,7 +126,7 @@ RSpec.describe MajorChangeMessageProcessor do
 
     context "document with missing tag fields" do
       before do
-        good_document["links"].delete("topics")
+        good_document["links"].delete("world_locations")
         good_document["details"].delete("tags")
       end
 
