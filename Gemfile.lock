@@ -41,7 +41,7 @@ GEM
       sorted_set (~> 1, >= 1.0.2)
     byebug (11.1.3)
     coderay (1.1.3)
-    concurrent-ruby (1.3.3)
+    concurrent-ruby (1.3.4)
     connection_pool (2.4.1)
     crack (1.0.0)
       bigdecimal
@@ -463,7 +463,7 @@ GEM
     thor (1.3.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
-    tzinfo-data (1.2024.1)
+    tzinfo-data (1.2024.2)
       tzinfo (>= 1.0.0)
     unicode-display_width (2.5.0)
     uuidtools (2.2.0)
