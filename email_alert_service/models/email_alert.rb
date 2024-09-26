@@ -17,6 +17,8 @@ class EmailAlert
       logger.info "email-alert-api returned conflict for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
     rescue GdsApi::HTTPUnprocessableEntity
       logger.info "email-alert-api returned unprocessable entity for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
+    rescue => e
+      logger.info "email-alert-api returned error #{e.class}, #{e.message} for #{document['content_id']}, #{document['base_path']}, #{document['public_updated_at']}"
     end
   end
 

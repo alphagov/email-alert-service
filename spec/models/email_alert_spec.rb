@@ -95,6 +95,16 @@ RSpec.describe EmailAlert do
       )
     end
 
+    it "logs if it receives any other type of error" do
+      stub_create_content_change.to_return(status: 500)
+
+      email_alert.trigger
+
+      expect(logger).to have_received(:info).with(
+        a_string_matching(/email-alert-api returned error GdsApi::HTTPInternalServerError/)
+      )
+    end
+
     def stub_create_content_change
       stub_request(:post, "#{GdsApi::TestHelpers::EmailAlertApi::EMAIL_ALERT_API_ENDPOINT}/content-changes")
     end
