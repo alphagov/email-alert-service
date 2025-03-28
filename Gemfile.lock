@@ -92,7 +92,7 @@ GEM
       sentry-rails (~> 5.3)
       sentry-ruby (~> 5.3)
       statsd-ruby (~> 1.5)
-    govuk_message_queue_consumer (5.0.2)
+    govuk_message_queue_consumer (6.0.0)
       bunny (~> 2.17)
       ostruct
     govuk_schemas (6.0.0)
