@@ -4,50 +4,38 @@ development:
   <<: *defaults
   exchange: published_documents
   queues:
-    - processor: major_change_message_processor
-      name: email_alert_service
+    - name: email_alert_service
       routing_key: '*.major.#'
-    - processor: email_unpublishing_processor
-      name: email_unpublishing
+    - name: email_unpublishing
       routing_key: '*.unpublish.#'
-    - processor: subscriber_list_details_update_major_processor
-      name: subscriber_list_details_update_major
+    - name: subscriber_list_details_update_major
       routing_key: "*.major.#"
-    - processor: subscriber_list_details_update_minor_processor
-      name: subscriber_list_details_update_minor
+    - name: subscriber_list_details_update_minor
       routing_key: "*.minor.#"
 
 test:
   <<: *defaults
   exchange: email_alert_service_published_documents_test_exchange
   queues:
-    - processor: major_change_message_processor
-      name: email_alert_service_published_documents_test_queue
+    - name: email_alert_service_published_documents_test_queue
       routing_key: "*.major.#"
-    - processor: email_unpublishing_processor
-      name: email_unpublishing
+    - name: email_unpublishing
       routing_key: "*.unpublish.#"
-    - processor: subscriber_list_details_update_major_processor
-      name: subscriber_list_details_update_major
+    - name: subscriber_list_details_update_major
       routing_key: "*.major.#"
-    - processor: subscriber_list_details_update_minor_processor
-      name: subscriber_list_details_update_minor
+    - name: subscriber_list_details_update_minor
       routing_key: "*.minor.#"
 
 production:
   <<: *defaults
   exchange: <%= ENV['RABBITMQ_EXCHANGE'] || 'published_documents' %>
   queues:
-    - processor: major_change_message_processor
-      name: <%= ENV['RABBITMQ_QUEUE'] || 'email_alert_service' %>
+    - name: <%= ENV['RABBITMQ_QUEUE'] || 'email_alert_service' %>
       routing_key: "*.major.#"
-    - processor: email_unpublishing_processor
-      name: email_unpublishing
+    - name: email_unpublishing
       routing_key: "*.unpublish.#"
-    - processor: subscriber_list_details_update_major_processor
-      name: subscriber_list_details_update_major
+    - name: subscriber_list_details_update_major
       routing_key: "*.major.#"
-    - processor: subscriber_list_details_update_minor_processor
-      name: subscriber_list_details_update_minor
+    - name: subscriber_list_details_update_minor
       routing_key: "*.minor.#"
 
