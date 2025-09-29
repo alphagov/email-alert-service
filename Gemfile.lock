@@ -58,8 +58,6 @@ GEM
     drb (2.2.3)
     erb (5.0.2)
     erubi (1.13.1)
-    faker (3.5.2)
-      i18n (>= 1.8.11, < 2)
     gds-api-adapters (101.0.0)
       addressable
       link_header
@@ -96,8 +94,7 @@ GEM
     govuk_message_queue_consumer (6.0.0)
       bunny (~> 2.17)
       ostruct
-    govuk_schemas (6.1.0)
-      faker (>= 3.4.1, < 3.6.0)
+    govuk_schemas (6.2.0)
       json-schema (>= 2.8, < 6.1)
     hashdiff (1.1.2)
     http-accept (1.7.0)
