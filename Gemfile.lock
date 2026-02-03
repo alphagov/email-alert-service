@@ -58,7 +58,7 @@ GEM
     drb (2.2.3)
     erb (6.0.1)
     erubi (1.13.1)
-    gds-api-adapters (101.2.0)
+    gds-api-adapters (102.0.0)
       addressable
       link_header
       null_logger
@@ -126,7 +126,7 @@ GEM
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
-    mime-types-data (3.2025.0924)
+    mime-types-data (3.2026.0127)
     mini_portile2 (2.8.9)
     minitest (6.0.1)
       prism (~> 1.5)
