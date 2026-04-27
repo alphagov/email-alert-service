@@ -4,3 +4,10 @@ updates:
     directory: /
     schedule:
       interval: daily
+    cooldown:
+      default-days: 3
+      exclude:
+        - gds-api-adapters
+        - govuk_*
+        - plek
+        - rubocop-govuk
