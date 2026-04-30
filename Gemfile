@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "~> 3.3.1"
+ruby "~> 4.0"
 
 gem "bootsnap", require: false
 gem "bunny"
