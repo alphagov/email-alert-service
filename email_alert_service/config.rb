@@ -1,4 +1,3 @@
-require "pathname"
 require "yaml"
 require "logger"
 require "erb"
