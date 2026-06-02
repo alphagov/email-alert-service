@@ -65,14 +65,14 @@ private
     # let through anything for which Whitehall would have sent emails to
     # organisation-based lists if none of these other attributes exist on it.
     supported_attributes = %w[
-      policies
-      service_manual_topics
-      taxons
-      world_locations
-      topical_events
       people
+      policies
       policy_areas
       roles
+      service_manual_topics
+      taxons
+      topical_events
+      world_locations
     ]
 
     supported_attributes.any? do |tag_name|
