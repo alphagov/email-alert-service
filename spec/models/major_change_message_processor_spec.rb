@@ -110,6 +110,20 @@ RSpec.describe MajorChangeMessageProcessor do
       end
     end
 
+    context "document with shared_navigation in its links hash and no tags" do
+      before do
+        good_document["details"].delete("tags")
+        good_document["links"] = { "shared_navigation" => %w[example-location-uuid] }
+      end
+
+      it "still acknowledges and triggers the email" do
+        processor.process(message)
+
+        email_was_triggered
+        message_acknowledged
+      end
+    end
+
     context "document with empty tags" do
       before do
         good_document["details"]["tags"] = { "roles" => [] }

@@ -70,6 +70,7 @@ private
       policy_areas
       roles
       service_manual_topics
+      shared_navigation
       taxons
       topical_events
       world_locations
